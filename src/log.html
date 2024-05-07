@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+
+<div id="app"></div>
+<script type="text/babel">
+
+      class Rectangle extends React.Component {
+        render() {
+          const rectangleStyle = {
+            backgroundColor: '#dcdcdc',
+            width: '100vw',
+            height: '2cm',
+          };
+
+          return <div style={rectangleStyle}></div>;
+        }
+      }
+
+      class Buttons extends React.Component {
+        render() {
+          const buttonContainerStyle = {
+            position: 'absolute',
+            top: '45px',
+            right: '10px', // Odległość od prawego brzegu prostokąta
+            transform: 'translateY(-50%)', // Wyśrodkowanie pionowe
+          };
+
+          const buttonStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            backgroundColor: '#fff', // Tło przycisków
+            color: '#000', // Kolor tekstu
+            border: 'none',
+            borderRadius: '20px', // Zaokrąglone rogi
+            padding: '10px 20px',
+            marginRight: '10px',
+            cursor: 'pointer',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)', // Cień
+          };
+
+          return (
+            <div style={buttonContainerStyle}>
+              <button style={buttonStyle}>Zaloguj się / załóż konto</button>
+              <button style={buttonStyle}>Dodaj swoją firmę</button>
+            </div>
+          );
+        }
+      }
+      class SearchBar extends React.Component {
+        render() {
+          const searchBarStyle = {
+            backgroundColor: '#fff',
+            border: '1px solid #ccc',
+            borderRadius: '20px',
+            padding: '5px 10px',
+            display: 'flex',
+            alignItems: 'center',
+            width: '400px',
+            height: '20px',
+            position: 'absolute', // Ustawienie pozycji absolutnej
+            top: '30px', // Odległość od góry strony
+            left: '50%', // Wyśrodkowanie poziome
+            transform: 'translateX(-50%)', // Przesunięcie w lewo o połowę szerokości
+          };
+
+          const textStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            fontSize: '10px',
+            color: '#999', // Kolor tekstu
+          };
+
+          return (
+            <div style={searchBarStyle}>
+                <span style={textStyle}>Szukaj usług lub biznesów</span>
+            </div>
+          );
+        }
+      }
+
+      class LoginForm extends React.Component {
+        render() {
+          const formContainerStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: '5px',
+            marginBottom: '20px',
+          };
+
+          const inputContainerStyle = {
+            marginBottom: '5px',
+            marginTop: '20px',
+            textAlign: 'left',
+            
+          };
+
+          const inputLabelStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            color: 'black', 
+          };
+
+          const inputStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            width: '300px',
+            padding: '10px',
+            borderRadius: '20px',
+            border: '1px solid #ccc',
+            color: '#999', // Jasnoszary kolor
+            textAlign: 'left', // Tekst w lewym górnym rogu
+          };
+
+          const forgotPasswordButtonStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            color: '#666', // Szary kolor
+            border: 'none', // Brak obramowania
+            background: 'none', // Brak tła
+            cursor: 'pointer', // Kursor wskazujący
+            position: 'absolute', // Ustawienie pozycji bezwzględnej
+            top: '100%', // Ustawienie na 100% odstępu od góry
+            left: '0', // Ustawienie na lewo
+            transform: 'translateY(10px)', // Przesunięcie o 5px w dół, aby uzyskać odstęp między polem a przyciskiem
+          };
+
+          const loginButtonStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            color: 'black',
+            border: '1px solid black',
+            borderRadius: '20px',
+            padding: '10px 20px',
+            cursor: 'pointer',
+            marginTop: '40px',
+            marginRight: '10px',
+            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', // Cień
+            position: 'absolute', // Ustawienie pozycji bezwzględnej
+           // top: '100%', // Ustawienie na 100% odstępu od góry
+           // right: '0', // Ustawienie na lewo
+            transform: 'translateX(50px)', 
+        };
+
+        const registerButtonStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            color: 'black',
+            border: '1px solid black',
+            borderRadius: '20px',
+            padding: '10px 20px',
+            cursor: 'pointer',
+            marginTop: '40px',
+            position: 'absolute',
+            transform: 'translateX(150px)', 
+            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', // Cień
+        };
+
+          const headlineStyle = {
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 'light',
+            fontSize: '30px',
+            marginBottom: '10px',
+            marginTop: '140px',
+          };
+
+          const footerStyle = {
+            backgroundColor: 'black',
+            color: 'white',
+            textAlign: 'center',
+            padding: '20px 0',
+            width: '100%',
+            marginTop: '50px', // Dodatkowy margines na dole
+          };
+
+          return (
+            <div style={formContainerStyle}>
+                <h2 style={headlineStyle}>LOGOWANIE DLA UŻYTKOWNIKÓW</h2>
+                <div style={inputContainerStyle}>
+                <div>
+                    <label htmlFor="email" style={inputLabelStyle}>Email</label>
+                </div>
+                <div>
+                    <input type="email" id="email" style={inputStyle} placeholder="Podaj email" />
+                </div>
+                </div>
+                <div style={inputContainerStyle}>
+                <div>
+                    <label htmlFor="password" style={inputLabelStyle}>Hasło</label>
+                </div>
+                <div style={{ position: 'relative' }}>
+                    <input type="password" id="password" style={inputStyle} placeholder="Wprowadź swoje hasło" />
+                    <button style={forgotPasswordButtonStyle}>Zapomniałem hasła</button>
+                </div>
+                </div>
+                <div>
+                    <button style={loginButtonStyle}>Zaloguj</button>
+                    <button style={registerButtonStyle}>Nie masz konta? Zarejestruj się!</button>
+                </div>
+                <h3 style={headlineStyle}>LOGOWANIE DLA FIRM</h3>
+                <div style={inputContainerStyle}>
+                <div>
+                    <label htmlFor="companyEmail" style={inputLabelStyle}>Email</label>
+                </div>
+                <div>
+                    <input type="email" id="companyEmail" style={inputStyle} placeholder="Podaj email firmy" />
+                </div>
+                </div>
+                <div style={inputContainerStyle}>
+                <div>
+                    <label htmlFor="companyPassword" style={inputLabelStyle}>Hasło</label>
+                </div>
+                <div style={{ position: 'relative' }}>
+                    <input type="password" id="companyPassword" style={inputStyle} placeholder="Wprowadź hasło firmy" />
+                    <button style={forgotPasswordButtonStyle}>Zapomniałem hasła</button>
+                </div>
+                </div>
+                <div>
+                    <button style={loginButtonStyle}>Zaloguj</button>
+                    <button style={registerButtonStyle}>Nie masz konta? Zarejestruj swoją firmę!</button>
+                </div>
+            </div>
+            );
+        }
+      }
+
+      class Footer extends React.Component {
+  render() {
+    const footerStyle = {
+      backgroundColor: 'black', // Kolor tła stopki
+      color: 'white', // Kolor tekstu w stopce
+      textAlign: 'center', // Wyśrodkowanie tekstu w stopce
+      padding: '20px 0', // Wewnętrzny odstęp stopki
+      width: '100%', // Szerokość stopki równa szerokości strony
+      marginTop: '150px', // Margines górny stopki, aby oddzielić ją od reszty treści na stronie
+    };
+
+    const footerTextStyle = {
+      fontFamily: 'Roboto, sans-serif', // Czcionka tekstu w stopce
+      fontWeight: 'light', // Grubość tekstu w stopce
+      color: 'white', // Kolor tekstu w stopce
+      fontSize: '10px', // Rozmiar tekstu w stopce
+      
+    };
+
+    const separatorStyle = {
+      height: '0.5px', // Wysokość linii oddzielającej
+      backgroundColor: 'white', // Kolor linii oddzielającej
+      width: '90%', // Szerokość linii oddzielającej
+      margin: '0 auto 10px', // Margines linii oddzielającej
+      marginTop: '5px',
+    };
+
+    const linkContainerStyle = {
+      display: 'flex', // Wyświetlenie elementów w stopce obok siebie
+      justifyContent: 'flex-start', // Rozmieszczenie elementów na lewo
+      paddingLeft: '5%', // Lewy margines linków w stopce
+    };
+
+    const linkStyle = {
+      fontFamily: 'Roboto, sans-serif', // Czcionka linków w stopce
+      fontWeight: 'light', // Grubość linków w stopce
+      color: 'white', // Kolor linków w stopce
+      fontSize: '14px', // Rozmiar linków w stopce
+      marginRight: '20px', // Margines prawy między linkami w stopce
+      cursor: 'pointer',
+    };
+
+    return (
+      <div style={footerStyle}>
+        <div style={linkContainerStyle}>
+          <span style={linkStyle}>O nas</span>
+          <span style={linkStyle}>Kontakt</span>
+          <span style={linkStyle}>FAQ</span>
+        </div>
+        <div style={separatorStyle}></div>
+        
+        <div style={footerTextStyle}>© 2024 PRZ All Rights Reserved</div>
+      </div>
+    );
+  }
+}
+
+      ReactDOM.render(
+        <div>
+          <Rectangle />
+          <Buttons />
+          <SearchBar />
+          <LoginForm />
+          <Footer />
+        </div>,
+        document.querySelector('#app')
+      );
+    </script>
+
+  </body>
+</html>
