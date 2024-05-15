@@ -17,11 +17,23 @@ function App() {
   useEffect(() => {
     fetch("/api/image_cards")
       .then((res) => res.json())
-      .then((data) => {
-        setImageCards(data);
-        console.log(data);
+      .then((imageCards) => {
+        setImageCards(imageCards);
+        console.log(imageCards);
       });
   }, []);
+  
+  const ImageCard = ({ imageSrc, imageAlt, description }) => (
+    <div className="flex flex-col items-center rounded-md rounded-mb overflow-hidden">
+      <img
+        loading="lazy"
+        src={imageSrc}
+        alt={imageAlt}
+        className="w-full shadow-lg aspect-[1.06] rounded-mb overflow-hidden w-[350px] h-[350px] max-md:w-[350px] max-md:h-[350px]"
+      />
+      <p className="mt-2">{description}</p>
+    </div>
+  );
 
   const NavLink = ({ children }) => {
     return React.createElement(
@@ -52,14 +64,6 @@ function App() {
       children
     );
 
-  const Image1 = ({ src, alt }) =>
-    React.createElement("img", {
-      loading: "lazy",
-      src: src,
-      alt: alt,
-      className: "max-w-full aspect-[1.16] w-[175px]",
-    });
-
   const Text = ({ children, className }) =>
     React.createElement(
       "div",
@@ -71,18 +75,6 @@ function App() {
     <p className="self-center mt-11 text-xl font-light text-center text-black max-md:mt-10 max-md:max-w-full">
       {children}
     </p>
-  );
-
-  const ImageCard = ({ imageSrc, imageAlt, description }) => (
-    <div className="flex flex-col">
-      <img
-        loading="lazy"
-        src={imageSrc}
-        alt={imageAlt}
-        className="w-full shadow-lg aspect-[1.06]"
-      />
-      <p className="mt-2">{description}</p>
-    </div>
   );
 
   const Header = () => (
@@ -157,31 +149,6 @@ function App() {
 
   const UPPBody = () => (
     <section className="flex gap-5 justify-between items-end px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
-      <div className="flex flex-col self-stretch">
-        <div className="flex gap-5 justify-between">
-          <img
-            loading="lazy"
-            src="URL_DO_FLASKA/STAR_ICON_URL"
-            alt="Star icon"
-            className="shrink-0 my-auto aspect-[0.97] w-[30px]"
-          />
-          <div className="flex flex-col">
-            <h2 className="self-start ml-4 max-md:ml-2.5">
-              Najlepiej oceniane:
-            </h2>
-            <img
-              loading="lazy"
-              src="URL_DO_FLASKA/TOP_RATED_IMAGE_URL"
-              alt="Top rated image"
-              className="mt-3.5 w-full shadow-lg aspect-[1.06]"
-            />
-          </div>
-        </div>
-        <p className="mt-2 max-md:mr-2.5">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pulvinar
-          ipsum orci, eget ullamcorper lectus cursus nec.
-        </p>
-      </div>
       {imageCards.map((card, index) => (
         <ImageCard
           key={index}
@@ -190,12 +157,6 @@ function App() {
           description={card.description}
         />
       ))}
-      <img
-        loading="lazy"
-        src="URL_DO_FLASKA/STAR_ICON_URL"
-        alt="Star icon"
-        className="shrink-0 self-stretch my-auto aspect-[0.97] w-[30px]"
-      />
     </section>
   );
 
