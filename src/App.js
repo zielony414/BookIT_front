@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import "./output.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
+  const sliderRef = useRef(null); 
+  const scrollAmount = 100;
+
+  const isFirstImage = sliderRef.current?.scrollLeft === 0; // Sprawdź, czy jesteśmy na pierwszym zdjęciu
+  const isLastImage = sliderRef.current?.scrollLeft === sliderRef.current?.scrollWidth - sliderRef.current?.clientWidth; // Sprawdź, czy jesteśmy na ostatnim zdjęciu
+
 
   useEffect(() => {
     fetch("/api/nav_items") // Poprawiony endpoint
@@ -22,7 +30,7 @@ function App() {
         console.log(imageCards);
       });
   }, []);
-  
+
   const ImageCard = ({ imageSrc, imageAlt, description }) => (
     <div className="flex flex-col items-center rounded-md rounded-mb overflow-hidden">
       <img
@@ -148,7 +156,21 @@ function App() {
   );
 
   const UPPBody = () => (
-    <section className="flex gap-5 justify-between items-end px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
+    <section className="flex gap-5 aling-items-center justify-center items-end px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
+      <div className="flex justify-center flex-grow">
+        <button
+          className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
+          onClick={() => {
+            const container = sliderRef.current;
+            const firstCard = container.firstChild;
+            container.removeChild(firstCard);
+            container.appendChild(firstCard);
+          }}
+          style={{ visibility: 'visible' }}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+      </div>
       {imageCards.map((card, index) => (
         <ImageCard
           key={index}
@@ -157,11 +179,39 @@ function App() {
           description={card.description}
         />
       ))}
+      <div className="flex justify-center flex-grow">
+        <button
+          className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
+          onClick={() => {
+            const container = sliderRef.current;
+            const lastCard = container.lastChild;
+            container.removeChild(lastCard);
+            container.insertBefore(lastCard, container.firstChild);
+          }}
+          style={{ visibility: 'visible' }}
+        >
+          <FontAwesomeIcon icon={faArrowRight} />
+        </button>
+      </div>
     </section>
   );
 
   const DOWNBody = () => (
     <div className="flex flex-col items-center">
+      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
+        <span className="font-semibold">
+          Nie czekaj, sprawdź nasze oferty już dziś
+        </span>{" "}
+      </div>
+      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
+        <span className="font-semibold">
+          <Text>
+            Na pewno się nie zawiedziesz, minimalistyczny wygląd i wiele <br />
+            funkcjonalności dają możliwość łatwego wyboru
+            <br /> odpowiedniej oferty dla Ciebie !!!
+          </Text>
+        </span>{" "}
+      </div>
       <h1 className="self-center mt-10 text-2xl font-medium text-black">
         Rezerwacja na 2 sposoby
       </h1>
@@ -209,20 +259,6 @@ function App() {
             firm.
           </Text1>
         </div>
-      </div>
-      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
-        <span className="font-semibold">
-          Nie czekaj, sprawdź nasze oferty już dziś
-        </span>{" "}
-      </div>
-      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
-        <span className="font-semibold">
-          <Text>
-            Na pewno się nie zawiedziesz, minimalistyczny wygląd i wiele <br />
-            funkcjonalności dają możliwość łatwego wyboru<br /> odpowiedniej oferty
-            dla Ciebie !!!
-          </Text>
-        </span>{" "}
       </div>
     </div>
   );
