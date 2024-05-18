@@ -1,17 +1,13 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./output.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
-  const sliderRef = useRef(null); 
+  const sliderRef = useRef(null);
   const scrollAmount = 100;
-
-  const isFirstImage = sliderRef.current?.scrollLeft === 0; // Sprawdź, czy jesteśmy na pierwszym zdjęciu
-  const isLastImage = sliderRef.current?.scrollLeft === sliderRef.current?.scrollWidth - sliderRef.current?.clientWidth; // Sprawdź, czy jesteśmy na ostatnim zdjęciu
-
 
   useEffect(() => {
     fetch("/api/nav_items") // Poprawiony endpoint
@@ -26,22 +22,52 @@ function App() {
     fetch("/api/image_cards")
       .then((res) => res.json())
       .then((imageCards) => {
-        setImageCards(imageCards);
+        if (imageCards && imageCards.companies) {
+          setImageCards(imageCards.companies); // Ustaw tablicę z danymi firm
+        } else {
+          setImageCards([]); // Ustaw pustą tablicę w przypadku braku danych
+        }
         console.log(imageCards);
+      })
+      .catch((error) => {
+        console.error("Error fetching image cards:", error);
+        setImageCards([]); // Ustaw pustą tablicę w przypadku błędu
       });
   }, []);
 
-  const ImageCard = ({ imageSrc, imageAlt, description }) => (
-    <div className="flex flex-col items-center rounded-md rounded-mb overflow-hidden">
-      <img
-        loading="lazy"
-        src={imageSrc}
-        alt={imageAlt}
-        className="w-full shadow-lg aspect-[1.06] rounded-mb overflow-hidden w-[350px] h-[350px] max-md:w-[350px] max-md:h-[350px]"
-      />
-      <p className="mt-2">{description}</p>
-    </div>
-  );
+  const ImageCard = ({ name, logo, description }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+      setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+    };
+
+    return (
+      <div
+        className="relative flex flex-col items-center rounded-md overflow-hidden mb-4 w-[250px] h-[450px] group"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-md">
+          <img
+            loading="lazy"
+            src={logo}
+            alt={name}
+            className="max-w-full max-h-full object-contain rounded-md"
+          />
+        </div>
+        {isHovered && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-white p-4 text-center">{description}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const NavLink = ({ children }) => {
     return React.createElement(
@@ -137,7 +163,7 @@ function App() {
           className="flex-auto my-auto max-md:max-w-full text-black"
         />
       </form>
-      <div className="flex justify-center">
+      <div className="flex justify-center, flex-col, text-center p-25">
         <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5 mt-10 w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
           <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full">
             {data.map((data, index) => (
@@ -155,46 +181,98 @@ function App() {
     </div>
   );
 
-  const UPPBody = () => (
-    <section className="flex gap-5 aling-items-center justify-center items-end px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
-      <div className="flex justify-center flex-grow">
-        <button
-          className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
-          onClick={() => {
-            const container = sliderRef.current;
-            const firstCard = container.firstChild;
-            container.removeChild(firstCard);
-            container.appendChild(firstCard);
-          }}
-          style={{ visibility: 'visible' }}
+  const UPPBody = () => {
+    const [isFirstImage, setIsFirstImage] = useState(true);
+    const [isLastImage, setIsLastImage] = useState(false);
+    const scrollAmount = 300;
+    const [imageIndex, setImageIndex] = useState(0);
+  
+    const handleScroll = () => {
+      const container = sliderRef.current;
+      if (container) {
+        const scrollLeft = container.scrollLeft;
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+  
+        setIsFirstImage(scrollLeft === 0);
+        setIsLastImage(scrollLeft + clientWidth >= scrollWidth);
+      }
+    };
+  
+    useEffect(() => {
+      const container = sliderRef.current;
+      container.addEventListener("scroll", handleScroll);
+      handleScroll(); // Initialize state
+  
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
+  
+    const scrollLeft = () => {
+      const container = sliderRef.current;
+      container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+      setImageIndex((prevIndex) => (prevIndex === 0 ? imageCards.length - 1 : prevIndex - 1));
+    };
+  
+    const scrollRight = () => {
+      const container = sliderRef.current;
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      setImageIndex((prevIndex) => (prevIndex === imageCards.length - 1 ? 0 : prevIndex + 1));
+    };
+  
+    const reorderImages = () => {
+      const newImageCards = [...imageCards];
+      const firstImage = newImageCards[0];
+      for (let i = 0; i < newImageCards.length - 1; i++) {
+        newImageCards[i] = newImageCards[i + 1];
+      }
+      newImageCards[newImageCards.length - 1] = firstImage;
+      return newImageCards;
+    };
+  
+    return (
+      <section className="flex gap-5 items-center justify-center px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
+        <div className="flex justify-center flex-grow">
+          <button
+            className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
+            onClick={() => { scrollLeft(); setImageCards(reorderImages()); }}
+            style={{ visibility: isFirstImage ? "visible" : "visible" }}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </button>
+        </div>
+        <div
+          className="flex overflow-x-scroll"
+          ref={sliderRef}
+          style={{ scrollSnapType: "x mandatory" }}
         >
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
-      </div>
-      {imageCards.map((card, index) => (
-        <ImageCard
-          key={index}
-          imageSrc={card.imageSrc}
-          imageAlt={card.imageAlt}
-          description={card.description}
-        />
-      ))}
-      <div className="flex justify-center flex-grow">
-        <button
-          className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
-          onClick={() => {
-            const container = sliderRef.current;
-            const lastCard = container.lastChild;
-            container.removeChild(lastCard);
-            container.insertBefore(lastCard, container.firstChild);
-          }}
-          style={{ visibility: 'visible' }}
-        >
-          <FontAwesomeIcon icon={faArrowRight} />
-        </button>
-      </div>
-    </section>
-  );
+          {imageCards && imageCards.length > 0 ? (
+            imageCards.map((card, index) => (
+              <ImageCard
+                key={index}
+                name={card.name}
+                logo={card.logo}
+                description={card.description}
+                style={{ order: (index + imageIndex) % imageCards.length }}
+              />
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
+        <div className="flex justify-center flex-grow">
+          <button
+            className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
+            onClick={() => { scrollRight(); setImageCards(reorderImages()); }}
+            style={{ visibility: isLastImage ? "visible" : "visible" }}
+          >
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
+        </div>
+      </section>
+    );
+  };
 
   const DOWNBody = () => (
     <div className="flex flex-col items-center">
