@@ -7,7 +7,6 @@ function App() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
-  const scrollAmount = 100;
 
   useEffect(() => {
     fetch("/api/nav_items") // Poprawiony endpoint
@@ -131,12 +130,12 @@ function App() {
   );
 
   const Hero = () => (
-    <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[391px] max-md:max-w-full">
+    <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
       <img
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/10fbef2836b96a649d95600569a3c9f1049330147f43590e33d4d81ff4c7ccd4?apiKey=d10d36f0508e433185a32e898689ca50&"
         alt="Background"
-        className="object-cover absolute inset-0 size-full"
+        className="object-cover absolute inset-0 w-full h-full"
       />
       <div className="relative text-5xl font-medium text-center max-md:max-w-full max-md:text-4xl">
         Zarezerwuj to co potrzebujesz
@@ -145,7 +144,7 @@ function App() {
         Odkrywaj najlepszych specjalistów wokół siebie, <br /> wszystko czego
         potrzebujesz w jednym miejscu
       </div>
-      <form className="flex relative gap-5 px-3.5 py-1 mt-7 tracking-normal bg-white leading-[90%] rounded-[50px] text-stone-200 max-md:flex-wrap">
+      <form className="flex relative gap-5 px-6 py-2 mt-7 tracking-normal bg-white leading-[90%] rounded-full text-stone-200 max-md:flex-wrap w-[450px] max-w-md">
         <img
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/076444189e401938838e6a6b8094a3e4bcb51ab5cdafc308724bbfb8f96bb2a8?apiKey=d10d36f0508e433185a32e898689ca50&"
@@ -158,21 +157,21 @@ function App() {
         <input
           type="text"
           id="search"
-          placeholder="Szukaj usług lub biznesów"
-          aria-label="Szukaj usług lub biznesów"
-          className="flex-auto my-auto max-md:max-w-full text-black"
+          placeholder="Szukaj usług dzięki lokalizacji"
+          aria-label="Szukaj usług dzięki lokalizacji"
+          className="flex-grow text-black text-lg w-[350px]"
         />
       </form>
-      <div className="flex justify-center, flex-col, text-center p-25">
-        <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5 mt-10 w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
-          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full">
-            {data.map((data, index) => (
+      <div className="flex justify-center items-center flex-col text-center p-10 mt-10">
+        <div className="flex relative flex-col items-center self-stretch p-10 px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
+          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap p-10 max-md:max-w-full justify-center items-center ">
+            {data.map((item, index) => (
               <button
                 key={index}
-                className="flex flex-col items-center gap-1.5"
+                className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
               >
-                <p>{data}</p>
-                <span className="text-xs font-light">{data.name}</span>
+                <p className="text-lg">{item}</p>
+                <span className="text-xs font-light">{item.name}</span>
               </button>
             ))}
           </div>
@@ -180,63 +179,76 @@ function App() {
       </div>
     </div>
   );
+  
 
   const UPPBody = () => {
     const [isFirstImage, setIsFirstImage] = useState(true);
     const [isLastImage, setIsLastImage] = useState(false);
     const scrollAmount = 300;
     const [imageIndex, setImageIndex] = useState(0);
-  
+
     const handleScroll = () => {
       const container = sliderRef.current;
       if (container) {
         const scrollLeft = container.scrollLeft;
         const scrollWidth = container.scrollWidth;
         const clientWidth = container.clientWidth;
-  
+
         setIsFirstImage(scrollLeft === 0);
         setIsLastImage(scrollLeft + clientWidth >= scrollWidth);
       }
     };
-  
+
     useEffect(() => {
       const container = sliderRef.current;
-      container.addEventListener("scroll", handleScroll);
-      handleScroll(); // Initialize state
-  
-      return () => {
-        container.removeEventListener("scroll", handleScroll);
-      };
+      if (container) {
+        container.addEventListener("scroll", handleScroll);
+        handleScroll(); // Initialize state
+
+        return () => {
+          container.removeEventListener("scroll", handleScroll);
+        };
+      }
     }, []);
-  
+
     const scrollLeft = () => {
       const container = sliderRef.current;
       container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-      setImageIndex((prevIndex) => (prevIndex === 0 ? imageCards.length - 1 : prevIndex - 1));
+      setImageIndex((prevIndex) =>
+        prevIndex === 0 ? imageCards.length - 1 : prevIndex - 1
+      );
+      setImageCards(reorderImagesLeft);
     };
-  
+
     const scrollRight = () => {
       const container = sliderRef.current;
       container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-      setImageIndex((prevIndex) => (prevIndex === imageCards.length - 1 ? 0 : prevIndex + 1));
+      setImageIndex((prevIndex) =>
+        prevIndex === imageCards.length - 1 ? 0 : prevIndex + 1
+      );
+      setImageCards(reorderImagesRight);
     };
-  
-    const reorderImages = () => {
-      const newImageCards = [...imageCards];
-      const firstImage = newImageCards[0];
-      for (let i = 0; i < newImageCards.length - 1; i++) {
-        newImageCards[i] = newImageCards[i + 1];
-      }
-      newImageCards[newImageCards.length - 1] = firstImage;
+
+    const reorderImagesLeft = (cards) => {
+      const newImageCards = [...cards];
+      const lastImage = newImageCards.pop();
+      newImageCards.unshift(lastImage);
       return newImageCards;
     };
-  
+
+    const reorderImagesRight = (cards) => {
+      const newImageCards = [...cards];
+      const firstImage = newImageCards.shift();
+      newImageCards.push(firstImage);
+      return newImageCards;
+    };
+
     return (
       <section className="flex gap-5 items-center justify-center px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
         <div className="flex justify-center flex-grow">
           <button
             className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
-            onClick={() => { scrollLeft(); setImageCards(reorderImages()); }}
+            onClick={scrollLeft}
             style={{ visibility: isFirstImage ? "visible" : "visible" }}
           >
             <FontAwesomeIcon icon={faArrowLeft} />
@@ -264,7 +276,7 @@ function App() {
         <div className="flex justify-center flex-grow">
           <button
             className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
-            onClick={() => { scrollRight(); setImageCards(reorderImages()); }}
+            onClick={scrollRight}
             style={{ visibility: isLastImage ? "visible" : "visible" }}
           >
             <FontAwesomeIcon icon={faArrowRight} />
