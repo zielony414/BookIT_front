@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./output.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
+  const sliderRef = useRef(null);
 
   useEffect(() => {
     fetch("/api/nav_items") // Poprawiony endpoint
@@ -18,22 +21,52 @@ function App() {
     fetch("/api/image_cards")
       .then((res) => res.json())
       .then((imageCards) => {
-        setImageCards(imageCards);
+        if (imageCards && imageCards.companies) {
+          setImageCards(imageCards.companies); // Ustaw tablicę z danymi firm
+        } else {
+          setImageCards([]); // Ustaw pustą tablicę w przypadku braku danych
+        }
         console.log(imageCards);
+      })
+      .catch((error) => {
+        console.error("Error fetching image cards:", error);
+        setImageCards([]); // Ustaw pustą tablicę w przypadku błędu
       });
   }, []);
-  
-  const ImageCard = ({ imageSrc, imageAlt, description }) => (
-    <div className="flex flex-col items-center rounded-md rounded-mb overflow-hidden">
-      <img
-        loading="lazy"
-        src={imageSrc}
-        alt={imageAlt}
-        className="w-full shadow-lg aspect-[1.06] rounded-mb overflow-hidden w-[350px] h-[350px] max-md:w-[350px] max-md:h-[350px]"
-      />
-      <p className="mt-2">{description}</p>
-    </div>
-  );
+
+  const ImageCard = ({ name, logo, description }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+      setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+    };
+
+    return (
+      <div
+        className="relative flex flex-col items-center rounded-md overflow-hidden mb-4 w-[250px] h-[450px] group"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-md">
+          <img
+            loading="lazy"
+            src={logo}
+            alt={name}
+            className="max-w-full max-h-full object-contain rounded-md"
+          />
+        </div>
+        {isHovered && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-white p-4 text-center">{description}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const NavLink = ({ children }) => {
     return React.createElement(
@@ -97,12 +130,12 @@ function App() {
   );
 
   const Hero = () => (
-    <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[391px] max-md:max-w-full">
+    <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
       <img
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/10fbef2836b96a649d95600569a3c9f1049330147f43590e33d4d81ff4c7ccd4?apiKey=d10d36f0508e433185a32e898689ca50&"
         alt="Background"
-        className="object-cover absolute inset-0 size-full"
+        className="object-cover absolute inset-0 w-full h-full"
       />
       <div className="relative text-5xl font-medium text-center max-md:max-w-full max-md:text-4xl">
         Zarezerwuj to co potrzebujesz
@@ -111,7 +144,7 @@ function App() {
         Odkrywaj najlepszych specjalistów wokół siebie, <br /> wszystko czego
         potrzebujesz w jednym miejscu
       </div>
-      <form className="flex relative gap-5 px-3.5 py-1 mt-7 tracking-normal bg-white leading-[90%] rounded-[50px] text-stone-200 max-md:flex-wrap">
+      <form className="flex relative gap-5 px-6 py-2 mt-7 tracking-normal bg-white leading-[90%] rounded-full text-stone-200 max-md:flex-wrap w-[450px] max-w-md">
         <img
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/076444189e401938838e6a6b8094a3e4bcb51ab5cdafc308724bbfb8f96bb2a8?apiKey=d10d36f0508e433185a32e898689ca50&"
@@ -124,21 +157,21 @@ function App() {
         <input
           type="text"
           id="search"
-          placeholder="Szukaj usług lub biznesów"
-          aria-label="Szukaj usług lub biznesów"
-          className="flex-auto my-auto max-md:max-w-full text-black"
+          placeholder="Szukaj usług dzięki lokalizacji"
+          aria-label="Szukaj usług dzięki lokalizacji"
+          className="flex-grow text-black text-lg w-[350px]"
         />
       </form>
-      <div className="flex justify-center">
-        <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5 mt-10 w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
-          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full">
-            {data.map((data, index) => (
+      <div className="flex justify-center items-center flex-col text-center p-10 mt-10">
+        <div className="flex relative flex-col items-center self-stretch p-10 px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
+          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap p-10 max-md:max-w-full justify-center items-center ">
+            {data.map((item, index) => (
               <button
                 key={index}
-                className="flex flex-col items-center gap-1.5"
+                className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
               >
-                <p>{data}</p>
-                <span className="text-xs font-light">{data.name}</span>
+                <p className="text-lg">{item}</p>
+                <span className="text-xs font-light">{item.name}</span>
               </button>
             ))}
           </div>
@@ -146,22 +179,129 @@ function App() {
       </div>
     </div>
   );
+  
 
-  const UPPBody = () => (
-    <section className="flex gap-5 justify-between items-end px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
-      {imageCards.map((card, index) => (
-        <ImageCard
-          key={index}
-          imageSrc={card.imageSrc}
-          imageAlt={card.imageAlt}
-          description={card.description}
-        />
-      ))}
-    </section>
-  );
+  const UPPBody = () => {
+    const [isFirstImage, setIsFirstImage] = useState(true);
+    const [isLastImage, setIsLastImage] = useState(false);
+    const scrollAmount = 300;
+    const [imageIndex, setImageIndex] = useState(0);
+
+    const handleScroll = () => {
+      const container = sliderRef.current;
+      if (container) {
+        const scrollLeft = container.scrollLeft;
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+
+        setIsFirstImage(scrollLeft === 0);
+        setIsLastImage(scrollLeft + clientWidth >= scrollWidth);
+      }
+    };
+
+    useEffect(() => {
+      const container = sliderRef.current;
+      if (container) {
+        container.addEventListener("scroll", handleScroll);
+        handleScroll(); // Initialize state
+
+        return () => {
+          container.removeEventListener("scroll", handleScroll);
+        };
+      }
+    }, []);
+
+    const scrollLeft = () => {
+      const container = sliderRef.current;
+      container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+      setImageIndex((prevIndex) =>
+        prevIndex === 0 ? imageCards.length - 1 : prevIndex - 1
+      );
+      setImageCards(reorderImagesLeft);
+    };
+
+    const scrollRight = () => {
+      const container = sliderRef.current;
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      setImageIndex((prevIndex) =>
+        prevIndex === imageCards.length - 1 ? 0 : prevIndex + 1
+      );
+      setImageCards(reorderImagesRight);
+    };
+
+    const reorderImagesLeft = (cards) => {
+      const newImageCards = [...cards];
+      const lastImage = newImageCards.pop();
+      newImageCards.unshift(lastImage);
+      return newImageCards;
+    };
+
+    const reorderImagesRight = (cards) => {
+      const newImageCards = [...cards];
+      const firstImage = newImageCards.shift();
+      newImageCards.push(firstImage);
+      return newImageCards;
+    };
+
+    return (
+      <section className="flex gap-5 items-center justify-center px-8 py-6 text-base font-medium text-black bg-stone-200 max-md:flex-wrap max-md:px-5">
+        <div className="flex justify-center flex-grow">
+          <button
+            className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
+            onClick={scrollLeft}
+            style={{ visibility: isFirstImage ? "visible" : "visible" }}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </button>
+        </div>
+        <div
+          className="flex overflow-x-scroll"
+          ref={sliderRef}
+          style={{ scrollSnapType: "x mandatory" }}
+        >
+          {imageCards && imageCards.length > 0 ? (
+            imageCards.map((card, index) => (
+              <ImageCard
+                key={index}
+                name={card.name}
+                logo={card.logo}
+                description={card.description}
+                style={{ order: (index + imageIndex) % imageCards.length }}
+              />
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
+        <div className="flex justify-center flex-grow">
+          <button
+            className="justify-center px-2 py-1 bg-white rounded-md border-b border-black border-solid"
+            onClick={scrollRight}
+            style={{ visibility: isLastImage ? "visible" : "visible" }}
+          >
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
+        </div>
+      </section>
+    );
+  };
 
   const DOWNBody = () => (
     <div className="flex flex-col items-center">
+      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
+        <span className="font-semibold">
+          Nie czekaj, sprawdź nasze oferty już dziś
+        </span>{" "}
+      </div>
+      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
+        <span className="font-semibold">
+          <Text>
+            Na pewno się nie zawiedziesz, minimalistyczny wygląd i wiele <br />
+            funkcjonalności dają możliwość łatwego wyboru
+            <br /> odpowiedniej oferty dla Ciebie !!!
+          </Text>
+        </span>{" "}
+      </div>
       <h1 className="self-center mt-10 text-2xl font-medium text-black">
         Rezerwacja na 2 sposoby
       </h1>
@@ -209,20 +349,6 @@ function App() {
             firm.
           </Text1>
         </div>
-      </div>
-      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
-        <span className="font-semibold">
-          Nie czekaj, sprawdź nasze oferty już dziś
-        </span>{" "}
-      </div>
-      <div className="self-center mt-32 text-5xl font-light text-center text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
-        <span className="font-semibold">
-          <Text>
-            Na pewno się nie zawiedziesz, minimalistyczny wygląd i wiele <br />
-            funkcjonalności dają możliwość łatwego wyboru<br /> odpowiedniej oferty
-            dla Ciebie !!!
-          </Text>
-        </span>{" "}
       </div>
     </div>
   );
