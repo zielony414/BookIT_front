@@ -3,23 +3,66 @@ import "./output.css";
 
 function Wyszukiwanie_uslug() {
   const [data, setData] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [sorting, setSorting] = useState("Najwyższa ocena");
 
   useEffect(() => {
-    fetch("/api/nav_items") // Poprawiony endpoint
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data.nav_items); // Ustaw tablicę danych
-        console.log(data);
+    fetchData();
+  }, []); // Pusta tablica zależności sprawia, że useEffect zostanie wywołany tylko raz
+
+  const fetchData = () => {
+    Promise.all([
+      fetch("/api/nav_items").then((res) => res.json()),
+      fetch("/api/strona_wyszukiwania_kategorie").then((res) => res.json()),
+      fetch("/api/strona_wyszukiwania_miasta").then((res) => res.json()),
+    ])
+      .then(([navItemsData, categoriesData, citiesData]) => {
+        setData(navItemsData.nav_items);
+        setCategories(categoriesData.categories);
+        setCities(citiesData.cities);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       });
-  }, []);
+  };
 
   const NavLink = ({ children }) => {
-    return React.createElement(
-      "div",
-      { className: "justify-center" },
-      children
-    );
+    return <div className="justify-center">{children}</div>;
   };
+
+  const Dropdown = ({ label, value, options, onChange }) => (
+    <div>
+      <div className="flex gap-5 justify-between">
+        <label className="text-base text-black">{label}:</label>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="text-sm font-light text-zinc-800"
+        >
+          {options && options.length > 0 ? (
+            options.map((option, index) => (
+              <option 
+                key={index} 
+                value={option}>
+                {option}
+              </option>
+            ))
+          ) : (
+            <option value="">Brak opcji</option>
+          )}
+        </select>
+        <img
+          loading="lazy"
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/7283873b8132ccda578a0ea7b8c6b67b5736fed7aa3ffb4fb0342bd4dd538759?apiKey=d10d36f0508e433185a32e898689ca50&"
+          className="shrink-0 my-auto w-2.5 aspect-[2]"
+          alt=""
+        />
+      </div>
+      <div className="shrink-0 self-end mt-1 w-40 h-px border border-solid bg-zinc-500 border-zinc-500" />
+    </div>
+  );
+  
 
   const Header = () => (
     <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
@@ -76,18 +119,55 @@ function Wyszukiwanie_uslug() {
       <div className="flex justify-center items-center flex-col text-center p-10 mt-10">
         <div className="flex relative flex-col items-center self-stretch p-10 px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
           <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap p-10 max-md:max-w-full justify-center items-center ">
-            {data.map((item, index) => (
-              <button
-                key={index}
-                className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
-              >
-                <p className="text-lg">{item}</p>
-                <span className="text-xs font-light">{item.name}</span>
-              </button>
-            ))}
+            {data &&
+              data.map((item, index) => (
+                <button
+                  key={index}
+                  className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
+                >
+                  <p className="text-lg">{item}</p>
+                  <span className="text-xs font-light">{item.name}</span>
+                </button>
+              ))}
           </div>
         </div>
       </div>
+      <section className="flex gap-5 justify-between items-center self-stretch px-10 py-px mt-10 mix-blend-overlay bg-stone-200 max-md:flex-wrap max-md:px-5">
+        <article className="flex flex-col self-stretch my-auto whitespace-nowrap">
+          <Dropdown
+            label="Kategoria"
+            value={categories}
+            options={categories}
+            onChange={setCategories}
+          />
+        </article>
+
+        <section className="flex overflow-hidden relative flex-col justify-center self-stretch px-14 py-6 whitespace-nowrap border border-black border-solid aspect-[5.77] stroke-[1px] stroke-black w-[352px] max-md:px-5">
+          <img
+            loading="lazy"
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/326b48e40000b75bb3c44a922dc87c4347f2befa26f8d4a42bef68f288fbe8b0?apiKey=d10d36f0508e433185a32e898689ca50&"
+            className="object-cover absolute inset-0 w-full h-full"
+            alt=""
+          />
+          <article className="flex relative flex-col">
+            <Dropdown
+              label="Miasto"
+              value={cities}
+              options={cities}
+              onChange={setCities}
+            />
+          </article>
+        </section>
+
+        <article className="flex flex-col self-stretch my-auto">
+          <Dropdown
+            label="Sortowanie"
+            value={sorting}
+            options={["Najwyższa ocena", "Najwięcej opinii", "Wyróżnione", "Cena: od najniższej", "Cena: od najwyższej"]}
+            onChange={setSorting}
+          />
+        </article>
+      </section>
     </div>
   );
 

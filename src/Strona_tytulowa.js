@@ -3,70 +3,63 @@ import "./output.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-function App() {
+function Strona_tytulowa() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
 
   useEffect(() => {
-    fetch("/api/nav_items") // Poprawiony endpoint
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data.nav_items); // Ustaw tablicę danych
-        console.log(data);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/image_cards")
-      .then((res) => res.json())
-      .then((imageCards) => {
-        if (imageCards && imageCards.companies) {
-          setImageCards(imageCards.companies); // Ustaw tablicę z danymi firm
-        } else {
-          setImageCards([]); // Ustaw pustą tablicę w przypadku braku danych
-        }
-        console.log(imageCards);
-      })
-      .catch((error) => {
-        console.error("Error fetching image cards:", error);
-        setImageCards([]); // Ustaw pustą tablicę w przypadku błędu
-      });
+    const fetchData = async () => {
+      console.log("Pobieranie danych...");
+      try {
+        const navData = await fetch("/api/nav_items").then((res) => res.json());
+        setData(navData.nav_items);
+  
+        const imageCardData = await fetch("/api/image_cards").then((res) => res.json());
+        setImageCards(imageCardData.companies || []);
+      } catch (error) {
+        console.error("Błąd podczas pobierania danych:", error);
+        setData([]);
+        setImageCards([]);
+      }
+    };
+  
+    fetchData();
   }, []);
 
   const ImageCard = ({ name, logo, description }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
-      setIsHovered(true);
+        setIsHovered(true);
     };
 
     const handleMouseLeave = () => {
-      setIsHovered(false);
+        setIsHovered(false);
     };
 
     return (
-      <div
-        className="relative flex flex-col items-center rounded-md overflow-hidden mb-4 w-[250px] h-[450px] group"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-md">
-          <img
-            loading="lazy"
-            src={logo}
-            alt={name}
-            className="max-w-full max-h-full object-contain rounded-md"
-          />
+        <div
+            className="relative flex flex-col items-center rounded-md overflow-hidden mb-4 w-[250px] h-[450px] group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-md">
+                <img
+                    loading="lazy"
+                    src={logo}
+                    alt={name}
+                    className="max-w-full max-h-full object-contain rounded-md"
+                />
+            </div>
+            {isHovered && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <p className="text-white p-4 text-center">{description}</p>
+                </div>
+            )}
         </div>
-        {isHovered && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <p className="text-white p-4 text-center">{description}</p>
-          </div>
-        )}
-      </div>
     );
-  };
+};
 
   const NavLink = ({ children }) => {
     return React.createElement(
@@ -129,7 +122,7 @@ function App() {
     </div>
   );
 
-  const Hero = () => (
+  const Hero = ({ data }) => (
     <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
       <img
         loading="lazy"
@@ -181,7 +174,7 @@ function App() {
   );
   
 
-  const UPPBody = () => {
+  const UPPBody = ({ imageCards, sliderRef }) => {
     const [isFirstImage, setIsFirstImage] = useState(true);
     const [isLastImage, setIsLastImage] = useState(false);
     const scrollAmount = 300;
@@ -386,12 +379,12 @@ function App() {
   return (
     <>
       <Header />
-      <Hero />
-      <UPPBody />
+      <Hero data={data} />
+      <UPPBody imageCards={imageCards} sliderRef={sliderRef} />
       <DOWNBody />
       <Footer />
     </>
   );
 }
 
-export default App;
+export default Strona_tytulowa;
