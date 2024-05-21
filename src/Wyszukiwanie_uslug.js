@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import "./output.css";
 
 function Wyszukiwanie_uslug() {
@@ -12,6 +12,7 @@ function Wyszukiwanie_uslug() {
   }, []); // Pusta tablica zależności sprawia, że useEffect zostanie wywołany tylko raz
 
   const fetchData = () => {
+    console.log("Pobieranie danych..."); // Dodany console.log
     Promise.all([
       fetch("/api/nav_items").then((res) => res.json()),
       fetch("/api/strona_wyszukiwania_kategorie").then((res) => res.json()),
@@ -52,14 +53,7 @@ function Wyszukiwanie_uslug() {
             <option value="">Brak opcji</option>
           )}
         </select>
-        <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/7283873b8132ccda578a0ea7b8c6b67b5736fed7aa3ffb4fb0342bd4dd538759?apiKey=d10d36f0508e433185a32e898689ca50&"
-          className="shrink-0 my-auto w-2.5 aspect-[2]"
-          alt=""
-        />
       </div>
-      <div className="shrink-0 self-end mt-1 w-40 h-px border border-solid bg-zinc-500 border-zinc-500" />
     </div>
   );
   
@@ -116,9 +110,9 @@ function Wyszukiwanie_uslug() {
           className="flex-grow text-black text-lg w-[350px]"
         />
       </form>
-      <div className="flex justify-center items-center flex-col text-center p-10 mt-10">
-        <div className="flex relative flex-col items-center self-stretch p-10 px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
-          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap p-10 max-md:max-w-full justify-center items-center ">
+      <div className="flex justify-center items-center flex-col text-center mt-10">
+        <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
+          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full justify-center items-center ">
             {data &&
               data.map((item, index) => (
                 <button
@@ -142,13 +136,7 @@ function Wyszukiwanie_uslug() {
           />
         </article>
 
-        <section className="flex overflow-hidden relative flex-col justify-center self-stretch px-14 py-6 whitespace-nowrap border border-black border-solid aspect-[5.77] stroke-[1px] stroke-black w-[352px] max-md:px-5">
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/326b48e40000b75bb3c44a922dc87c4347f2befa26f8d4a42bef68f288fbe8b0?apiKey=d10d36f0508e433185a32e898689ca50&"
-            className="object-cover absolute inset-0 w-full h-full"
-            alt=""
-          />
+        <section className="flex overflow-hidden relative flex-col justify-center self-stretch px-14 py-6 whitespace-nowrap aspect-[5.77] stroke-[1px] stroke-black w-[352px] max-md:px-5">
           <article className="flex relative flex-col">
             <Dropdown
               label="Miasto"

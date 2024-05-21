@@ -18,10 +18,12 @@ function Strona_tytulowa() {
     const fetchData = async () => {
       console.log("Pobieranie danych...");
       try {
-        const navData = await fetch("/api/nav_items").then((res) => res.json());
-        setData(navData.nav_items);
+        const [navData, imageCardData] = await Promise.all([
+          fetch("/api/nav_items").then((res) => res.json()),
+          fetch("/api/image_cards").then((res) => res.json())
+        ]);
   
-        const imageCardData = await fetch("/api/image_cards").then((res) => res.json());
+        setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
         console.error("Błąd podczas pobierania danych:", error);
@@ -32,6 +34,7 @@ function Strona_tytulowa() {
   
     fetchData();
   }, []);
+  
 
   const ImageCard = ({ name, logo, description }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -50,7 +53,7 @@ function Strona_tytulowa() {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-md">
+            <div className="w-full h-full flex items-center justify-center rounded-md">
                 <img
                     loading="lazy"
                     src={logo}
@@ -161,9 +164,9 @@ function Strona_tytulowa() {
           className="flex-grow text-black text-lg w-[350px]"
         />
       </form>
-      <div className="flex justify-center items-center flex-col text-center p-10 mt-10">
-        <div className="flex relative flex-col items-center self-stretch p-10 px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
-          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap p-10 max-md:max-w-full justify-center items-center ">
+      <div className="flex justify-center items-center flex-col text-center mt-4 p-10">
+        <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
+          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full justify-center items-center ">
             {data.map((item, index) => (
               <button
                 key={index}
