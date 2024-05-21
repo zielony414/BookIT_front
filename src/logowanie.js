@@ -1,5 +1,8 @@
 import * as React from "react";
+import { useNavigate } from 'react-router-dom';
 
+
+function Logowanie(){
 const Header = () => (
     <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" style={{ marginBottom: "100px" }}>
       <img
@@ -59,9 +62,14 @@ const Footer = () => (
     );
   };
 
-  const Log = () => (
+  const navigate = useNavigate();
+
+  const handleRegisterClick = () => {
+    navigate('/rejestracja');
+  };
+
+  const Hero = () => (
 <div className="flex flex-col bg-white">
-    <Header />
     <main className="flex flex-col self-center px-5 mt-40 w-full max-w-[1027px] max-md:mt-10 max-md:max-w-full">
         <h1 className="self-center text-5xl font-light leading-6 text-black max-md:text-4xl" style={{ marginBottom: "50px" }}>
           LOGOWANIE DLA UŻYTKOWNIKA
@@ -72,14 +80,9 @@ const Footer = () => (
         <div className="flex flex-col gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
           <Input label="Haslo" placeholder="Wprowadź swoje hasło" />
         </div>
-        <div className="flex flex-col gap-5 self-start mt-3.5 font-light max-md:flex-wrap max-md:max-w-full" style={{marginLeft: "410px"}}>
-          <button className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
-            Zapomniałem hasła
-          </button>
-        </div>
           <div className="flex gap-5 max-md:flex-col max-md:gap-0" style={{marginLeft: "500px"}}>
               <div className="flex flex grow font-light" style={{ marginTop: "40px"}}>
-                <Button>Nie masz konta? 
+                <Button onClick={handleRegisterClick}>Nie masz konta? 
                   Zarejestruj się!
                 </Button>
                 <Button>BookIt dla firm</Button>
@@ -96,19 +99,22 @@ const Footer = () => (
         <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
           <Input label="Haslo" placeholder="Wprowadź swoje hasło" />
         </div>
-        <div className="flex flex-col gap-5 self-start mt-3.5 font-light max-md:flex-wrap max-md:max-w-full" style={{marginLeft: "410px"}}>
-          <button className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
-            Zapomniałem hasła
-          </button>
-        </div>
         <div className="flex gap-5 max-md:flex-col max-md:gap-0" style={{marginLeft: "800px"}}>
               <div className="flex flex grow font-light" style={{height: "40px", marginTop: "40px"}}>
                 <Button style={{ width: "200px" }}>Zaloguj</Button>
               </div>
           </div>
       </main>
-    <Footer />
   </div>
   );
 
-export default Log;
+  return (
+    <>
+      <Header />
+      <Hero />
+      <Footer />
+    </>
+  );
+
+};
+export default Logowanie;

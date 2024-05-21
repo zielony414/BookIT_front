@@ -1,6 +1,8 @@
 import React from "react";
 import "./output.css";
 
+
+function Rejestracja(){
 const Input = ({ label, placeholder }) => {
   return (
     <div className="flex flex-col flex-1 max-md:max-w-full">
@@ -60,9 +62,8 @@ const Footer = () => (
   </footer>
 );
 
-const Log = () => (
+const Hero = () => (
   <div className="flex flex-col bg-white">
-    <Header />
     <main className="flex flex-col self-center px-5 mt-40 w-full max-w-[1027px] max-md:mt-10 max-md:max-w-full">
         <h1 className="self-center text-5xl font-light leading-6 text-black max-md:text-4xl" style={{ marginBottom: "50px" }}>
           REJESTRACJA
@@ -79,26 +80,8 @@ const Log = () => (
           <Input label="Haslo" placeholder="Wprowadź swoje hasło" />
           <Input label="Powtórz hasło" placeholder="Powtórz swoje hasło" />
         </div>
-        <div className="self-center mt-3.5 max-md:max-w-full" style={{marginBottom: "100px"}}>
-          <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-              <div className="flex flex-col grow font-light max-md:mt-10 max-md:max-w-full">
-                  <div className="self-start mt-10 leading-[120%]">
-                    Akceptuje wszelkie umowy i warunki*
-                  </div>
-                  <div className="self-start mt-5 leading-6">
-                    Wyrażam chęć na przesyłanie korespondencji na adres mailowy*
-                  </div>
-              </div>
-              <div className="flex flex-col grow font-light" style={{width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px"}}>
-                <Button>Dalej</Button>
-              </div>
-          </div>
-        </div>
-        <h2 className="self-center mt-96 text-5xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl"style={{ marginBottom: "50px", marginTop: "100px" }}>
-          POWIEDZ NAM COŚ WIĘCEJ
-        </h2>
-        <div className="flex gap-5 self-center mt-14 font-light max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
-          <Input label="Miasto" placeholder="Wprowadź miasto, w którym mieszkasz" />
+        <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
+        <Input label="Miasto" placeholder="Wprowadź miasto, w którym mieszkasz" />
           <div className="flex flex-col flex-1 max-md:max-w-full">
             <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{marginLeft: "50px"}}>
               Płeć
@@ -116,32 +99,35 @@ const Log = () => (
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex gap-5 self-left mt-14 font-light max-md:flex-wrap max-md:mt-10 max-md:max-w-full" style={{marginLeft: "130px"}}>
-          <Input label="Data urodzenia" placeholder="Podaj datę urodzenia" />
-        </div>
-        <label className="mt-8 text-lg font-light leading-6 text-zinc-800 max-md:max-w-full"style={{marginLeft: "180px"}}>
-          Coś o tobie
-        </label>
-        <div className="justify-center items-start px-4 py-3 mt-1.5 bg-white border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"style={{borderRadius: '0.5rem', marginLeft: "180px", height: "100px"}}>
-          <div className="text-lg font-light leading-6 text-zinc-400 max-md:max-w-full">
-          <input
-            type="text"
-            className="justify-start items-start text-sm bg-white text-zinc-400"
-            placeholder={"Powiedz coś o sobie, aby usługodawca mógł cię poznać!"}
-            style={{width: '500px'}} 
-          />
+          </div>
+        <div className="self-center mt-3.5 max-md:max-w-full" style={{marginBottom: "100px"}}>
+          <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+              <div className="flex flex-col grow font-light max-md:mt-10 max-md:max-w-full">
+                  <div className="self-start mt-10 leading-[120%]">
+                    Akceptuje wszelkie umowy i warunki*
+                  </div>
+                  <div className="self-start mt-5 leading-6">
+                    Wyrażam chęć na przesyłanie korespondencji na adres mailowy*
+                  </div>
+              </div>
+              <div className="flex flex-col grow font-light" style={{width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px"}}>
+                <Button>Dalej</Button>
+              </div>
           </div>
         </div>
-        <div className="flex grow gap-10px font-light" style={{height: "30px", marginTop: "20px", marginLeft: "500px", marginRight: "20px" }}>
-          <Button>Pomiń</Button>
-          <Button>Zatwierdź</Button>
+        </main>
         </div>
-      </main>
-    <Footer />
-  </div>
+
 );
 
-export default Log;
+return (
+  <>
+    <Header />
+    <Hero />
+    <Footer />
+  </>
+);
+};
+export default Rejestracja;
 
 
