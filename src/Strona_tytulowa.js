@@ -2,11 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import "./output.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from 'react-router-dom';
 
 function Strona_tytulowa() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/logowanie');
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +118,7 @@ function Strona_tytulowa() {
         className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
       />
       <div className="flex gap-3.5 items-start my-auto">
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={handleLoginClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
           Zaloguj się/załóż konto
         </button>
         <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">

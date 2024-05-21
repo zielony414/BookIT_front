@@ -1,8 +1,16 @@
 import React from "react";
 import "./output.css";
+import { useNavigate } from 'react-router-dom';
 
 
 function Rejestracja(){
+
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/logowanie');
+  };
+
 const Input = ({ label, placeholder }) => {
   return (
     <div className="flex flex-col flex-1 max-md:max-w-full">
@@ -19,9 +27,9 @@ const Input = ({ label, placeholder }) => {
   );
 };
 
-const Button = ({ children }) => {
+const Button = ({ children, onClick }) => {
   return (
-    <button className="bg-white border border-black border-solid" style={{borderRadius: '1rem', width: "100px", height: "50px", marginRight: "50px"}}>
+    <button onClick={onClick} className="bg-white border border-black border-solid" style={{borderRadius: '1rem', width: "100px", height: "50px", marginRight: "50px"}}>
       {children}
     </button>
   );
@@ -36,7 +44,7 @@ const Header = () => (
       className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
     />
     <div className="flex gap-3.5 items-start my-auto">
-      <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+      <button onClick={handleLoginClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
         Zaloguj się/załóż konto
       </button>
       <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
@@ -115,9 +123,8 @@ const Hero = () => (
               </div>
           </div>
         </div>
-        </main>
-        </div>
-
+    </main>
+  </div>
 );
 
 return (

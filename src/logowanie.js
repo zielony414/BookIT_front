@@ -3,6 +3,19 @@ import { useNavigate } from 'react-router-dom';
 
 
 function Logowanie(){
+
+  const navigate = useNavigate();
+
+  const handleRegisterClick = () => {
+    navigate('/rejestracja');
+  };
+
+  const scrollToLoginForm = () => {
+    const formHeader = document.getElementById("form-header");
+    if (formHeader) {
+      formHeader.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 const Header = () => (
     <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" style={{ marginBottom: "100px" }}>
       <img
@@ -22,9 +35,9 @@ const Header = () => (
     </div>
   );
 
-  const Button = ({ children }) => {
+  const Button = ({ children, onClick }) => {
     return (
-      <button className="bg-white border border-black border-solid" style={{borderRadius: '1rem', marginLeft: "50px", width: "150px", height: "50px"}}>
+      <button onClick={onClick} className="bg-white border border-black border-solid" style={{borderRadius: '1rem', marginLeft: "50px", width: "150px", height: "50px"}}>
         {children}
       </button>
     );
@@ -62,11 +75,6 @@ const Footer = () => (
     );
   };
 
-  const navigate = useNavigate();
-
-  const handleRegisterClick = () => {
-    navigate('/rejestracja');
-  };
 
   const Hero = () => (
 <div className="flex flex-col bg-white">
@@ -85,12 +93,12 @@ const Footer = () => (
                 <Button onClick={handleRegisterClick}>Nie masz konta? 
                   Zarejestruj się!
                 </Button>
-                <Button>BookIt dla firm</Button>
+                <Button onClick={scrollToLoginForm}>BookIt dla firm</Button>
                 <Button>Zaloguj</Button>
               </div>
           </div>
        
-        <h2 className="self-center mt-96 text-5xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl"style={{ marginBottom: "50px", marginTop: "80px" }}>
+        <h2 id="form-header" className="self-center mt-96 text-5xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl"style={{ marginBottom: "50px", marginTop: "100px" }}>
           LOGOWANIE DLA FIRM
         </h2>
         <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">

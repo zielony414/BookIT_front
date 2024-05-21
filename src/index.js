@@ -15,12 +15,13 @@ root.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route exact path="/" element={<Logowanie />} />
+        <Route exact path="/" element={<Rezerwacja />} />
         <Route exact path="/rezerwacja" element={<Rezerwacja />} />
         <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
         <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
         <Route exact path="/testing-stuff" element={<Testing />} />
         <Route exact path="/rejestracja" element={<Rejestracja />} />
+        <Route exact path="/logowanie" element={<Logowanie />} />
       </Routes>
     </Router>
   </React.StrictMode>
