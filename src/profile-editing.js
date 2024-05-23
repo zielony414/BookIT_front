@@ -69,7 +69,15 @@ function ProfileForm({ onSubmit })
           headers: {
               'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email: email }), // Wysyłamy napis "hej"
+          body: JSON.stringify({ 
+            email: email,
+            nrTelefonu: nrTelefonu,
+            miasto: miasto,
+            plec: plec,
+            stareHaslo: stareHaslo,
+            noweHaslo: noweHaslo,
+            powtorzNoweHaslo: powtorzNoweHaslo
+           }), // Wysyłamy napis "hej"
       })
       .then(response => response.json())
       .then(data => {
@@ -111,6 +119,8 @@ function ProfileForm({ onSubmit })
               type="text"
               placeholder="+48 420 213 769"
               aria-label="Numer telefonu"
+              value={nrTelefonu}
+              onChange={(event) => setnrTelefonu(event.target.value)}
             />
             <label htmlFor="city" className="sr-only">Miasto</label>
             <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">
@@ -122,6 +132,8 @@ function ProfileForm({ onSubmit })
               type="text"
               placeholder="Lipinki Łużyckie"
               aria-label="Miasto"
+              value={miasto}
+              onChange={(event) => setMiasto(event.target.value)}
             />
             <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">
           PŁEĆ
@@ -134,6 +146,8 @@ function ProfileForm({ onSubmit })
                 >
                 <option value="Mezczyzna">Mężczyzna</option>
                 <option value="Kobieta">Kobieta</option>
+                value={plec}
+                onChange={(event) => setPlec(event.target.value)}
             </select>
           </div>
           
@@ -148,6 +162,8 @@ function ProfileForm({ onSubmit })
               type="password"
               placeholder="***************"
               aria-label="Stare hasło"
+              value={stareHaslo}
+              onChange={(event) => setStareHaslo(event.target.value)}
             />
             <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">
           NOWE HASŁO
@@ -159,6 +175,8 @@ function ProfileForm({ onSubmit })
               type="password"
               placeholder="***************"
               aria-label="Nowe hasło"
+              value={noweHaslo}
+              onChange={(event) => setNoweHaslo(event.target.value)}
             />
             <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">
           POWTÓRZ NOWE HASŁO
@@ -170,6 +188,8 @@ function ProfileForm({ onSubmit })
               type="password"
               placeholder="***************"
               aria-label="Powtórz nowe hasło"
+              value={powtorzNoweHaslo}
+              onChange={(event) => setPowtworzNoweHaslo(event.target.value)}
             />
             </div>
               <button className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
