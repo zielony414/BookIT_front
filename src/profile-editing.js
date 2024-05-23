@@ -55,6 +55,12 @@ function ProfileForm({ onSubmit })
 {    
   
     const [email, setEmail] = useState('');
+    const [nrTelefonu, setnrTelefonu] = useState('');
+    const [miasto, setMiasto] = useState('');
+    const [plec, setPlec] = useState('');
+    const [stareHaslo, setStareHaslo] = useState('');
+    const [noweHaslo, setNoweHaslo] = useState('');
+    const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
 
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
