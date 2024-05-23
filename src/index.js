@@ -7,6 +7,8 @@ import Rezerwacja2 from './pages/rezerwacja-uslug2';
 import Rezerwacja_logged from './pages/rezerwacja-uslug-zalogowany';
 import Testing from './pages/testing-stuff';
 import reportWebVitals from './reportWebVitals';
+import ProfilEditing from './profile-editing';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,6 +20,8 @@ root.render(
         <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
         <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
         <Route exact path="/testing-stuff" element={<Testing />} />
+        <Route exact path="/profile_editing" element={<ProfilEditing />} />
+        
       </Routes>
     </Router>
   </React.StrictMode>
