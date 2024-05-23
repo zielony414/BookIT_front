@@ -153,27 +153,6 @@ const Footer = () => {
 
   function ProfilEditing() {
 
-    const bookings = [
-        {
-            name: "Holistic Body & Soul",
-            address: "Rzeszów, ul. Mrokawska 14",
-            service: "Terapia olejkami",
-            price: "140",
-            date: "15.02.2024 r., 11:00",
-            rating: "4.5",
-            ratingImage: "https://cdn.builder.io/api/v1/image/assets/TEMP/aeabdacdf00eece9a8c6d82aa040143c73766f01fa42c139624d348a78d58522?apiKey=fafb1adb41a64ae8909ced39c83205ff&",
-        },
-        {
-            name: "Mister Dappler",
-            address: "Rzeszów, ul. Staroniwska 41A",
-            service: "Strzyżenie męskie",
-            price: "około 60",
-            date: "15.05.2024 r., 11:00",
-            rating: "",
-            ratingImage: "",
-        },
-    ];
-
     return (
         <main className="flex flex-col bg-white">
             <header className="flex gap-5 justify-between pt-4 pr-14 pb-2.5 pl-4 w-full mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
@@ -198,8 +177,6 @@ const Footer = () => {
                     Zalogowany użytkownik
                 </div>
             </header>
-
-            <BookingHistory bookings={bookings} />
 
             <section className="mt-16 text-5xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
                 EDYTUJ PROFIL
