@@ -3,7 +3,17 @@ import "./output.css";
 import { Link } from "react-router-dom";
   
 
-function Header() { return ( 
+function Header() { 
+  
+  const [email, setEmail] = useState('');
+  const [nrTelefonu, setNrTelefonu] = useState('');
+  const [miasto, setMiasto] = useState('');
+  const [plec, setPlec] = useState('');
+  const [stareHaslo, setStareHaslo] = useState('');
+  const [noweHaslo, setNoweHaslo] = useState('');
+  const [powtorzNoweHaslo, setPowtorzNoweHaslo] = useState('');
+  
+    return ( 
     <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
         <img 
             loading="lazy" 
