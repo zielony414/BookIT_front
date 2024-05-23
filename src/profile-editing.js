@@ -3,7 +3,8 @@ import "./output.css";
 import { Link } from "react-router-dom";
   
 
-function Header() { 
+function Header() 
+{ 
   
   const [email, setEmail] = useState('');
   const [nrTelefonu, setNrTelefonu] = useState('');
@@ -29,7 +30,8 @@ function Header() {
 );
 } 
 
-const Footer = () => {
+const Footer = () => 
+{
     return (
       <footer className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-16 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
         <div className="flex gap-5 justify-between text-base">
@@ -43,9 +45,10 @@ const Footer = () => {
         <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
       </footer>
     );
-  }
+}
 
-  function BookingHistory({ bookings }) {
+function BookingHistory({ bookings }) 
+  {
     return (
       <section className="flex flex-col self-center px-5 mt-14 w-full max-w-6xl max-md:mt-10 max-md:max-w-full">
         <h2 className="text-5xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl">
@@ -54,10 +57,15 @@ const Footer = () => {
         Tutaj bedzie historia rezerwacji
       </section>
     );
-  }
+}
   
-
-  function ProfileForm({ onSubmit }) {    
+function ProfileForm({ onSubmit }) 
+{    
+  
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSubmit({ message: 'hej' }); // Wyślij JSON z wiadomością "hej"
+  };
 
     return (
       <form className="mt-16 max-md:mt-10 max-md:max-w-full">
@@ -145,13 +153,23 @@ const Footer = () => {
               placeholder="***************"
               aria-label="Powtórz nowe hasło"
             />
+            </div>
+              <button className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+                          Anuluj
+                      </button>
+                      <button
+                          className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
+                          type="sumbit"
+                      >
+                          Zapisz
+                      </button>
           </div>
-        </div>
       </form>
     );
-  }
+}
 
-  function ProfilEditing() {
+function ProfilEditing() 
+  {
 
     return (
         <main className="flex flex-col bg-white">
@@ -185,14 +203,7 @@ const Footer = () => {
 
             <section className="flex gap-5 justify-between items-start mt-20 w-full font-light max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
                 <div className="flex gap-5 justify-between text-2xl text-center text-black whitespace-nowrap max-md:flex-wrap max-md:max-w-full">
-                    <button className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
-                        Anuluj
-                    </button>
-                    <button
-                        className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
-                    >
-                        Zapisz
-                    </button>
+                    
                 </div>
                 <div className="flex flex-col mt-4 text-xl leading-6 text-right">
                     <p className="underline text-zinc-800">
