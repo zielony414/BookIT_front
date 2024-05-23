@@ -140,15 +140,15 @@ function ProfileForm({ onSubmit })
         </h2>
             <label htmlFor="gender" className="sr-only">Płeć</label>
             <select
-                className="label justify-center items-start px-5 py-9 text-sm whitespace-nowrap bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
-                id="gender"
-                aria-label="Płeć"
-                >
-                <option value="Mezczyzna">Mężczyzna</option>
-                <option value="Kobieta">Kobieta</option>
-                value={plec}
-                onChange={(event) => setPlec(event.target.value)}
-            </select>
+                        className="label justify-center items-start px-5 py-9 text-sm whitespace-nowrap bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
+                        id="gender"
+                        aria-label="Płeć"
+                        value={plec}
+                        onChange={(event) => setPlec(event.target.value)}
+                    >
+                        <option value="Mezczyzna">Mężczyzna</option>
+                        <option value="Kobieta">Kobieta</option>
+                    </select>
           </div>
           
           <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
