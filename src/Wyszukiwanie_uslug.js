@@ -2,10 +2,6 @@ import React, { useState, useEffect} from "react";
 import "./output.css";
 
 function Wyszukiwanie_uslug() {
-  const [data, setData] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [sorting, setSorting] = useState("Najwyższa ocena");
 
   useEffect(() => {
     fetchData();

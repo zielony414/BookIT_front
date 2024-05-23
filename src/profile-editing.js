@@ -6,14 +6,6 @@ import { Link } from "react-router-dom";
 function Header() 
 { 
   
-  const [email, setEmail] = useState('');
-  const [nrTelefonu, setNrTelefonu] = useState('');
-  const [miasto, setMiasto] = useState('');
-  const [plec, setPlec] = useState('');
-  const [stareHaslo, setStareHaslo] = useState('');
-  const [noweHaslo, setNoweHaslo] = useState('');
-  const [powtorzNoweHaslo, setPowtorzNoweHaslo] = useState('');
-  
     return ( 
     <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
         <img 
@@ -62,10 +54,26 @@ function BookingHistory({ bookings })
 function ProfileForm({ onSubmit }) 
 {    
   
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      onSubmit({ message: 'hej' }); // Wyślij JSON z wiadomością "hej"
+    const handleSave = () => {
+      // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
+      fetch('/edit_profile', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: "hej" }), // Wysyłamy napis "hej"
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log('Odpowiedź z serwera:', data);
+          // Tutaj możesz obsłużyć odpowiedź z serwera
+      })
+      .catch(error => {
+          console.error('Błąd:', error);
+          // Tutaj możesz obsłużyć błąd, np. wyświetlając komunikat dla użytkownika
+      });
   };
+
 
     return (
       <form className="mt-16 max-md:mt-10 max-md:max-w-full">
@@ -157,12 +165,12 @@ function ProfileForm({ onSubmit })
               <button className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
                           Anuluj
                       </button>
-                      <button
-                          className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
-                          type="sumbit"
-                      >
-                          Zapisz
-                      </button>
+                      <button 
+            className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
+            onClick={handleSave} // Dodajemy obsługę zdarzenia onClick
+        >
+            Zapisz
+        </button>
           </div>
       </form>
     );
