@@ -54,6 +54,8 @@ function BookingHistory({ bookings })
 function ProfileForm({ onSubmit }) 
 {    
   
+    const [email, setEmail] = useState('');
+
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
       fetch('/edit_profile', {
@@ -61,7 +63,7 @@ function ProfileForm({ onSubmit })
           headers: {
               'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ data: "hej" }), // Wysyłamy napis "hej"
+          body: JSON.stringify({ email: email }), // Wysyłamy napis "hej"
       })
       .then(response => response.json())
       .then(data => {
@@ -89,6 +91,8 @@ function ProfileForm({ onSubmit })
                 type="email"
                 placeholder="kontakt@roksa.pl"
                 aria-label="Email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
             />
             <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">
           
