@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MyDatePicker from "../components/MyDatePicker";
 import TimePicker from "../components/TimePicker";
-import SelectableButton from "../components/SelectableButton"
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 
 function Header() { return ( 
@@ -14,7 +13,7 @@ function Header() { return (
           className="shrink-0 max-w-full aspect-[4.35] w-[230px]" 
       /> 
       <div className="flex gap-4 items-start my-auto"> 
-          <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Zaloguj się/załóż konto </Link> 
+          <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Profil </Link> 
           <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Dodaj swoją firmę </button> 
       </div>
   </header> 
@@ -27,7 +26,7 @@ function ContactForm_logged() {
       <div className="flex items-start max-md:flex-wrap">
         <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">
-              <div className="text-3xl text-black">Dane kontaktowe</div>
+              <div className="text-3xl font-semibold text-black">Dane kontaktowe</div>
             </FormLabel>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
@@ -49,9 +48,9 @@ function ContactForm_logged() {
                   },
                 }}/>
               <div className="self-end ml-5 mb-5 mr-45 -mb-px text-xl text-zinc-700">
-                Jan Kowalski +48 777 777 777
+                Marek Marucha +48 491 829 184
                 <br />
-                kanjowalski@gmail.com
+                mmarucha@gmail.com
               </div>
               <FormControlLabel 
                 value="second-option" 
@@ -93,50 +92,6 @@ function ContactForm_logged() {
     </section>
   );
 }
- 
-function DatePickerz() { 
-  const days = Array.from({ length: 31 }, (_, i) => i + 1); 
-  return ( 
-      <div className="flex flex-col items-start mt-0 text-3xl font-semibold text-black max-md:max-w-full"> 
-          <h3 className="ml-6 mb-5 max-md:ml-2.5">Wybierz datę</h3> 
-          <MyDatePicker />
-          <div className="mt-8">
-              <TimePicker />
-          </div>
-      </div> 
-  );
-} 
-
-function Summary() { 
-  return ( 
-  <section className="flex flex-col mt-0 text-black"> 
-      <h2 className="self-end mr-11 text-3xl font-semibold text-right max-md:mr-2.5"> Podsumowanie </h2> 
-      <div className="flex gap-5 justify-between mt-20 max-md:mt-10"> 
-          <div className="flex flex-col self-start mt-1.5 text-xl text-right"> 
-              <div className="self-end">Haircut - Top Stylist</div> 
-              <div className="mt-6">Haircut - Premier Stylist</div> 
-          </div> 
-          <div className="flex flex-col text-3xl font-semibold"> 
-              <div> 
-                  <span className="font-medium">79.</span> 
-                  <span className="text-xl font-medium">99zł</span> 
-              </div> 
-              <div className="mt-6"> 
-                  <span className="font-medium">99.</span> 
-                  <span className="text-xl font-medium">99zł</span> 
-              </div> 
-          </div> 
-      </div> 
-      <div className="shrink-0 mt-9 h-0.5 border border-solid bg-stone-300 bg-opacity-70 border-stone-300 border-opacity-70" /> 
-      <div className="flex gap-5 justify-between self-end mt-3.5 text-right"> 
-          <div className="my-auto text-xl font-bold">Suma:</div> 
-          <div className="text-3xl font-semibold"> 
-              <span className="font-medium">179.</span> 
-              <span className="text-xl font-medium">98zł</span> 
-          </div> 
-      </div> 
-  </section> );
-}
 
 const Footer = () => {
   return (
@@ -154,28 +109,108 @@ const Footer = () => {
   );
 }
 
+function Summary(props) {
+  // Obliczanie sumy cen usług
+  const totalSum = props.services.reduce((sum, service) => sum + service.cost, 0);
+
+  return (
+    <div className="w-[350px]">
+      <h5 className="self-end text-center text-3xl font-semibold max-md:mr-2.5">Podsumowanie:</h5>
+      {props.services.map((service) => (
+        <div key={service.name} className="flex text-xl justify-between">
+          <span>{service.name}</span>
+          <span className="font-bold">{service.cost} zł</span>
+        </div>
+      ))}
+      <div className="shrink-0 mt-4 mb-4 h-0.5 border border-solid bg-stone-300 bg-opacity-70 border-stone-300 border-opacity-70" />
+      <h2 className="self-end text-2xl font-semibold max-md:mr-2.5">Suma: {totalSum} zł</h2>
+    </div>
+  );
+}
 
 const Rezerwacja_logged = () => {
+  const location = useLocation();
+  const companyId = 1;
+  const { services } = location.state || { services: [] };
+  const [sum, setSum] = useState(0);
+  const [time, setTime] = useState();
+  const [date, setDate] = useState(new Date());
+
+  const handleConfirm = async () => {
+    const bookingData = {
+      company_id: companyId,
+      user_id: 1,  // przykładowy user_id
+      service_id: 1,  
+      booking_time: services.time,
+      confirm_mail: 1,
+      reminder_mail: 1,
+      confirm_sms: 1,
+      reminder_sms: 1,
+    };
+
+    try {
+      const response = await fetch('/api/add_booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Booking confirmed:', data);
+    } catch (error) {
+      console.error('Error confirming booking:', error);
+    }
+  };
+
+  const Sum = (number) => {
+    setSum(number);
+  }
+
+  const PickTime = (pickedTime) => {
+    setTime(prevTime => pickedTime)
+  }
+
+  const PickDate = (pickedDate) => {
+    setDate(prevDate => pickedDate)
+  }
+ 
   return (
     <div className="flex flex-col bg-white">
       <Header />
       <main className="flex flex-col px-10 mt-8 w-full max-md:px-5 max-md:mt-10 max-md:max-w-full">
         <div className="flex gap-5 justify-between items-start max-md:flex-wrap max-md:max-w-full">
           <ContactForm_logged />
-          <DatePickerz />
-          <Summary />
+          <div>
+            <div className="flex flex-col items-start mt-0 text-3xl font-semibold text-black max-md:max-w-full"> 
+              <h3 className="ml-6 font-semibold mb-5 max-md:ml-2.5">Wybierz datę</h3> 
+              <MyDatePicker PickDate={PickDate} />          
+            </div> 
+            <div className="mt-8">
+                <TimePicker PickTime={PickTime} />
+            </div>
+            Czas: {time} <br />
+            Data: {date.toDateString()}        
+          </div>
+          <Summary services={services} Sum={Sum} />
         </div>
         <div className="flex gap-5 mb-10 justify-between self-end mr-14 max-w-full text-2xl font-light text-center text-black whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-2.5">
           <Link to="/rezerwacja" 
             className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"> 
               Cofnij 
           </Link>
-          <Link to="/ " 
+          <button 
+            onClick={handleConfirm}
             className="justify-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"> 
               Zatwierdź 
-          </Link>
+          </button>
         </div>
-      </main>
+      </main>      
       <Footer />
     </div>
   );
