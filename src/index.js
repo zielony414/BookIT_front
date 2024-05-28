@@ -9,13 +9,14 @@ import Testing from './pages/testing-stuff';
 import reportWebVitals from './reportWebVitals';
 import Rejestracja from './rejestracja';
 import Logowanie from './logowanie';
+import Rejestracja_firmy from './rejestracja_firmy';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route exact path="/" element={<Strona_tytulowa />} />
+        <Route exact path="/" element={<Rejestracja_firmy />} />
         <Route exact path="/rezerwacja" element={<Rezerwacja />} />
         <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
         <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
