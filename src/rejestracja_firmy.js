@@ -235,6 +235,24 @@ const Header = () => (
       }
     };
 
+    const handleServiceNameChange = (e) => {
+      if (e.target.value.length <= 45) {
+        setServiceName(e.target.value);
+      }
+    };
+  
+    const handleServiceTypeChange = (e) => {
+      if (e.target.value.length <= 45) {
+        setServiceType(e.target.value);
+      }
+    };
+  
+    const handleServiceDescriptionChange = (e) => {
+      if (e.target.value.length <= 255) {
+        setServiceDescription(e.target.value);
+      }
+    };
+
     const handleAddService = () => {
       setServices([...services, { name: serviceName }]);
       setServiceName('');
@@ -297,29 +315,29 @@ const Header = () => (
             </section>
             <section className="flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full">
               <div className="flex flex-col grow px-14 pt-8 pb-4 w-full rounded-3xl bg-stone-200 max-md:px-5 max-md:mt-8 max-md:max-w-full">
+              <input
+                type="text"
+                value={serviceName}
+                onChange={handleServiceNameChange}
+                placeholder="Nazwa usługi"
+                className="mb-4 p-2 rounded-lg border border-gray-400"
+                style={{marginLeft: "50px", marginRight: "50px"}}
+              />
                 <input
-                  type="text"
-                  value={serviceName}
-                  onChange={(e) => setServiceName(e.target.value)}
-                  placeholder="Nazwa usługi"
-                  className="mb-4 p-2 rounded-lg border border-gray-400"
-                  style={{marginLeft: "50px", marginRight: "50px"}}
-                />
-                <input
-                  type="text"
-                  value={serviceType}
-                  onChange={(e) => setServiceType(e.target.value)}
-                  placeholder="Typ usługi"
-                  className="mb-4 p-2 rounded-lg border border-gray-400"
-                  style={{marginLeft: "50px", marginRight: "50px"}}
-                />
-                <textarea
-                  value={serviceDescription}
-                  onChange={(e) => setServiceDescription(e.target.value)}
-                  placeholder="Opis"
-                  className="mb-4 p-2 rounded-lg border border-gray-400"
-                  style={{marginLeft: "50px", marginRight: "50px"}}
-                />
+                type="text"
+                value={serviceType}
+                onChange={handleServiceTypeChange}
+                placeholder="Typ usługi"
+                className="mb-4 p-2 rounded-lg border border-gray-400"
+                style={{marginLeft: "50px", marginRight: "50px"}}
+              />
+              <textarea
+                value={serviceDescription}
+                onChange={handleServiceDescriptionChange}
+                placeholder="Opis"
+                className="mb-4 p-2 rounded-lg border border-gray-400"
+                style={{marginLeft: "50px", marginRight: "50px"}}
+              />
                 <div className="flex gap-5 justify-between mt-5 max-md:flex-wrap">
                   <div className="flex flex-col text-xl font-light leading-6 text-black" style={{marginLeft: "50px", marginRight: "30px", marginBottom: "20px"}}>
                     <div>Czas trwania:</div>
@@ -580,8 +598,22 @@ const Hero = () => (
         <h2 id="dodaj_zdjecia" className="mt-72 text-5xl font-light text-center text-black max-md:mt-10 max-md:text-4xl" style={{ marginTop: "100px" }}>
         DODAJ ZDJĘCIA
       </h2>
+      <div style={{marginTop: "15px"}}>
+        Dodaj pierwsze zdjęcie jako logo twojej firmy
+      </div>
       <div className="justify-center items-start px-16 py-16 mt-12 font-light text-2xl text-center text-black rounded-3xl border-1 border-black border-solid bg-stone-200 max-md:px-5 max-md:mt-10 max-md:max-w-full" style={{ width: "700px", height: "200px", marginTop: "30px" }}>
         <input type="file" onChange={handleImageUpload} multiple className="w-full h-full text-center" />
+      </div>
+      <div className="flex flex-wrap justify-center gap-4 mt-5">
+        {images.map((image, index) => (
+          <div key={index} className="relative w-32 h-32">
+            <img
+              src={URL.createObjectURL(image)}
+              alt={`upload-${index}`}
+              className="object-cover w-full h-full rounded-xl"
+            />
+          </div>
+        ))}
       </div>
       <div className="mt-20 text-2xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full flex items-center">
         <input
