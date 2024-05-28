@@ -6,6 +6,7 @@ import Rezerwacja from './pages/rezerwacja-uslug';
 import Rezerwacja2 from './pages/rezerwacja-uslug2';
 import Rezerwacja_logged from './pages/rezerwacja-uslug-zalogowany';
 import Testing from './pages/testing-stuff';
+import Testing2 from './pages/testing-stuff-2';
 import reportWebVitals from './reportWebVitals';
 import Rejestracja from './rejestracja';
 import Logowanie from './logowanie';
