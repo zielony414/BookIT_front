@@ -160,8 +160,8 @@ function Strona_tytulowa() {
         <input
           type="text"
           id="search"
-          placeholder="Szukaj usług dzięki lokalizacji"
-          aria-label="Szukaj usług dzięki lokalizacji"
+          placeholder="Szukaj usług"
+          aria-label="Szukaj usług"
           className="flex-grow text-black text-lg w-[350px]"
         />
       </form>

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes, Switch } from 'react-router-dom';
 import Strona_tytulowa from './Strona_tytulowa';
+import Wyszukiwanie_uslug from './Wyszukiwanie_uslug';
 import Rezerwacja from './pages/rezerwacja-uslug';
 import Rezerwacja2 from './pages/rezerwacja-uslug2';
 import Rezerwacja_logged from './pages/rezerwacja-uslug-zalogowany';
@@ -16,6 +17,7 @@ root.render(
     <Router>
       <Routes>
         <Route exact path="/" element={<Strona_tytulowa />} />
+        <Route exact path="/Wyszukiwanie usług" element={<Wyszukiwanie_uslug />} />
         <Route exact path="/rejestracja_firmy" element={<Rejestracja_firmy />} />
         <Route exact path="/rezerwacja" element={<Rezerwacja />} />
         <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
