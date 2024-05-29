@@ -20,7 +20,7 @@ root.render(
         <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
         <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
         <Route exact path="/testing-stuff" element={<Testing />} />
-        <Route exact path="/profile_editing" element={<ProfilEditing />} />
+        <Route exact path="/profile-editing" element={<ProfilEditing />} />
         
       </Routes>
     </Router>
