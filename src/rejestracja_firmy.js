@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ImageUpload from './ImageUpload';
 import { Component } from "react";
+import DodajUsluge from "./Dodaj_usluge";
 
 
 function Rejestracja_firmy(){
@@ -28,8 +29,20 @@ function Rejestracja_firmy(){
       confirmPassword: '',
       phone: '',
       NIP: '',
+      description: '',
       termsAccepted: false,
       newsletterAccepted: false,
+      website: '',
+      facebook: '',
+      titok: '',
+      linkedin: '',
+      instagram: '',
+      twitter: '',
+      street: '',
+      city: '',
+      code: '',
+      stacjonarnie: false,
+      mobilnie: false,
       workingHours: {
         monday: { checked: false, open: '00:00', close: '00:00' },
         tuesday: { checked: false, open: '00:00', close: '00:00' },
@@ -219,7 +232,13 @@ const Header = () => (
     const [price, setPrice] = useState(0);
     const [isApproximate, setIsApproximate] = useState(false);
     const [isExact, setIsExact] = useState(false);
+    const [message, setMessage] = useState(null);
+    const [error, setError] = useState(null);
+  
+    const navigate = useNavigate();
 
+
+    
     const handleApproximateChange = () => {
       setIsApproximate(!isApproximate);
       if (!isApproximate) {
@@ -252,16 +271,50 @@ const Header = () => (
       }
     };
 
-    const handleAddService = () => {
-      setServices([...services, { name: serviceName }]);
-      setServiceName('');
-      setServiceType('');
-      setServiceDescription('');
-      setHours(0);
-      setMinutes(30);
-      setPrice(0);
-    };
+    const handleAddService = async () => {
+      const newService = {
+        name: serviceName,
+        type: serviceType,
+        description: serviceDescription,
+        duration: hours * 60 + minutes,
+        price: price,
+        isApproximate: isApproximate,
+        isExact: isExact,
+      };
+
+      try {
+        const response = await fetch('/api/add_service', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newService),
+        });
   
+        const data = await response.json();
+        if (response.ok) {
+          setMessage(data.message);
+          setError(null);
+          // Clear form fields
+          setServiceName('');
+          setServiceType('');
+          setServiceDescription('');
+          setHours(0);
+          setMinutes(30);
+          setPrice(0);
+          setIsApproximate(false);
+          setIsExact(false);
+          navigate('/logowanie'); // Replace with the desired route after adding the service
+        } else {
+          setError(data.error);
+          setMessage(null);
+        }
+      } catch (error) {
+        console.error('Błąd połączenia z serwerem!', error);
+        alert('An error occurred while adding the service. Please try again.');
+      }
+    };
+
     const decrementMinutes = () => {
       if (minutes === 30) {
         setMinutes(0);
@@ -284,7 +337,6 @@ const Header = () => (
       }
     };
     
-  
     return (
       <>
         <h2 id="dodaj_usluge" className="mt-24 text-5xl font-light text-center text-black max-md:mt-10 max-md:text-4xl">
@@ -405,12 +457,11 @@ const Header = () => (
                     />
                     <label>Dokładna cena</label>
                   </div>
-                    <button
-                      onClick={handleAddService}
-                      className="bg-white border border-black border-solid font-light text-center" style={{ borderRadius: '1rem', width: "100px", height: "50px", marginLeft: "120px", marginBottom: "10px", marginRight: "10px"}}
-                    >
-                      DODAJ
-                    </button>
+                  <button
+                    onClick={handleAddService}
+                    className="bg-white border border-black border-solid font-light text-center"
+                    style={{ borderRadius: '1rem', width: "100px", height: "50px", marginLeft: "120px", marginBottom: "10px", marginRight: "10px" }}
+                  > Dodaj </button>
                   </div>
                 </div>
               </div>
@@ -625,7 +676,6 @@ const Hero = () => (
     
     );
 
-   
 
     return (
         <>
@@ -635,6 +685,7 @@ const Hero = () => (
         </>
       );
 }
+
 
 
 export default Rejestracja_firmy;
