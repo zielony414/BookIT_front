@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState }  from "react";
 import "./output.css";
 import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ImageUpload from './ImageUpload';
+import { Component } from "react";
+
 
 function Rejestracja_firmy(){
 
@@ -105,13 +109,7 @@ function Rejestracja_firmy(){
         alert('An error occurred during login. Please try again.');
       }
     };
-  
-    const [images, setImages] = useState([]);
 
-    const handleImageUpload = (event) => {
-      const files = Array.from(event.target.files);
-      setImages([...images, ...files]);
-    };
 
     const daysOfWeek = [
       { name: 'poniedzialek', label: 'Poniedziałek' },
@@ -149,7 +147,8 @@ function Rejestracja_firmy(){
     };
 
     const [isDataTrue, setIsDataTrue] = useState(false); // Definicja stanu isDataTrue
-    
+
+  
 
     const Button = ({ children, onClick, type = 'button' }) => (
         <button type={type} onClick={onClick} className="bg-white border border-black border-solid" style={{ borderRadius: '1rem', width: "100px", height: "50px", marginRight: "50px" }}>
@@ -601,19 +600,8 @@ const Hero = () => (
       <div style={{marginTop: "15px"}}>
         Dodaj pierwsze zdjęcie jako logo twojej firmy
       </div>
-      <div className="justify-center items-start px-16 py-16 mt-12 font-light text-2xl text-center text-black rounded-3xl border-1 border-black border-solid bg-stone-200 max-md:px-5 max-md:mt-10 max-md:max-w-full" style={{ width: "700px", height: "200px", marginTop: "30px" }}>
-        <input type="file" onChange={handleImageUpload} multiple className="w-full h-full text-center" />
-      </div>
-      <div className="flex flex-wrap justify-center gap-4 mt-5">
-        {images.map((image, index) => (
-          <div key={index} className="relative w-32 h-32">
-            <img
-              src={URL.createObjectURL(image)}
-              alt={`upload-${index}`}
-              className="object-cover w-full h-full rounded-xl"
-            />
-          </div>
-        ))}
+      <div className="flex flex-col items-center px-16 pt-3.5 pb-7 mt-10 max-w-full text-xl leading-6 text-black whitespace-nowrap rounded-3xl bg-stone-200 w-[710px] max-md:px-5 max-md:mt-10">
+      <ImageUpload />
       </div>
       <div className="mt-20 text-2xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full flex items-center">
         <input
@@ -634,6 +622,7 @@ const Hero = () => (
         </div>
       </main>
     </div>
+    
     );
 
    

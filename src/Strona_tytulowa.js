@@ -13,6 +13,9 @@ function Strona_tytulowa() {
   const handleLoginClick = () => {
     navigate('/logowanie');
   };
+  const handleFirmRegistrationClick = () => {
+    navigate('/rejestracja_firmy');
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,7 +128,7 @@ function Strona_tytulowa() {
         <button onClick={handleLoginClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
           Zaloguj się/załóż konto
         </button>
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={handleFirmRegistrationClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
           Dodaj swoją firmę
         </button>
       </div>
