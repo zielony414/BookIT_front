@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ImageUpload from './ImageUpload';
 import { Component } from "react";
-import DodajUsluge from "./Dodaj_usluge";
 
 
 function Rejestracja_firmy(){
@@ -12,16 +11,6 @@ function Rejestracja_firmy(){
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
-
-    const scrollToNext = (headerId) => {
-      const element = document.getElementById(headerId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        console.error('Element with ID ' + headerId + ' not found.');
-      }
-    };
-  
     const [formData, setFormData] = useState({
       email: '',
       companyName: '',
@@ -34,7 +23,7 @@ function Rejestracja_firmy(){
       newsletterAccepted: false,
       website: '',
       facebook: '',
-      titok: '',
+      tiktok: '',
       linkedin: '',
       instagram: '',
       twitter: '',
@@ -44,121 +33,108 @@ function Rejestracja_firmy(){
       stacjonarnie: false,
       mobilnie: false,
       workingHours: {
-        monday: { checked: false, open: '00:00', close: '00:00' },
-        tuesday: { checked: false, open: '00:00', close: '00:00' },
-        wednesday: { checked: false, open: '00:00', close: '00:00' },
-        thursday: { checked: false, open: '00:00', close: '00:00' },
-        friday: { checked: false, open: '00:00', close: '00:00' },
-        saturday: { checked: false, open: '00:00', close: '00:00' },
-        sunday: { checked: false, open: '00:00', close: '00:00' },
+          monday: { checked: false, open: '00:00', close: '00:00' },
+          tuesday: { checked: false, open: '00:00', close: '00:00' },
+          wednesday: { checked: false, open: '00:00', close: '00:00' },
+          thursday: { checked: false, open: '00:00', close: '00:00' },
+          friday: { checked: false, open: '00:00', close: '00:00' },
+          saturday: { checked: false, open: '00:00', close: '00:00' },
+          sunday: { checked: false, open: '00:00', close: '00:00' },
       },
-    });
-  
-    const handleChange = (e) => {
+  });
+
+
+  const handleChange = (e) => {
       const { name, value, type, checked } = e.target;
-      const [day, time] = name.split('_');
-      if (time) {
-        setFormData((prevData) => ({
-          ...prevData,
-          workingHours: {
-            ...prevData.workingHours,
-            [day]: {
-              ...prevData.workingHours[day],
-              [time]: value,
-            },
-          },
-        }));
-      } else {
-        setFormData((prevData) => ({
-          ...prevData,
+      setFormData({
+          ...formData,
           [name]: type === 'checkbox' ? checked : value,
-        }));
-      }
-    };
-  
-    const handleCheckboxChange = (day) => (e) => {
-      const { checked } = e.target;
-      setFormData((prevData) => ({
-        ...prevData,
-        workingHours: {
-          ...prevData.workingHours,
-          [day]: {
-            ...prevData.workingHours[day],
-            checked: checked,
+      });
+  };
+
+  const handleTimeChange = (day, field, value) => {
+      setFormData({
+          ...formData,
+          workingHours: {
+              ...formData.workingHours,
+              [day]: {
+                  ...formData.workingHours[day],
+                  [field]: value,
+              },
           },
-        },
-      }));
-    };
-  
-    const handleSubmit = async (e) => {
+      });
+  };
+
+  const handleSubmit = async (e) => {
       e.preventDefault();
-  
-      if (formData.password !== formData.confirmPassword) {
-        setError('Hasła nie są takie same.');
-        setMessage(null);
-        return;
-      }
-  
       try {
-        const response = await fetch('/api/user_registration', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        });
-  
-        const data = await response.json();
-        if (response.ok) {
-          setMessage(data.message);
-          setError(null);
-          navigate('/logowanie');
-        } else {
-          setError(data.error);
-          setMessage(null);
-        }
-      } catch (err) {
-        console.error('Błąd połączenia z serwerm!', error);
-        alert('An error occurred during login. Please try again.');
+          const response = await fetch('/api/register-company', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(formData),
+          });
+          if (response.ok) {
+              // Obsługa sukcesu (np. wyświetlenie komunikatu o powodzeniu)
+              console.log('Firma została zarejestrowana pomyślnie');
+          } else {
+              // Obsługa błędów (np. wyświetlenie komunikatu o błędzie)
+              console.log('Wystąpił błąd podczas rejestracji firmy');
+          }
+      } catch (error) {
+          console.error('Błąd:', error);
+      }
+  };
+
+    const scrollToNext = (headerId) => {
+      const element = document.getElementById(headerId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        console.error('Element with ID ' + headerId + ' not found.');
       }
     };
+  
 
+    const handleCheckboxChange = (day) => (e) => {
+        const { checked } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            workingHours: {
+                ...prevData.workingHours,
+                [day]: {
+                    ...prevData.workingHours[day],
+                    checked: checked,
+                },
+            },
+        }));
+    };
 
+    
     const daysOfWeek = [
-      { name: 'poniedzialek', label: 'Poniedziałek' },
-      { name: 'wtorek', label: 'Wtorek' },
-      { name: 'sroda', label: 'Środa' },
-      { name: 'czwartek', label: 'Czwartek' },
-      { name: 'piatek', label: 'Piątek' },
-      { name: 'sobota', label: 'Sobota' },
-      { name: 'niedziela', label: 'Niedziela' },
+        { name: 'poniedzialek', label: 'Poniedziałek' },
+        { name: 'wtorek', label: 'Wtorek' },
+        { name: 'sroda', label: 'Środa' },
+        { name: 'czwartek', label: 'Czwartek' },
+        { name: 'piatek', label: 'Piątek' },
+        { name: 'sobota', label: 'Sobota' },
+        { name: 'niedziela', label: 'Niedziela' },
     ];
 
     const generateTimeOptions = () => {
-      const options = [];
-      for (let h = 0; h < 24; h++) {
-        for (let m = 0; m < 60; m += 30) {
-          const hour = h.toString().padStart(2, '0');
-          const minute = m.toString().padStart(2, '0');
-          options.push(`${hour}:${minute}`);
+        const options = [];
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                const hour = h.toString().padStart(2, '0');
+                const minute = m.toString().padStart(2, '0');
+                options.push(`${hour}:${minute}`);
+            }
         }
-      }
-      return options;
+        return options;
     };
 
-    const handleTimeChange = (day, type, value) => {
-      setFormData({
-        ...formData,
-        workingHours: {
-          ...formData.workingHours,
-          [day]: {
-            ...formData.workingHours[day],
-            [type]: value,
-          },
-        },
-      });
-    };
-
+ 
     const [isDataTrue, setIsDataTrue] = useState(false); // Definicja stanu isDataTrue
 
   
@@ -204,7 +180,7 @@ function Rejestracja_firmy(){
       );
 
 const Header = () => (
-    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" style={{ marginBottom: "100px" }}>
+    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" >
       <img
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
@@ -475,6 +451,7 @@ const Header = () => (
 const Hero = () => (
     <div className="flex flex-col pb-20 bg-white">
       <main className="flex flex-col items-center self-center px-5 mt-36 w-full max-w-[1130px] max-md:mt-10 max-md:max-w-full">
+      <form onSubmit={handleSubmit}>
         <h1 className="text-5xl font-light text-center text-black max-md:text-4xl">
           DODAJ FIRMĘ
         </h1>
@@ -638,6 +615,8 @@ const Hero = () => (
           </div>
         </form>
       </section>
+      <button className="bg-white border border-black border-solid font-light text-center" type="submit">Zatwierdź dane</button>
+        </form>
         <div className="flex flex-col grow font-light" style={{ width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px" }}>
             <Button onClick={() => scrollToNext('dodaj_usluge')} type='button'>Dalej</Button>
         </div>
@@ -671,6 +650,7 @@ const Hero = () => (
             Zakończ
           </button>
         </div>
+
       </main>
     </div>
     
