@@ -10,6 +10,8 @@ import reportWebVitals from './reportWebVitals';
 import Rejestracja from './rejestracja';
 import Logowanie from './logowanie';
 import Rejestracja_firmy from './rejestracja_firmy';
+import ProfilEditing from './profile-editing';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -24,6 +26,8 @@ root.render(
         <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
         <Route exact path="/rejestracja" element={<Rejestracja />} />
         <Route exact path="/logowanie" element={<Logowanie />} />
+        <Route exact path="/testing-stuff" element={<Testing />} />
+        <Route exact path="/profile-editing" element={<ProfilEditing />} />
       </Routes>
     </Router>
   </React.StrictMode>
