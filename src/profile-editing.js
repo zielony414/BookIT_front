@@ -50,7 +50,51 @@ function BookingHistory({ bookings })
       </section>
     );
 }
-  
+ 
+function ReservationHistoryItem({ businessName, location, service, price, date, userRating, upcoming }) {
+  return (
+    <article className="flex gap-5 justify-between py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl max-md:flex-wrap max-md:max-w-full bg-white">
+      <header className="flex flex-col">
+        <h2 className="text-3xl font-medium">{businessName}</h2>
+        <p className="mt-1.5 text-xl">{location}</p>
+      </header>
+      <section className="flex flex-col">
+        <p className="text-xl">{service}</p>
+        <p className="mt-3.5 text-3xl font-semibold">
+          <span className="text-2xl font-medium">Cena: {price}</span>
+          <span className="text-base font-medium">00</span>
+        </p>
+      </section>
+      <footer className="flex flex-col text-2xl font-medium">
+        <p>Data: {date}</p>
+        {userRating ? (
+          <div className="flex gap-3 mt-1.5">
+            <span className="grow">Twoja ocena:</span>
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/aeabdacdf00eece9a8c6d82aa040143c73766f01fa42c139624d348a78d58522?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
+              alt="User rating"
+              className="shrink-0 max-w-full aspect-[5.56] w-[157px]"
+            />
+          </div>
+        ) : upcoming ? (
+          <p className="mt-3">Spotkanie już za 4 dni!</p>
+        ) : (
+          <div className="flex gap-4 font-medium">
+            <div className="flex flex-col grow shrink-0 self-start mt-2 text-2xl basis-0 w-fit">
+              <p>Data: {date}</p>
+              <p className="mt-2.5">Daj znać jak było!</p>
+            </div>
+            <button className="justify-center px-2 py-1.5 text-xl text-center whitespace-nowrap border border-black border-solid rounded-[30px]">
+              Oceń <br /> spotkanie!
+            </button>
+          </div>
+        )}
+      </footer>
+    </article>
+  );
+}
+
 function ProfileForm({ onSubmit }) 
 {    
   
@@ -199,6 +243,12 @@ function ProfileForm({ onSubmit })
 
 function ProfilEditing() 
   {
+  
+    const reservations = [
+      { businessName: "Holistic Body & Soul", location: "Rzeszów, ul. Mrokawska 14", service: "Terapia olejkami", price: 140, date: "15.02.2024 r., 11:00", userRating: true },
+      { businessName: "Mister Dappler", location: "Rzeszów, ul. Staroniwska 41A", service: "Strzyżenie męskie", price: 60, date: "15.05.2024 r., 11:00", userRating: false },
+      { businessName: "Mister Dappler", location: "Rzeszów, ul. Staroniwska 41A", service: "Strzyżenie męskie", price: 60, date: "24.06.2024 r., 16:00", userRating: false, upcoming: true },
+    ];
 
     return (
         <main className="flex flex-col bg-white">
@@ -225,9 +275,11 @@ function ProfilEditing()
                 </div>
             </header>
 
-            <section className="mt-16 text-5xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
-                EDYTUJ PROFIL
-            </section>
+            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+          {reservations.map((reservation, index) => (
+            <ReservationHistoryItem key={index} {...reservation} />
+          ))}
+        </section>
             <ProfileForm/>
 
             <section className="flex gap-5 justify-between items-start mt-20 w-full font-light max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
