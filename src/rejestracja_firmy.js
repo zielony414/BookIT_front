@@ -350,7 +350,7 @@ const handleSubmit = async () => {
       };
 
       try {
-        const response = await fetch('/api/add_service', {
+        const response = await fetch('/api/strona_rejestracji_firmy/usługa', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
