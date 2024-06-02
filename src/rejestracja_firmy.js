@@ -820,7 +820,7 @@ return(
           </div>
           <button
             className="justify-center px-7 py-1.5 font-light bg-white border border-black border-solid rounded-[30px] max-md:px-5"
-            tabIndex="0"
+            tabIndex="0" onClick={handleSubmit}
           >
             Zatwierdź dane
           </button>
