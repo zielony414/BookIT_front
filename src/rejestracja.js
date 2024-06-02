@@ -5,34 +5,58 @@ import { useNavigate } from 'react-router-dom';
 function Rejestracja() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    city: '',
-    gender: '',
-    termsAccepted: false,
-    newsletterAccepted: false
-  });
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [city, setCity] = useState('');
+  const [gender, setGender] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [newsletterAccepted, setNewsletterAccepted] = useState(false);
 
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+  const handleChange = (setter) => (e) => {
+    if (e.target.value.length <= 45) {
+      setter(e.target.value);
+    }
+    
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleEmailChange = handleChange(setEmail);
+const handleNameChange = handleChange(setName);
+const handleSurnameChange = handleChange(setSurname);
+const handlePhoneChange = handleChange(setPhone);
+const handelPasswordChange = handleChange(setPassword);
+const handleConfirmedPasswordChange = handleChange(setConfirmPassword);
+const handleCityChange = handleChange(setCity);
+const handleGenderChange = handleChange(setGender);
 
-    if (formData.password !== formData.confirmPassword) {
+const handleToggle = (setter) => () => {
+  setter((prev) => !prev);
+};
+
+const handleTermsAcceptedChange = handleToggle(setTermsAccepted);
+const handleNewsletterAcceptedChange = handleToggle(setNewsletterAccepted);
+
+  const handleSubmit = async () => {
+    const newUser ={
+      name: name,
+      surname: surname,
+      email: email,
+      phone: phone,
+      city: city,
+      password: password,
+      confirmPassword: confirmPassword,
+      gender: gender,
+      termsAccepted: termsAccepted,
+      newsletterAccepted: newsletterAccepted
+    }
+
+    if (password !== confirmPassword) {
       setError('Hasła nie są takie same.');
       setMessage(null);
       return;
@@ -44,13 +68,24 @@ function Rejestracja() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(newUser)
       });
 
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
         setError(null);
+        //clear from fields
+        setName('');
+        setSurname('');
+        setPassword('');
+        setConfirmPassword('');
+        setCity('');
+        setGender('');
+        setPhone('');
+        setNewsletterAccepted(false);
+        setTermsAccepted(false);
+        setEmail('');
         navigate('/logowanie');
       } else {
         setError(data.error);
@@ -64,23 +99,6 @@ function Rejestracja() {
 
   const handleLoginClick = () => {
     navigate('/logowanie');
-  };
-
-  const Input = ({ label, placeholder, name, type = "text" }) => {
-    return (
-      <div className="flex flex-col flex-1 max-md:max-w-full">
-        <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{ marginLeft: "50px" }}>
-          {label}
-        </label>
-        <input
-          name={name}
-          type={type}
-          className="justify-center items-start px-4 py-3 mt-1.5 text-sm bg-white border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
-          placeholder={placeholder}
-          style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px", marginLeft: "50px" }} 
-        />
-      </div>
-    );
   };
 
   const Button = ({ children, onClick, type = 'button' }) => (
@@ -124,38 +142,91 @@ function Rejestracja() {
     </footer>
   );
 
-  const Hero = () => (
-    <div className="flex flex-col bg-white">
+
+
+  return (
+    <>
+      <Header />
+      <div className="flex flex-col bg-white">
       <main className="flex flex-col self-center px-5 mt-20 w-full max-w-[1027px] max-md:mt-10 max-md:max-w-full">
         <h1 className="self-center text-5xl font-light leading-6 text-black max-md:text-4xl" style={{ marginBottom: "20px" }}>
           REJESTRACJA
         </h1>
-        <form onSubmit={handleSubmit}>
+
           <div style={{marginLeft: "120px"}}>
           <div className="flex gap-5 self-center mt-10 font-light max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
-            <Input label="Imię" name="name" placeholder="Wprowadź swoje imię" />
-            <Input label="Nazwisko" name="surname" placeholder="Wprowadź swoje nazwisko" />
-          </div>
-          <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
-            <Input label="Email" name="email" placeholder="Wprowadź swój email" />
-            <Input label="Numer telefonu" name="phone" placeholder="Wprowadź swój numer telefonu" />
-          </div>
-          <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
-            <Input label="Hasło" name="password" placeholder="Wprowadź swoje hasło" type="password" />
-            <Input label="Powtórz hasło" name="confirmPassword" placeholder="Powtórz swoje hasło" type="password" />
-          </div>
-          <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
-            <Input label="Miasto" name="city" placeholder="Wprowadź miasto, w którym mieszkasz" />
+          <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
+                  Imię
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={name} onChange={handleNameChange} type="text" placeholder="Imię"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}/>
+            </div>
             <div className="flex flex-col flex-1 max-md:max-w-full">
-              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{ marginLeft: "50px" }}>
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
+                  Nazwisko
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={surname} onChange={handleSurnameChange} type="text" placeholder="Nazwisko"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px"}}/>
+            </div>
+          </div>
+          <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
+          <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
+                  Email
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={email} onChange={handleEmailChange} type="email" placeholder="Email"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}/>
+            </div>
+            <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
+                  Numer Telefonu
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={phone} onChange={handlePhoneChange} type="text" placeholder="Telefon"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}/>
+            </div>
+          </div>
+          <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
+          <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
+                  Hasło
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={password} onChange={handelPasswordChange} type="password" placeholder="Haśło"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}/>
+            </div>
+            <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
+                  Potwierdź hasło
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={confirmPassword} onChange={handleConfirmedPasswordChange} type="password" placeholder="Potwierdź hasło"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}/>
+            </div>
+          </div>
+          <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
+          <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" >
+                  Miejscowość
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={city} onChange={handleCityChange} type="text" placeholder="Miejscowość"               
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}/>
+            </div>
+            <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" >
                 Płeć
               </label>
               <select
                 name="gender"
-                value={formData.gender}
-                onChange={handleChange}
+                value={gender}
+                onChange={handleGenderChange}
                 className="justify-center items-start px-4 py-3 mt-1.5 text-sm bg-white border border-solid border-zinc-400 text-zinc-800 max-md:pr-5 max-md:max-w-full"
-                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px", marginLeft: "50px" }}
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px" }}
               >
                 <option value="">Wybierz swoją płeć</option>
                 <option value="Mezczyzna">Mężczyzna</option>
@@ -170,8 +241,8 @@ function Rejestracja() {
                   <input
                     type="checkbox"
                     name="termsAccepted"
-                    checked={formData.termsAccepted}
-                    onChange={handleChange}
+                    checked={termsAccepted}
+                    onChange={handleTermsAcceptedChange}
                     className="mr-2"
                     style={{marginRight: "10px"}}
                   />
@@ -181,8 +252,8 @@ function Rejestracja() {
                   <input
                     type="checkbox"
                     name="newsletterAccepted"
-                    checked={formData.newsletterAccepted}
-                    onChange={handleChange}
+                    checked={newsletterAccepted}
+                    onChange={handleNewsletterAcceptedChange}
                     className="mr-2"
                     style={{marginRight: "10px"}}
                   />
@@ -190,22 +261,20 @@ function Rejestracja() {
                 </div>
               </div>
               <div className="flex flex-col grow font-light" style={{ width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px" }}>
-                <Button type="submit">Dalej</Button>
+              <button
+                className="justify-center px-7 py-1.5 font-light bg-white border border-black border-solid rounded-[30px] max-md:px-5"
+                tabIndex="0" onClick={handleSubmit}
+              >
+                Zarejestruj
+              </button>
               </div>
             </div>
           </div>
           {error && <div className="text-red-500 text-center">{error}</div>}
           {message && <div className="text-green-500 text-center">{message}</div>}
           </div>
-        </form>
       </main>
     </div>
-  );
-
-  return (
-    <>
-      <Header />
-      <Hero />
       <Footer />
     </>
   );
