@@ -3,22 +3,19 @@ import "./output.css";
 import { Link } from "react-router-dom";
   
 
-function Header() 
-{ 
-  
-    return ( 
-    <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
-        <img 
-            loading="lazy" 
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&" 
-            alt="Company logo" 
-            className="shrink-0 max-w-full aspect-[4.35] w-[230px]" 
-        /> 
-        <div className="flex gap-4 items-start my-auto"> 
-            <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Zaloguj się/załóż konto </Link> 
-            <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Dodaj swoją firmę </button> 
-        </div>
-    </header> 
+function Header() { return ( 
+  <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
+      <img 
+          loading="lazy" 
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&" 
+          alt="Company logo" 
+          className="shrink-0 max-w-full aspect-[4.35] w-[230px]" 
+      /> 
+      <div className="flex gap-4 items-start my-auto"> 
+          <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Zaloguj się/załóż konto </Link> 
+          <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Dodaj swoją firmę </button> 
+      </div>
+  </header> 
 );
 } 
 
@@ -53,38 +50,35 @@ function BookingHistory({ bookings })
  
 function ReservationHistoryItem({ businessName, location, service, price, date, userRating, upcoming }) {
   return (
-    <article className="flex gap-5 justify-between py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl max-md:flex-wrap max-md:max-w-full bg-white">
-      <header className="flex flex-col">
+    <article className="py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl bg-white">
+      <header className="mb-4">
         <h2 className="text-3xl font-medium">{businessName}</h2>
         <p className="mt-1.5 text-xl">{location}</p>
       </header>
-      <section className="flex flex-col">
+      <section className="mb-4">
         <p className="text-xl">{service}</p>
         <p className="mt-3.5 text-3xl font-semibold">
           <span className="text-2xl font-medium">Cena: {price}</span>
           <span className="text-base font-medium">00</span>
         </p>
       </section>
-      <footer className="flex flex-col text-2xl font-medium">
+      <footer className="text-2xl font-medium">
         <p>Data: {date}</p>
         {userRating ? (
-          <div className="flex gap-3 mt-1.5">
-            <span className="grow">Twoja ocena:</span>
+          <div className="mt-1.5">
+            <span className="block">Twoja ocena:</span>
             <img
               loading="lazy"
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/aeabdacdf00eece9a8c6d82aa040143c73766f01fa42c139624d348a78d58522?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
               alt="User rating"
-              className="shrink-0 max-w-full aspect-[5.56] w-[157px]"
+              className="max-w-full aspect-[5.56] w-[157px]"
             />
           </div>
         ) : upcoming ? (
           <p className="mt-3">Spotkanie już za 4 dni!</p>
         ) : (
-          <div className="flex gap-4 font-medium">
-            <div className="flex flex-col grow shrink-0 self-start mt-2 text-2xl basis-0 w-fit">
-              <p>Data: {date}</p>
-              <p className="mt-2.5">Daj znać jak było!</p>
-            </div>
+          <div className="mt-2">
+            <p className="mb-2.5">Daj znać jak było!</p>
             <button className="justify-center px-2 py-1.5 text-xl text-center whitespace-nowrap border border-black border-solid rounded-[30px]">
               Oceń <br /> spotkanie!
             </button>
@@ -94,6 +88,8 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
     </article>
   );
 }
+
+
 
 function ProfileForm({ onSubmit }) 
 {    
@@ -106,6 +102,8 @@ function ProfileForm({ onSubmit })
     const [noweHaslo, setNoweHaslo] = useState('');
     const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
 
+
+    
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
       fetch('/edit_profile', {
