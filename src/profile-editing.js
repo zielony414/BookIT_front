@@ -35,20 +35,8 @@ const Footer = () =>
       </footer>
     );
 }
-
-function BookingHistory({ bookings }) 
-  {
-    return (
-      <section className="flex flex-col self-center px-5 mt-14 w-full max-w-6xl max-md:mt-10 max-md:max-w-full">
-        <h2 className="text-5xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl">
-          HISTORIA REZERWACJI
-        </h2>
-        Tutaj bedzie historia rezerwacji
-      </section>
-    );
-}
  
-function ReservationHistoryItem({ businessName, location, service, price, date, userRating, upcoming }) {
+function ReservationHistoryItem({ businessName, location, service, price, date }) {
   return (
     <article className="py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl bg-white">
       <header className="mb-4">
@@ -58,36 +46,16 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
       <section className="mb-4">
         <p className="text-xl">{service}</p>
         <p className="mt-3.5 text-3xl font-semibold">
-          <span className="text-2xl font-medium">Cena: {price}</span>
-          <span className="text-base font-medium">00</span>
+          <span className="text-2xl font-medium">Cena: {price} zł</span>
         </p>
       </section>
       <footer className="text-2xl font-medium">
         <p>Data: {date}</p>
-        {userRating ? (
-          <div className="mt-1.5">
-            <span className="block">Twoja ocena:</span>
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/aeabdacdf00eece9a8c6d82aa040143c73766f01fa42c139624d348a78d58522?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
-              alt="User rating"
-              className="max-w-full aspect-[5.56] w-[157px]"
-            />
-          </div>
-        ) : upcoming ? (
-          <p className="mt-3">Spotkanie już za 4 dni!</p>
-        ) : (
-          <div className="mt-2">
-            <p className="mb-2.5">Daj znać jak było!</p>
-            <button className="justify-center px-2 py-1.5 text-xl text-center whitespace-nowrap border border-black border-solid rounded-[30px]">
-              Oceń <br /> spotkanie!
-            </button>
-          </div>
-        )}
       </footer>
     </article>
   );
 }
+
 
 
 
@@ -114,16 +82,24 @@ function ProfileForm({ onSubmit })
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          setServices(data);
+          
+          // Formatowanie daty
+          const formattedData = data.map(service => ({
+            ...service,
+            booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
+          }));
+          
+          setServices(formattedData);
         } catch (error) {
           setError(error);
         } finally {
           setLoading(false);
         }
       }
-  
+    
       fetchUserReservations();
     }, []);
+    
 
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
@@ -158,16 +134,21 @@ function ProfileForm({ onSubmit })
       <form className="mt-16 max-md:mt-10 max-md:max-w-full">
         
         <ul className="service-list">
-        {services.length === 0 ? (
-          <li>No services found.</li>
-        ) : (
-          services.map(service => (
-            <li key={service.id} className="service-item">
-              {service.service_name} - {service.date}
-            </li>
-          ))
-        )}
-      </ul>
+      {services.length === 0 ? (
+        <li>No services found.</li>
+      ) : (
+        services.map((service, index) => (
+          <ReservationHistoryItem
+            key={index}
+            businessName={service.name}
+            location={service.Address}
+            service={service.service_name}
+            price={service.cost}
+            date={service.booking_time}
+          />
+        ))
+      )}
+    </ul>
         
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
   <form className="mt-16 max-md:mt-10 max-md:max-w-full bg-white p-8 rounded-xl shadow-lg">
