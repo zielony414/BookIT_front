@@ -18,6 +18,7 @@ function Rejestracja_firmy(){
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phone, setPhone] = useState('');
     const [nip, setNip] = useState('');
+    const [type, setType] = useState('');
     const [description, setDescription] = useState('');
     const [termsAccepted, setTermsAccepted] = useState('');
     const [newsletterAccepted, setNewsletterAccepted] = useState('');
@@ -58,6 +59,7 @@ const handlePasswordChange = handleChange(setPassword);
 const handleConfirmPasswordChange = handleChange(setConfirmPassword);
 const handlePhoneChange = handleChange(setPhone);
 const handleNipChange = handleChange(setNip);
+const handleTypeChange = handleChange(setType);
 const handleDescriptionChange = handleChange(setDescription);
 const handleLinkPageChange = handleChange(setLinkPage);
 const handleFacebookChange = handleChange(setFacebook);
@@ -110,9 +112,11 @@ const handleSubmit = async () => {
       twitter: twitter,
       street_number: street_number,
       city: city,
+      type: type,
       post_code: post_code,
       stacjonarnie: stacjonarnie,
       mobilnie: mobilnie,
+
       workingHours: {
           monday: formData.workingHours.monday,
           tuesday: formData.workingHours.tuesday,
@@ -155,6 +159,7 @@ const handleSubmit = async () => {
           setStreet('');
           setCity('');
           setCode('');
+          setType('');
           setStacjonarnie(false);
           setMobilnie(false);
           setFormData({
@@ -616,6 +621,14 @@ return(
                 value={description} onChange={handleDescriptionChange} type="text" placeholder="Opis"               
                 style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px", marginLeft: "50px" }}/>
             </div>
+            <div className="flex flex-col flex-1 max-md:max-w-full">
+              <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{ marginLeft: "50px" }}>
+                  Typ firmy
+                </label>
+              <input className="mb-4 p-2 rounded-lg border border-gray-400"
+                value={type} onChange={handleTypeChange} type="text" placeholder="Typ"                
+                style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px", marginLeft: "50px" }}/>
+            </div>
           </div>
           <div className="self-center mt-5 max-md:max-w-full" style={{ marginBottom: "50px" }}>
             <div className="flex gap-5 max-md:flex-col max-md:gap-0">
@@ -627,7 +640,7 @@ return(
                       onChange={handleTermsAcceptedChange}
                       className="mr-2"
                     />
-                    <label>Akceptuję Warunki</label>
+                    <label>Akceptuję wszelkie umowy i warunki*</label>
                 </div>
                 <div className="flex items-center mt-5 leading-6">
                   <input
