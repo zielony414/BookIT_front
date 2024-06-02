@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Wyszukiwanie_uslug() {
   const [data, setData] = useState([]);
@@ -8,11 +9,47 @@ function Wyszukiwanie_uslug() {
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [sorting, setSorting] = useState("Najwyższa ocena");
+  const [isFromHomepage, setIsFromHomepage] = useState(false);
+  const [isCategorySelected, setIsCategorySelected] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    let data = location.state?.filteredData || [];
+    setFilteredData(data);
+    console.log("Wyszukiwanie usług");
+    if (location.state?.fromHomepage && location.state?.category) {
+      setIsCategorySelected(true);
+      setIsFromHomepage(true);
+      setSelectedCategory(location.state.category); 
+      handleFilter({ preventDefault: () => {} }, location.state.category);
+    }
+  }, [location.state]);
+  
+  useEffect(() => {
+    const checkFilteredData = async () => {
+      console.log("Sprawdzanie danych...");
+      console.log(filteredData);
+      console.log(location.state);
+      console.log(isCategorySelected);
+      console.log(isFromHomepage);
+
+      if (!isCategorySelected && !isFromHomepage && !location.state && filteredData.length === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 0)); // Opóźnienie wykonania sprawdzenia
+        handleFilter({ preventDefault: () => {} });
+      }
+    };
+
+    checkFilteredData();
+  }, [filteredData, location.state]);
+  useEffect(() => {
+    // Jeśli wybrana kategoria nie jest pusta, ustaw ją w formularzu wyboru
+    if (selectedCategory !== "") {
+      handleFilter({ preventDefault: () => {} }, selectedCategory);
+    }
     fetchData();
-    handleFilter({ preventDefault: () => {} });
-  }, []);
+  }, [selectedCategory]);
 
   const fetchData = () => {
     console.log("Pobieranie danych...");
@@ -31,11 +68,10 @@ function Wyszukiwanie_uslug() {
       });
   };
 
-  const handleFilter = async (e) => {
-    e.preventDefault();
+  const handleFilter = async (e, categoryFromHome = null) => {
 
     const filterData = {
-      kategoria: selectedCategory,
+      kategoria: categoryFromHome || selectedCategory,
       miasto: selectedCity,
       sortowanie: sorting,
     };
@@ -48,11 +84,15 @@ function Wyszukiwanie_uslug() {
         },
         body: JSON.stringify(filterData),
       });
-
       if (response.ok) {
         const filteredData = await response.json();
         setFilteredData(filteredData.companies); // Accessing the 'companies' array
         console.log(filteredData); // Handle the filtered data
+
+        // Navigate to the search results page with the filtered data as state
+        navigate("/Wyszukiwanie usług", {
+          state: { filteredData: filteredData.companies },
+        });
       } else {
         console.error("Failed to fetch filtered data");
       }
@@ -95,6 +135,8 @@ function Wyszukiwanie_uslug() {
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
         alt="Logo"
         className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
+        role="button"
+        onClick={() => navigate("/")}
       />
       <div className="flex gap-3.5 items-start my-auto">
         <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
@@ -127,8 +169,13 @@ function Wyszukiwanie_uslug() {
         if (response.ok) {
           const filteredData = await response.json();
           setFilteredData(filteredData.companies);
-          console.log('searchbar');
+          console.log("searchbar");
           console.log(filteredData);
+
+          // Navigate to the search results page with the filtered data as state
+          navigate("/Wyszukiwanie usług", {
+            state: { filteredData: filteredData.companies },
+          });
         } else {
           console.error("Failed to fetch filtered data");
         }
@@ -156,7 +203,8 @@ function Wyszukiwanie_uslug() {
           Zarezerwuj to co potrzebujesz
         </div>
         <div className="relative mt-3.5 text-2xl font-light text-center max-md:max-w-full">
-          Odkrywaj najlepszych specjalistów wokół siebie, <br /> wszystko czego potrzebujesz w jednym miejscu
+          Odkrywaj najlepszych specjalistów wokół siebie, <br /> wszystko czego
+          potrzebujesz w jednym miejscu
         </div>
         <form className="flex relative gap-5 px-6 py-2 mt-7 tracking-normal bg-white leading-[90%] rounded-full text-stone-200 max-md:flex-wrap w-[450px] max-w-md">
           <img
@@ -208,7 +256,11 @@ function Wyszukiwanie_uslug() {
             <Dropdown
               label="Sortowanie"
               value={sorting}
-              options={["Najwyższa ocena", "Najwięcej opinii", "Od najnowszych"]}
+              options={[
+                "Najwyższa ocena",
+                "Najwięcej opinii",
+                "Od najnowszych",
+              ]}
               onChange={setSorting}
             />
           </article>
@@ -223,7 +275,7 @@ function Wyszukiwanie_uslug() {
     );
   };
 
-  const MidBody = () => {
+  const MidBody = ({ filteredData }) => {
     return (
       <div className="flex flex-col m-4 p-4">
         {filteredData.length > 0 ? (
@@ -233,7 +285,9 @@ function Wyszukiwanie_uslug() {
               className="flex items-center md-4 bg-stone-200 rounded p-4"
               style={{ marginBottom: "20px" }}
             >
-              <div className="w-50vw h-10vh flex items-center rounded"> {/* Użyj jednostek vw i vh */}
+              <div className="w-50vw h-10vh flex items-center rounded">
+                {" "}
+                {/* Użyj jednostek vw i vh */}
                 <img
                   alt="Logo"
                   src={item.logo}
@@ -245,7 +299,7 @@ function Wyszukiwanie_uslug() {
                 <p>{item.description}</p>
                 <p>Kategoria: {item.category}</p>
                 <p>
-                  Adres: {item.city}, {item.address}
+                  Adres: {item.city} {item.address}
                 </p>
                 <p>Oceny: {item.reviews_no}</p>
                 <p>Średnia ocen: {item.avg_rating}</p>
@@ -258,13 +312,15 @@ function Wyszukiwanie_uslug() {
       </div>
     );
   };
-  
-  
 
   const Footer = () => {
-    let cas = ''; 
-    if(filteredData.length == 0 || filteredData.length == 1) cas = "flex flex-col items-start px-8 pt-5 pb-3.5 mt-auto w-full text-white bg-black max-md:px-5 max-md:max-w-full fixed bottom-0";
-    else  cas = "flex flex-col items-start px-8 pt-5 pb-3.5 w-full text-white bg-black max-md:px-5 max-md:max-w-full";
+    let cas = "";
+    if (filteredData.length == 0 || filteredData.length == 1)
+      cas =
+        "flex flex-col items-start px-8 pt-5 pb-3.5 mt-auto w-full text-white bg-black max-md:px-5 max-md:max-w-full fixed bottom-0";
+    else
+      cas =
+        "flex flex-col items-start px-8 pt-5 pb-3.5 w-full text-white bg-black max-md:px-5 max-md:max-w-full";
     return (
       <footer className={cas}>
         <nav className="flex gap-5 justify-between text-base">
@@ -281,13 +337,12 @@ function Wyszukiwanie_uslug() {
       </footer>
     );
   };
-  
 
   return (
     <>
       <Header />
       <Hero />
-      <MidBody />
+      <MidBody filteredData={filteredData} />
       <Footer />
     </>
   );
