@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./output.css";
 import { Link } from "react-router-dom";
   
@@ -102,8 +102,29 @@ function ProfileForm({ onSubmit })
     const [noweHaslo, setNoweHaslo] = useState('');
     const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
 
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    
+    useEffect(() => {
+      async function fetchUserReservations() {
+        try {
+          const response = await fetch('/api/user_reservations');
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          setServices(data);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchUserReservations();
+    }, []);
+
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
       fetch('/edit_profile', {
@@ -135,6 +156,19 @@ function ProfileForm({ onSubmit })
 
     return (
       <form className="mt-16 max-md:mt-10 max-md:max-w-full">
+        
+        <ul className="service-list">
+        {services.length === 0 ? (
+          <li>No services found.</li>
+        ) : (
+          services.map(service => (
+            <li key={service.id} className="service-item">
+              {service.service_name} - {service.date}
+            </li>
+          ))
+        )}
+      </ul>
+        
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
   <form className="mt-16 max-md:mt-10 max-md:max-w-full bg-white p-8 rounded-xl shadow-lg">
     <div className="flex gap-5 max-md:flex-col max-md:gap-0">
