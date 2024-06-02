@@ -31,8 +31,8 @@ function Rejestracja_firmy(){
     const [street_number, setStreet] = useState('');
     const [city, setCity] = useState('');
     const [post_code, setCode] = useState('');
-    const [stacjonarnie, setStacjonarnie] = useState('');
-    const [mobilnie, setMobilnie] = useState('');
+    const [stacjonarnie, setStacjonarnie] = useState(true);
+    const [mobilnie, setMobilnie] = useState(false);
     
     const [formData, setFormData] = useState({
       workingHours: {
@@ -116,7 +116,6 @@ const handleSubmit = async () => {
       post_code: post_code,
       stacjonarnie: stacjonarnie,
       mobilnie: mobilnie,
-
       workingHours: {
           monday: formData.workingHours.monday,
           tuesday: formData.workingHours.tuesday,
@@ -141,38 +140,7 @@ const handleSubmit = async () => {
       if (response.ok) {
           console.log('Form submitted successfully:', data);
           // Reset form fields if needed
-          setEmail('');
-          setCompanyName('');
-          setPassword('');
-          setConfirmPassword('');
-          setPhone('');
-          setNip('');
-          setDescription('');
-          setTermsAccepted(false);
-          setNewsletterAccepted(false);
-          setLinkPage('');
-          setFacebook('');
-          setTiktok('');
-          setLinkedin('');
-          setInstagram('');
-          setTwitter('');
-          setStreet('');
-          setCity('');
-          setCode('');
-          setType('');
-          setStacjonarnie(false);
-          setMobilnie(false);
-          setFormData({
-              workingHours: {
-                  monday: { checked: false, open: '00:00', close: '00:00' },
-                  tuesday: { checked: false, open: '00:00', close: '00:00' },
-                  wednesday: { checked: false, open: '00:00', close: '00:00' },
-                  thursday: { checked: false, open: '00:00', close: '00:00' },
-                  friday: { checked: false, open: '00:00', close: '00:00' },
-                  saturday: { checked: false, open: '00:00', close: '00:00' },
-                  sunday: { checked: false, open: '00:00', close: '00:00' },
-              },
-          });
+
       } else {
           console.error('Error submitting form:', data.error);
       }
@@ -298,7 +266,7 @@ const handleSubmit = async () => {
     const [minutes, setMinutes] = useState(30);
     const [price, setPrice] = useState(0);
     const [isApproximate, setIsApproximate] = useState(false);
-    const [isExact, setIsExact] = useState(false);
+    const [isExact, setIsExact] = useState(true);
     const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
   
@@ -363,15 +331,13 @@ const handleSubmit = async () => {
           setMessage(data.message);
           setError(null);
           // Clear form fields
-          setServices([...services, newService]);
           setServiceName('');
           setServiceType('');
           setServiceDescription('');
-          setHours(0);
-          setMinutes(30);
-          setPrice(0);
-          setIsApproximate(false);
-          setIsExact(false);
+          setHours('');
+          setMinutes('');
+          setPrice('');
+          setServices([...services, newService]);
           navigate('/logowanie'); // Replace with the desired route after adding the service
         } else {
           setError(data.error);
@@ -543,8 +509,6 @@ const handleSubmit = async () => {
   };
 
 
-
-
 return(
   <>
   <Header />
@@ -577,7 +541,7 @@ return(
           <div className="flex gap-5 mt-4 max-md:flex-col max-md:gap-0">
             <div className="flex flex-col flex-1 max-md:max-w-full">
               <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{ marginLeft: "50px" }}>
-                  Hasło
+                  Hasło (min. 8 znaków)
                 </label>
               <input className="mb-4 p-2 rounded-lg border border-gray-400"
                 value={password} onChange={handlePasswordChange} type="password" placeholder="Hasło" 
@@ -623,10 +587,10 @@ return(
             </div>
             <div className="flex flex-col flex-1 max-md:max-w-full">
               <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{ marginLeft: "50px" }}>
-                  Typ firmy
+                  Kategoria firmy
                 </label>
               <input className="mb-4 p-2 rounded-lg border border-gray-400"
-                value={type} onChange={handleTypeChange} type="text" placeholder="Typ"                
+                value={type} onChange={handleTypeChange} type="text" placeholder="Kategoria"                
                 style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px", marginLeft: "50px" }}/>
             </div>
           </div>
@@ -640,7 +604,7 @@ return(
                       onChange={handleTermsAcceptedChange}
                       className="mr-2"
                     />
-                    <label>Akceptuję wszelkie umowy i warunki*</label>
+                    <label>Akceptuję wszelkie umowy i warunki</label>
                 </div>
                 <div className="flex items-center mt-5 leading-6">
                   <input
@@ -775,10 +739,10 @@ return(
             </div>
             <div className="flex flex-col flex-1 max-md:max-w-full">
               <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full" style={{ marginLeft: "50px" }}>
-                  Twitter
+                  X
                 </label>
               <input className="mb-4 p-2 rounded-lg border border-gray-400"
-                value={twitter} onChange={handleTwitterChange} type="text" placeholder="Twitter"               
+                value={twitter} onChange={handleTwitterChange} type="text" placeholder="X"               
                 style={{ borderRadius: '0.5rem', width: '350px', marginRight: "50px", marginLeft: "50px" }}/>
             </div>
             </div>
@@ -840,12 +804,10 @@ return(
       </section>
         
         <div className="flex flex-col grow font-light" style={{ width: "100px", height: "80px", marginTop: "30px", marginLeft: "500px" }}>
-            <Button onClick={() => scrollToNext('dodaj_usluge')} type='button'>Dalej</Button>
-        </div>
-        <DodajUsluge />
-        <div className="flex flex-col grow font-light" style={{ width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px" }}>
             <Button onClick={() => scrollToNext('dodaj_zdjecia')} type='button'>Dalej</Button>
         </div>
+        
+
         <h2 id="dodaj_zdjecia" className="mt-72 text-5xl font-light text-center text-black max-md:mt-10 max-md:text-4xl" style={{ marginTop: "100px" }}>
         DODAJ ZDJĘCIA
       </h2>
@@ -855,19 +817,15 @@ return(
       <div className="flex flex-col items-center px-16 pt-3.5 pb-7 mt-10 max-w-full text-xl leading-6 text-black whitespace-nowrap rounded-3xl bg-stone-200 w-[710px] max-md:px-5 max-md:mt-10">
       <ImageUpload />
       </div>
-      <div className="mt-20 text-2xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full flex items-center">
-        <input
-          type="checkbox"
-          checked={isDataTrue}
-          onChange={(e) => setIsDataTrue(e.target.checked)}
-          className="mr-2"
-        />
-        Zatwierdzam, że podane dane są prawdziwe
-      </div>
+      <div className="flex flex-col grow font-light" style={{ width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px" }}>
+            <Button onClick={() => scrollToNext('dodaj_usluge')} type='button'>Dalej</Button>
+        </div>
+      <DodajUsluge />
+
         <div className="flex gap-5 justify-between mt-16 max-w-full text-2xl font-light text-center text-black whitespace-nowrap w-[823px] max-md:flex-wrap max-md:mt-10">
           <button
             className="justify-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
-            tabIndex="0"
+            tabIndex="0" style={{marginLeft: "350px"}}
           >
             Zakończ
           </button>

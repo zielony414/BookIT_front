@@ -193,7 +193,7 @@ const handleNewsletterAcceptedChange = handleToggle(setNewsletterAccepted);
           <div className="flex gap-5 self-center mt-3.5 font-light max-md:flex-wrap max-md:max-w-full">
           <div className="flex flex-col flex-1 max-md:max-w-full">
               <label className="text-lg leading-6 text-zinc-800 max-md:max-w-full">
-                  Hasło
+                  Hasło (min. 8 znaków)
                 </label>
               <input className="mb-4 p-2 rounded-lg border border-gray-400"
                 value={password} onChange={handelPasswordChange} type="password" placeholder="Haśło"               
