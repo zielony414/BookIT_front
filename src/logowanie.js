@@ -35,12 +35,13 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
+        navigate('/');
       } else {
         alert(response.data.message);
       }
     } catch (error) {
       console.error('There was an error logging in!', error);
-      alert('An error occurred during login. Please try again.');
+      alert('Niepoprawne dane logowania');
     }
   };
 
@@ -58,13 +59,13 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
-        navigate('/Strona_tytulowa');
+        navigate('/');
       } else {
         alert(response.data.message);
       }
     } catch (error) {
       console.error('There was an error logging in!', error);
-      alert('An error occurred during login. Please try again.');
+      alert('Niepoprawne dane logowania');
     }
   };
 
@@ -147,7 +148,7 @@ function Logowanie() {
             <div className="flex flex grow font-light" style={{ marginTop: "40px" }}>
               <Button type="button" onClick={handleRegisterClick}>Nie masz konta? Zarejestruj się!</Button>
               <Button type="button" onClick={scrollToLoginForm}>BookIt dla firm</Button>
-              <Button type="submit" onClick={handleFinish}>Zaloguj</Button>
+              <Button type="submit" >Zaloguj</Button>
             </div>
           </div>
         </form>
@@ -166,7 +167,7 @@ function Logowanie() {
           </div>
           <div className="flex gap-5 max-md:flex-col max-md:gap-0" style={{ marginLeft: "800px" }}>
             <div className="flex flex grow font-light" style={{ height: "40px", marginTop: "40px" }}>
-              <Button type="submit" style={{ width: "200px" }} onClick={handleFinish}>Zaloguj</Button>
+              <Button type="submit" style={{ width: "200px" }}>Zaloguj</Button>
             </div>
           </div>
         </form>

@@ -153,11 +153,12 @@ const handleSubmit = async () => {
       const data = await response.json();
       if (response.ok) {
           console.log('Form submitted successfully:', data);
-          // Reset form fields if needed
           
-
       } else {
-          console.error('Error submitting form:', data.error);
+
+        if (response.status === 400) {
+          alert(response.data.message);
+          console.error('Error submitting form:', data.error);}
       }
   } catch (error) {
       console.error('An error occurred while submitting the form:', error);
@@ -165,7 +166,7 @@ const handleSubmit = async () => {
 };
 
 const handleFinish = () => {
-  navigate('/Strona_tytulowa');
+  navigate('/');
 };
 
   
@@ -335,10 +336,10 @@ const handleFinish = () => {
           setMinutes(30);
           setPrice(0);
           setServices([...services, newService]);
-          navigate('/logowanie'); // Replace with the desired route after adding the service
         } else {
           setError(data.error);
           setMessage(null);
+          alert(response.data.message);
         }
       } catch (error) {
         console.error('Błąd połączenia z serwerem!', error);
