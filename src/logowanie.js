@@ -40,13 +40,8 @@ function Logowanie() {
         alert(response.data.message);
       }
     } catch (error) {
-<<<<<<< Updated upstream
-      console.error('There was an error logging in!', error);
-      alert('Niepoprawne dane logowania');
-=======
       console.error('Błąd logowania!', error);
       alert('Niepoprawne dane logowania. Spróbuj ponownie.');
->>>>>>> Stashed changes
     }
   };
 
@@ -64,22 +59,13 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
-<<<<<<< Updated upstream
-        navigate('/');
-=======
         navigate('/company_manage');
->>>>>>> Stashed changes
       } else {
         alert(response.data.message);
       }
     } catch (error) {
-<<<<<<< Updated upstream
-      console.error('There was an error logging in!', error);
-      alert('Niepoprawne dane logowania');
-=======
       console.error('Błąd logowania!', error);
       alert('Niepoprawne dane logowania. Spróbuj ponownie.');
->>>>>>> Stashed changes
     }
   };
 
@@ -164,11 +150,7 @@ function Logowanie() {
             <div className="flex flex grow font-light" style={{ marginTop: "40px" }}>
               <Button type="button" onClick={handleRegisterClick}>Nie masz konta? Zarejestruj się!</Button>
               <Button type="button" onClick={scrollToLoginForm}>BookIt dla firm</Button>
-<<<<<<< Updated upstream
-              <Button type="submit" >Zaloguj</Button>
-=======
               <Button type="submit">Zaloguj</Button>
->>>>>>> Stashed changes
             </div>
           </div>
         </form>
