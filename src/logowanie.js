@@ -16,6 +16,11 @@ function Logowanie() {
     }
   };
 
+  const handleFinish = () => {
+    navigate('/Strona_tytulowa');
+  };
+  
+
   const handleUserLoginSubmit = async (event) => {
     event.preventDefault();
     const email = event.target.email.value;
@@ -53,6 +58,7 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
+        navigate('/Strona_tytulowa');
       } else {
         alert(response.data.message);
       }
@@ -141,7 +147,7 @@ function Logowanie() {
             <div className="flex flex grow font-light" style={{ marginTop: "40px" }}>
               <Button type="button" onClick={handleRegisterClick}>Nie masz konta? Zarejestruj się!</Button>
               <Button type="button" onClick={scrollToLoginForm}>BookIt dla firm</Button>
-              <Button type="submit">Zaloguj</Button>
+              <Button type="submit" onClick={handleFinish}>Zaloguj</Button>
             </div>
           </div>
         </form>
@@ -160,7 +166,7 @@ function Logowanie() {
           </div>
           <div className="flex gap-5 max-md:flex-col max-md:gap-0" style={{ marginLeft: "800px" }}>
             <div className="flex flex grow font-light" style={{ height: "40px", marginTop: "40px" }}>
-              <Button type="submit" style={{ width: "200px" }}>Zaloguj</Button>
+              <Button type="submit" style={{ width: "200px" }} onClick={handleFinish}>Zaloguj</Button>
             </div>
           </div>
         </form>
