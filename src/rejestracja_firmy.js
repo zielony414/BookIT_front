@@ -33,18 +33,27 @@ function Rejestracja_firmy(){
     const [post_code, setCode] = useState('');
     const [stacjonarnie, setStacjonarnie] = useState(true);
     const [mobilnie, setMobilnie] = useState(false);
-    
-    const [formData, setFormData] = useState({
-      workingHours: {
-          monday: { checked: false, open: '00:00', close: '00:00' },
-          tuesday: { checked: false, open: '00:00', close: '00:00' },
-          wednesday: { checked: false, open: '00:00', close: '00:00' },
-          thursday: { checked: false, open: '00:00', close: '00:00' },
-          friday: { checked: false, open: '00:00', close: '00:00' },
-          saturday: { checked: false, open: '00:00', close: '00:00' },
-          sunday: { checked: false, open: '00:00', close: '00:00' },
-      },
-  });
+    const [monday_open, setMondayOpen] = useState('');
+    const [monday_close, setMondayClose] = useState('');
+    const [tuesday_open, setTuesdayOpen] = useState('');
+    const [tuesday_close, setTuesdayClose] = useState('');
+    const [wednesday_open, setWednesdayOpen] = useState('');
+    const [wednesday_close, setWednesdayClose] = useState('');
+    const [thursday_open, setThursdayOpen] = useState('');
+    const [thursday_close, setThursdayClose] = useState('');
+    const [friday_open, setFridayOpen] = useState('');
+    const [friday_close, setFridayClose] = useState('');
+    const [saturday_open, setSaturdayOpen] = useState('');
+    const [saturday_close, setSaturdayClose] = useState('');
+    const [sunday_open, setSundayOpen] = useState('');
+    const [sunday_close, setSundayClose] = useState('');
+    const [mondayIsOpen, setMondayIsOpen] = useState(false);
+    const [tuesdayIsOpen, setTuesdayIsOpen] = useState(false);
+    const [wednesdayIsOpen, setWednesdayIsOpen] = useState(false);
+    const [thursdayIsOpen, setThursdayIsOpen] = useState(false);
+    const [fridayIsOpen, setFridayIsOpen] = useState(false);
+    const [saturdayIsOpen, setSaturdayIsOpen] = useState(false);
+    const [sundayIsOpen, setSundayIsOpen] = useState(false);
 
   const handleChange = (setter) => (e) => {
     if (e.target.value.length <= 45) {
@@ -70,6 +79,22 @@ const handleTwitterChange = handleChange(setTwitter);
 const handleStreetNumberChange = handleChange(setStreet);
 const handleCityChange = handleChange(setCity);
 const handlePostCodeChange = handleChange(setCode);
+
+/* const handleMondayOpenChange = handleChange(setMondayOpen);
+const handleMondayCloseChange = handleChange(setMondayClose);
+const handleTuesdayOpenChange = handleChange(setTuesdayOpen);
+const handleTuesdayCloseChange = handleChange(setTuesdayClose);
+const handleWednesdayOpenChange = handleChange(setWednesdayOpen);
+const handleWednesdayClosenChange = handleChange(setWednesdayClose);
+const handleThursdayOpenChange = handleChange(setThursdayOpen);
+const handleThursdayCloseChange = handleChange(setThursdayClose);
+const handleFridayOpenChange = handleChange(setFridayOpen);
+const handleFridayCloseChange = handleChange(setFridayClose);
+const handleSaturdayOpenChange = handleChange(setSaturdayOpen);
+const handleSaturdayCloseChange = handleChange(setSaturdayClose);
+const handleSundayOpenChange = handleChange(setSundayOpen);
+const handleSundayCloseChange = handleChange(setSundayClose); */
+
 
 
 const handleStacjonarnieChange = () => {
@@ -116,15 +141,20 @@ const handleSubmit = async () => {
       post_code: post_code,
       stacjonarnie: stacjonarnie,
       mobilnie: mobilnie,
-      workingHours: {
-          monday: formData.workingHours.monday,
-          tuesday: formData.workingHours.tuesday,
-          wednesday: formData.workingHours.wednesday,
-          thursday: formData.workingHours.thursday,
-          friday: formData.workingHours.friday,
-          saturday: formData.workingHours.saturday,
-          sunday: formData.workingHours.sunday,
-      },
+      monday_open: monday_open,
+      monday_close: monday_close,
+      tuesday_open: tuesday_open,
+      tuesday_close: tuesday_close,
+      wednesday_open: wednesday_open,
+      wednesday_close: wednesday_close,
+      thursday_open: thursday_open,
+      thursday_close: thursday_close,
+      friday_open: friday_open,
+      friday_close: friday_close,
+      saturday_open: saturday_open,
+      saturday_close: saturday_close,
+      sunday_open: sunday_open,
+      sunday_close: sunday_close,
   };
 
   try {
@@ -140,6 +170,7 @@ const handleSubmit = async () => {
       if (response.ok) {
           console.log('Form submitted successfully:', data);
           // Reset form fields if needed
+          navigate('/Strona_tytulowa')
 
       } else {
           console.error('Error submitting form:', data.error);
@@ -149,18 +180,7 @@ const handleSubmit = async () => {
   }
 };
 
-  const handleTimeChange = (day, field, value) => {
-      setFormData({
-          ...formData,
-          workingHours: {
-              ...formData.workingHours,
-              [day]: {
-                  ...formData.workingHours[day],
-                  [field]: value,
-              },
-          },
-      });
-  };
+
 
   
     const scrollToNext = (headerId) => {
@@ -173,41 +193,32 @@ const handleSubmit = async () => {
     };
   
 
-    const handleCheckboxChange = (day) => (e) => {
-        const { checked } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            workingHours: {
-                ...prevData.workingHours,
-                [day]: {
-                    ...prevData.workingHours[day],
-                    checked: checked,
-                },
-            },
-        }));
+    const handleCheckboxChange = (setter) => () => {
+        setter((prev) => !prev);
+      
     };
 
     
     const daysOfWeek = [
-        { name: 'poniedzialek', label: 'Poniedziałek' },
-        { name: 'wtorek', label: 'Wtorek' },
-        { name: 'sroda', label: 'Środa' },
-        { name: 'czwartek', label: 'Czwartek' },
-        { name: 'piatek', label: 'Piątek' },
-        { name: 'sobota', label: 'Sobota' },
-        { name: 'niedziela', label: 'Niedziela' },
+      { name: 'monday', label: 'Poniedziałek', open: monday_open, close: monday_close, isOpen: mondayIsOpen, setOpen: setMondayOpen, setClose: setMondayClose, setIsOpen: setMondayIsOpen },
+      { name: 'tuesday', label: 'Wtorek', open: tuesday_open, close: tuesday_close, isOpen: tuesdayIsOpen, setOpen: setTuesdayOpen, setClose: setTuesdayClose, setIsOpen: setTuesdayIsOpen },
+      { name: 'wednesday', label: 'Środa', open: wednesday_open, close: wednesday_close, isOpen: wednesdayIsOpen, setOpen: setWednesdayOpen, setClose: setWednesdayClose, setIsOpen: setWednesdayIsOpen },
+      { name: 'thursday', label: 'Czwartek', open: thursday_open, close: thursday_close, isOpen: thursdayIsOpen, setOpen: setThursdayOpen, setClose: setThursdayClose, setIsOpen: setThursdayIsOpen },
+      { name: 'friday', label: 'Piątek', open: friday_open, close: friday_close, isOpen: fridayIsOpen, setOpen: setFridayOpen, setClose: setFridayClose, setIsOpen: setFridayIsOpen },
+      { name: 'saturday', label: 'Sobota', open: saturday_open, close: saturday_close, isOpen: saturdayIsOpen, setOpen: setSaturdayOpen, setClose: setSaturdayClose, setIsOpen: setSaturdayIsOpen },
+      { name: 'sunday', label: 'Niedziela', open: sunday_open, close: sunday_close, isOpen: sundayIsOpen, setOpen: setSundayOpen, setClose: setSundayClose, setIsOpen: setSundayIsOpen },
     ];
 
     const generateTimeOptions = () => {
-        const options = [];
-        for (let h = 0; h < 24; h++) {
-            for (let m = 0; m < 60; m += 30) {
-                const hour = h.toString().padStart(2, '0');
-                const minute = m.toString().padStart(2, '0');
-                options.push(`${hour}:${minute}`);
-            }
+      const options = [];
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 30) {
+          const hour = h.toString().padStart(2, '0');
+          const minute = m.toString().padStart(2, '0');
+          options.push(`${hour}:${minute}`);
         }
-        return options;
+      }
+      return options;
     };
 
  
@@ -318,7 +329,7 @@ const handleSubmit = async () => {
       };
 
       try {
-        const response = await fetch('/api/strona_rejestracji_firmy/usługa', {
+        const response = await fetch('/api/add_service', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -334,9 +345,9 @@ const handleSubmit = async () => {
           setServiceName('');
           setServiceType('');
           setServiceDescription('');
-          setHours('');
-          setMinutes('');
-          setPrice('');
+          setHours(0);
+          setMinutes(30);
+          setPrice(0);
           setServices([...services, newService]);
           navigate('/logowanie'); // Replace with the desired route after adding the service
         } else {
@@ -758,40 +769,40 @@ return(
           <div className="self-center mt-5 max-md:max-w-full" style={{ marginBottom: "50px" }}>
             <div className="flex gap-5 max-md:flex-col max-md:gap-0">
               <div className="flex flex-col grow font-light max-md:mt-10 max-md:max-w-full">
-                {daysOfWeek.map((day) => (
-                  <div className="flex items-center mt-5 leading-6" key={day.name}>
-                    <input
-                      type="checkbox"
-                      name={`${day.name}_checked`}
-                      checked={formData.workingHours[day.name]?.checked || false}
-                      onChange={handleCheckboxChange(day.name)}
-                      className="mr-2"
-                      style={{ marginRight: "10px" }}
-                    />
-                    <span className="mr-2">{day.label}</span>
-                    <select
-                      className="mr-2 p-1 rounded-lg border border-gray-400"
-                      name={`${day.name}_open`}
-                      value={formData.workingHours[day.name]?.open || '00:00'}
-                      onChange={(e) => handleTimeChange(day.name, 'open', e.target.value)}
-                    >
-                      {generateTimeOptions().map((time) => (
-                        <option key={time} value={time}>{time}</option>
-                      ))}
-                    </select>
-                    -
-                    <select
-                      className="ml-2 p-1 rounded-lg border border-gray-400"
-                      name={`${day.name}_close`}
-                      value={formData.workingHours[day.name]?.close || '00:00'}
-                      onChange={(e) => handleTimeChange(day.name, 'close', e.target.value)}
-                    >
-                      {generateTimeOptions().map((time) => (
-                        <option key={time} value={time}>{time}</option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
+              {daysOfWeek.map((day) => (
+                <div className="flex items-center mt-5 leading-6" key={day.name}>
+                  <input
+                    type="checkbox"
+                    name={`${day.name}_checked`}
+                    checked={day.isOpen}
+                    onChange={handleCheckboxChange(day.setIsOpen)}
+                    className="mr-2"
+                    style={{ marginRight: "10px" }}
+                  />
+                  <span className="mr-2">{day.label}</span>
+                  <select
+                    className="mr-2 p-1 rounded-lg border border-gray-400"
+                    name={`${day.name}_open`}
+                    value={day.open}
+                    onChange={handleChange(day.setOpen)}
+                  >
+                    {generateTimeOptions().map((time) => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
+                  </select>
+                  -
+                  <select
+                    className="ml-2 p-1 rounded-lg border border-gray-400"
+                    name={`${day.name}_close`}
+                    value={day.close}
+                    onChange={handleChange(day.setClose)}
+                  >
+                    {generateTimeOptions().map((time) => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
               </div>
             </div>
           </div>
@@ -818,7 +829,7 @@ return(
       <ImageUpload />
       </div>
       <div className="flex flex-col grow font-light" style={{ width: "100px", height: "80px", marginTop: "30px", marginLeft: "50px" }}>
-            <Button onClick={() => scrollToNext('dodaj_usluge')} type='button'>Dalej</Button>
+        <Button onClick={() => scrollToNext('dodaj_usluge')} type='button'>Dalej</Button>
         </div>
       <DodajUsluge />
 
