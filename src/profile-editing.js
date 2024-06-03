@@ -243,28 +243,7 @@ function ProfilEditing()
 
     return (
         <main className="flex flex-col bg-white">
-            <header className="flex gap-5 justify-between pt-4 pr-14 pb-2.5 pl-4 w-full mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/7977c09fbdc7f424f43b6bac313c8c0b846a8486409cc547828cd66becea5790?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
-                    alt="Logo"
-                    className="shrink-0 max-w-full aspect-[4] w-[269px]"
-                />
-                <div className="flex gap-5 self-start px-3 py-1 mt-4 text-xl tracking-normal leading-5 bg-white rounded-[50px] text-stone-200 max-md:flex-wrap">
-                    <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/cfe0cb0d32b199a057494cc33d09f8174e60fc1e9c7999c63ddd34527a7a9b32?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
-                        alt="Search Icon"
-                        className="shrink-0 aspect-[0.93] w-[42px]"
-                    />
-                    <div className="flex-auto my-auto max-md:max-w-full">
-                        Szukaj usług lub biznesów
-                    </div>
-                </div>
-                <div className="justify-center px-4 py-1.5 my-auto text-xs text-center text-black bg-white rounded-md border-b border-black border-solid">
-                    Zalogowany użytkownik
-                </div>
-            </header>
+            <Header />
 
             <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
           {reservations.map((reservation, index) => (
