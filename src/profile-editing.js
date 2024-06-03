@@ -37,6 +37,7 @@ const Footer = () =>
 }
  
 function ReservationHistoryItem({ businessName, location, service, price, date }) {
+
   
   return (
     <article className="py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl bg-white">
