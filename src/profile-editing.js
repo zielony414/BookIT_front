@@ -37,6 +37,7 @@ const Footer = () =>
 }
  
 function ReservationHistoryItem({ businessName, location, service, price, date }) {
+  
   return (
     <article className="py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl bg-white">
       <header className="mb-4">
@@ -69,38 +70,7 @@ function ProfileForm({ onSubmit })
     const [stareHaslo, setStareHaslo] = useState('');
     const [noweHaslo, setNoweHaslo] = useState('');
     const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
-
-    const [services, setServices] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-      async function fetchUserReservations() {
-        try {
-          const response = await fetch('/api/user_reservations');
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          
-          // Formatowanie daty
-          const formattedData = data.map(service => ({
-            ...service,
-            booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
-          }));
-          
-          setServices(formattedData);
-        } catch (error) {
-          setError(error);
-        } finally {
-          setLoading(false);
-        }
-      }
     
-      fetchUserReservations();
-    }, []);
-    
-
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
       fetch('/edit_profile', {
@@ -132,24 +102,6 @@ function ProfileForm({ onSubmit })
 
     return (
       <form className="mt-16 max-md:mt-10 max-md:max-w-full">
-        
-        <ul className="service-list">
-      {services.length === 0 ? (
-        <li>No services found.</li>
-      ) : (
-        services.map((service, index) => (
-          <ReservationHistoryItem
-            key={index}
-            businessName={service.name}
-            location={service.Address}
-            service={service.service_name}
-            price={service.cost}
-            date={service.booking_time}
-          />
-        ))
-      )}
-    </ul>
-        
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
   <form className="mt-16 max-md:mt-10 max-md:max-w-full bg-white p-8 rounded-xl shadow-lg">
     <div className="flex gap-5 max-md:flex-col max-md:gap-0">
@@ -256,12 +208,37 @@ function ProfileForm({ onSubmit })
 
 function ProfilEditing() 
   {
+    
+    const [reservations, setReservations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+      async function fetchReservations() {
+        try {
+          const response = await fetch('/api/user_reservations');
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
   
-    const reservations = [
-      { businessName: "Holistic Body & Soul", location: "Rzeszów, ul. Mrokawska 14", service: "Terapia olejkami", price: 140, date: "15.02.2024 r., 11:00", userRating: true },
-      { businessName: "Mister Dappler", location: "Rzeszów, ul. Staroniwska 41A", service: "Strzyżenie męskie", price: 60, date: "15.05.2024 r., 11:00", userRating: false },
-      { businessName: "Mister Dappler", location: "Rzeszów, ul. Staroniwska 41A", service: "Strzyżenie męskie", price: 60, date: "24.06.2024 r., 16:00", userRating: false, upcoming: true },
-    ];
+          // Formatowanie daty
+          const formattedData = data.map(service => ({
+            ...service,
+            booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
+          }));
+  
+          setReservations(formattedData);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchReservations();
+    }, []);
+  
 
     return (
         <main className="flex flex-col bg-white">
