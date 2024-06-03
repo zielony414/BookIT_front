@@ -153,12 +153,22 @@ const handleSubmit = async () => {
       const data = await response.json();
       if (response.ok) {
           console.log('Form submitted successfully:', data);
+<<<<<<< Updated upstream
+=======
+          alert('Dane poprawne. Kontynuuj');
+          // Reset form fields if needed
+>>>>>>> Stashed changes
           
       } else {
+<<<<<<< Updated upstream
 
         if (response.status === 400) {
           alert(response.data.message);
           console.error('Error submitting form:', data.error);}
+=======
+          console.error('Error submitting form:', data.error);
+          alert('Niepoprawne dane. Sprawdź wypełnione pola.');
+>>>>>>> Stashed changes
       }
   } catch (error) {
       console.error('An error occurred while submitting the form:', error);
@@ -166,7 +176,11 @@ const handleSubmit = async () => {
 };
 
 const handleFinish = () => {
+<<<<<<< Updated upstream
   navigate('/');
+=======
+  navigate('/logowanie');
+>>>>>>> Stashed changes
 };
 
   
@@ -318,7 +332,7 @@ const handleFinish = () => {
       };
 
       try {
-        const response = await fetch('/api/add_service', {
+        const response = await fetch('/api/strona_rejestracji_firmy/usługa', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
