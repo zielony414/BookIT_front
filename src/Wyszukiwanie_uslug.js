@@ -1,65 +1,69 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Wyszukiwanie_uslug() {
-  const [data, setData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
   const [sorting, setSorting] = useState("Najwyższa ocena");
-  const [isFromHomepage, setIsFromHomepage] = useState(false);
-  const [isCategorySelected, setIsCategorySelected] = useState(false);
+  const [isFromHomepage, setIsFromHomepage] = useState(0);
+  const [isCategorySelected, setIsCategorySelected] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     let data = location.state?.filteredData || [];
-    setFilteredData(data);
+    setFilteredResults(data);
     console.log("Wyszukiwanie usług");
     if (location.state?.fromHomepage && location.state?.category) {
-      setIsCategorySelected(true);
-      setIsFromHomepage(true);
-      setSelectedCategory(location.state.category); 
+      setIsCategorySelected(1);
+      setIsFromHomepage(1);
+      setSelectedCategory(location.state.category);
+      console.log(location.state.category);
       handleFilter({ preventDefault: () => {} }, location.state.category);
     }
   }, [location.state]);
+
   
+
   useEffect(() => {
     const checkFilteredData = async () => {
       console.log("Sprawdzanie danych...");
-      console.log(filteredData);
-      console.log(location.state);
-      console.log(isCategorySelected);
-      console.log(isFromHomepage);
+      console.log("isFromHomepage:", isFromHomepage);
+    console.log("isCategorySelected:", isCategorySelected);
+    console.log("selectedCategory:", selectedCategory);
+    console.log(location.state.category);
 
-      if (!isCategorySelected && !isFromHomepage && !location.state && filteredData.length === 0) {
+      if (
+        !isCategorySelected &&
+        !isFromHomepage &&
+        !location.state &&
+        filteredResults.length === 0
+      ) {
         await new Promise((resolve) => setTimeout(resolve, 0)); // Opóźnienie wykonania sprawdzenia
         handleFilter({ preventDefault: () => {} });
       }
     };
 
     checkFilteredData();
-  }, [filteredData, location.state]);
+  }, [filteredResults, location.state]);
+
   useEffect(() => {
-    // Jeśli wybrana kategoria nie jest pusta, ustaw ją w formularzu wyboru
-    if (selectedCategory !== "") {
-      handleFilter({ preventDefault: () => {} }, selectedCategory);
+    if (isFromHomepage === 0 && isCategorySelected === 0) {
+      fetchData();
     }
-    fetchData();
-  }, [selectedCategory]);
+  }, [isFromHomepage, isCategorySelected]);
 
   const fetchData = () => {
     console.log("Pobieranie danych...");
     Promise.all([
-      fetch("/api/nav_items").then((res) => res.json()),
       fetch("/api/strona_wyszukiwania_kategorie").then((res) => res.json()),
       fetch("/api/strona_wyszukiwania_miasta").then((res) => res.json()),
     ])
-      .then(([navItemsData, categoriesData, citiesData]) => {
-        setData(navItemsData.nav_items);
+      .then(([categoriesData, citiesData]) => {
         setCategories(categoriesData.categories);
         setCities(citiesData.cities);
       })
@@ -69,6 +73,7 @@ function Wyszukiwanie_uslug() {
   };
 
   const handleFilter = async (e, categoryFromHome = null) => {
+    e.preventDefault(); // Prevent the default form action (e.g. page reload)
 
     const filterData = {
       kategoria: categoryFromHome || selectedCategory,
@@ -86,8 +91,10 @@ function Wyszukiwanie_uslug() {
       });
       if (response.ok) {
         const filteredData = await response.json();
-        setFilteredData(filteredData.companies); // Accessing the 'companies' array
         console.log(filteredData); // Handle the filtered data
+
+        // Update the filtered results state
+        setFilteredResults(filteredData.companies);
 
         // Navigate to the search results page with the filtered data as state
         navigate("/Wyszukiwanie usług", {
@@ -168,7 +175,7 @@ function Wyszukiwanie_uslug() {
 
         if (response.ok) {
           const filteredData = await response.json();
-          setFilteredData(filteredData.companies);
+          setFilteredResults(filteredData.companies);
           console.log("searchbar");
           console.log(filteredData);
 
@@ -276,34 +283,81 @@ function Wyszukiwanie_uslug() {
   };
 
   const MidBody = ({ filteredData }) => {
+    const generateStars = (rating) => {
+      const fullStars = Math.floor(rating);
+      const halfStars = rating % 1 !== 0 ? 1 : 0;
+      const emptyStars = 5 - fullStars - halfStars;
+      return (
+        <div className="flex items-center">
+          {[...Array(fullStars)].map((_, i) => (
+            <span key={`full-${i}`} className="text-yellow-500">
+              ★
+            </span>
+          ))}
+          {halfStars === 1 && <span className="text-yellow-500">☆</span>}
+          {[...Array(emptyStars)].map((_, i) => (
+            <span key={`empty-${i}`} className="text-gray-400">
+              ★
+            </span>
+          ))}
+        </div>
+      );
+    };
+
     return (
       <div className="flex flex-col m-4 p-4">
-        {filteredData.length > 0 ? (
-          filteredData.map((item, index) => (
+        {filteredResults.length > 0 ? (
+          filteredResults.map((item, index) => (
             <div
               key={index}
-              className="flex items-center md-4 bg-stone-200 rounded p-4"
-              style={{ marginBottom: "20px" }}
+              className="flex flex-col justify-center mb-8 p-8 rounded bg-stone-200 max-md:p-5"
             >
-              <div className="w-50vw h-10vh flex items-center rounded">
-                {" "}
-                {/* Użyj jednostek vw i vh */}
-                <img
-                  alt="Logo"
-                  src={item.logo}
-                  style={{ width: "450px", height: "auto" }} // Ustaw stały rozmiar pikselowy
-                />
-              </div>
-              <div className="ml-4">
-                <h3>{item.name}</h3>
-                <p>{item.description}</p>
-                <p>Kategoria: {item.category}</p>
-                <p>
-                  Adres: {item.city} {item.address}
-                </p>
-                <p>Oceny: {item.reviews_no}</p>
-                <p>Średnia ocen: {item.avg_rating}</p>
-              </div>
+              <section className="flex gap-5 max-md:flex-col max-md:gap-0 w-full">
+                <figure className="flex flex-col max-md:ml-0 max-md:w-full rounded mr-4">
+                  <img
+                    src={item.logo}
+                    alt="Company logo"
+                    className="grow shrink-0 max-w-full shadow-lg aspect-[1.06] w-[229px] max-md:mt-8"
+
+                  />
+                </figure>
+                <div className="flex flex-col w-4/5 max-md:ml-0 max-md:w-full">
+                  <div className="flex gap-5 mr-8">
+                    {/* First Column */}
+                    <div className="flex flex-col gap-3 w-1/2">
+                      <h1 className="text-3xl font-medium">{item.name}</h1>
+                      <div className="flex items-center gap-2 text-xl">
+                        <img
+                          src="https://cdn.builder.io/api/v1/image/assets/TEMP/d2d1ecd326255b82c2ece04b5eaa6aba202a956783c93e13939df9af7ba141e9?apiKey=d10d36f0508e433185a32e898689ca50&"
+                          alt="Location icon"
+                          className="shrink-0 w-6 aspect-square"
+                        />
+                        <div className="flex-auto my-auto">
+                          {item.city} {item.address}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-base">
+                        <div>{item.reviews_no} opinii</div>
+                        <div>{generateStars(item.avg_rating)}</div>
+                      </div>
+                      <div className="flex flex-col text-xl whitespace-nowrap">
+                        <div>Kategoria: {item.category}</div>
+                      </div>
+                    </div>
+                    {/* Second Column */}
+                    <div className="flex flex-col gap-3 w-1/2">
+                      <div className="flex-auto text-base font-medium max-md:max-w-full text-center">
+                        {item.description}
+                      </div>
+                      <div className="flex flex-col flex-1 justify-center self-end mt-6 text-2xl font-medium text-center">
+                        <button className="justify-center px-10 py-3.5 bg-white rounded-[30px] max-md:px-5">
+                          Zarezerwuj wizytę
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           ))
         ) : (
@@ -315,7 +369,7 @@ function Wyszukiwanie_uslug() {
 
   const Footer = () => {
     let cas = "";
-    if (filteredData.length == 0 || filteredData.length == 1)
+    if (filteredResults.length === 0 || filteredResults.length === 1)
       cas =
         "flex flex-col items-start px-8 pt-5 pb-3.5 mt-auto w-full text-white bg-black max-md:px-5 max-md:max-w-full fixed bottom-0";
     else
@@ -342,7 +396,7 @@ function Wyszukiwanie_uslug() {
     <>
       <Header />
       <Hero />
-      <MidBody filteredData={filteredData} />
+      <MidBody filteredResults={filteredResults} />
       <Footer />
     </>
   );
