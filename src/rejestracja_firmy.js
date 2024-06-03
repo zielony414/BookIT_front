@@ -80,22 +80,6 @@ const handleStreetNumberChange = handleChange(setStreet);
 const handleCityChange = handleChange(setCity);
 const handlePostCodeChange = handleChange(setCode);
 
-/* const handleMondayOpenChange = handleChange(setMondayOpen);
-const handleMondayCloseChange = handleChange(setMondayClose);
-const handleTuesdayOpenChange = handleChange(setTuesdayOpen);
-const handleTuesdayCloseChange = handleChange(setTuesdayClose);
-const handleWednesdayOpenChange = handleChange(setWednesdayOpen);
-const handleWednesdayClosenChange = handleChange(setWednesdayClose);
-const handleThursdayOpenChange = handleChange(setThursdayOpen);
-const handleThursdayCloseChange = handleChange(setThursdayClose);
-const handleFridayOpenChange = handleChange(setFridayOpen);
-const handleFridayCloseChange = handleChange(setFridayClose);
-const handleSaturdayOpenChange = handleChange(setSaturdayOpen);
-const handleSaturdayCloseChange = handleChange(setSaturdayClose);
-const handleSundayOpenChange = handleChange(setSundayOpen);
-const handleSundayCloseChange = handleChange(setSundayClose); */
-
-
 
 const handleStacjonarnieChange = () => {
   setStacjonarnie(!stacjonarnie);
@@ -170,7 +154,7 @@ const handleSubmit = async () => {
       if (response.ok) {
           console.log('Form submitted successfully:', data);
           // Reset form fields if needed
-          navigate('/Strona_tytulowa')
+          
 
       } else {
           console.error('Error submitting form:', data.error);
@@ -180,7 +164,9 @@ const handleSubmit = async () => {
   }
 };
 
-
+const handleFinish = () => {
+  navigate('/Strona_tytulowa');
+};
 
   
     const scrollToNext = (headerId) => {
@@ -836,7 +822,7 @@ return(
         <div className="flex gap-5 justify-between mt-16 max-w-full text-2xl font-light text-center text-black whitespace-nowrap w-[823px] max-md:flex-wrap max-md:mt-10">
           <button
             className="justify-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
-            tabIndex="0" style={{marginLeft: "350px"}}
+            tabIndex="0" style={{marginLeft: "350px"}} onClick={handleFinish}
           >
             Zakończ
           </button>
