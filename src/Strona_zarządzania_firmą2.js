@@ -1,0 +1,315 @@
+import React, { useState, useEffect } from "react";
+import "./Strona_zarządzania_firmą.css";
+import Calendar from 'react-calendar';
+import axios from 'axios';
+
+function Strona_zarządzania_firmą2() {
+  const [hours, setHours] = useState({
+    monday_start: '',
+    monday_end: '',
+    tuesday_start: '',
+    tuesday_end: '',
+    wensday_start: '',
+    wensday_end: '',
+    thursday_start: '',
+    thursday_end: '',
+    friday_start: '',
+    friday_end: '',
+    saturday_start: '',
+    saturday_end: '',
+    sunday_start: '',
+    sunday_end: ''
+  });
+  const [checkboxes, setCheckboxes] = useState({
+    monday: false,
+    tuesday: false,
+    wensday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false
+  });
+  const [reservations, setReservations] = useState([]);
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [error, setError] = useState('');
+  const [newDate, setNewDate] = useState(new Date());
+  const [newTime, setNewTime] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const company_id = 3;
+
+  const fetchCompanyHours = async () => {
+    try {
+      const response = await axios.post('/api/Strona_zarządzania_firmą2', { company_id });
+      setHours(response.data);
+      updateCheckboxes(response.data);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error connecting to the server');
+    }
+  };
+
+  const fetchReservations = async (date) => {
+    try {
+      const response = await axios.post('/api/Strona_zarządzania_firmą/reservations', { company_id, date });
+      setReservations(response.data);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error fetching reservations');
+      setReservations([]);
+    }
+  };
+
+  const handleDateChange = (date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log('Fetching reservations for:', formattedDate);
+    fetchReservations(formattedDate);
+  };
+
+  const updateCheckboxes = (hours) => {
+    setCheckboxes({
+      monday: hours.monday_start !== hours.monday_end,
+      tuesday: hours.tuesday_start !== hours.tuesday_end,
+      wensday: hours.wensday_start !== hours.wensday_end,
+      thursday: hours.thursday_start !== hours.thursday_end,
+      friday: hours.friday_start !== hours.friday_end,
+      saturday: hours.saturday_start !== hours.saturday_end,
+      sunday: hours.sunday_start !== hours.sunday_end
+    });
+  };
+
+  useEffect(() => {
+    fetchCompanyHours();
+  }, []);
+
+  const handleHourChange = (day, type, value) => {
+    setHours(prevHours => ({
+      ...prevHours,
+      [`${day}_${type}`]: value
+    }));
+  };
+
+  const saveHours = async () => {
+    try {
+      console.log('Saving hours:', hours);
+      await axios.post('/api/update_company_hours', { company_id, hours });
+      alert('Godziny pracy zostały zapisane');
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error saving hours');
+    }
+  };
+
+  const handleCheckboxChange = (day) => {
+    setCheckboxes(prevCheckboxes => {
+      const newCheckboxes = { ...prevCheckboxes, [day]: !prevCheckboxes[day] };
+      if (!newCheckboxes[day]) {
+        setHours(prevHours => ({
+          ...prevHours,
+          [`${day}_start`]: '00:00',
+          [`${day}_end`]: '00:00'
+        }));
+      }
+      return newCheckboxes;
+    });
+  };
+
+  const handleReservationClick = (reservation) => {
+    setSelectedReservation(reservation);
+    setNewDate(new Date(reservation.booking_time));
+    setNewTime(reservation.booking_time.split(' ')[1]);
+  };
+
+  const handleEditClick = () => {
+    setShowModal(true);
+  };
+
+  const handleSaveClick = async () => {
+    try {
+      const newBookingTime = `${newDate.toISOString().split('T')[0]} ${newTime}`;
+      const updatedReservation = { ...selectedReservation, booking_time: newBookingTime };
+      await axios.post('/api/update_reservation', { reservation: updatedReservation });
+      setSelectedReservation(updatedReservation);
+      setShowModal(false);
+      alert('Rezerwacja została zaktualizowana');
+      fetchReservations(newDate);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error updating reservation');
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const Header = () => (
+    <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
+      <img
+        loading="lazy"
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&"
+        alt="Company logo"
+        className="shrink-0 max-w-full aspect-[4.35] w-[230px]"
+      />
+      <div className="flex gap-4 items-start my-auto">
+        <button to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
+          Zaloguj się/załóż konto
+        </button>
+        <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
+          Dodaj swoją firmę
+        </button>
+      </div>
+    </header>
+  );
+
+  const Body = () => (
+    <div>
+      <div id="calosc">
+        <div id="kalendarz">
+          <Calendar onClickDay={handleDateChange} />
+          <div id="godzina_wpisania">
+            <div className="godziny_do_wpisania_checkbox">
+              <input type="checkbox" className="dni" id="myCheckbox_poniedziałek" checked={checkboxes.monday} onChange={() => handleCheckboxChange('monday')} />
+              <input type="checkbox" className="dni" id="myCheckbox_wtorek" checked={checkboxes.tuesday} onChange={() => handleCheckboxChange('tuesday')} />
+              <input type="checkbox" className="dni" id="myCheckbox_środa" checked={checkboxes.wensday} onChange={() => handleCheckboxChange('wensday')} />
+              <input type="checkbox" className="dni" id="myCheckbox_czwartek" checked={checkboxes.thursday} onChange={() => handleCheckboxChange('thursday')} />
+              <input type="checkbox" className="dni" id="myCheckbox_piątek" checked={checkboxes.friday} onChange={() => handleCheckboxChange('friday')} />
+              <input type="checkbox" className="dni" id="myCheckbox_sobota" checked={checkboxes.saturday} onChange={() => handleCheckboxChange('saturday')} />
+              <input type="checkbox" className="dni" id="myCheckbox_niedziela" checked={checkboxes.sunday} onChange={() => handleCheckboxChange('sunday')} />
+            </div>
+            <div className="godziny_do_wpisania_text">
+              <label className="dni" htmlFor="myCheckbox_poniedziałek"> Poniedziałek</label>
+              <label className="dni" htmlFor="myCheckbox_wtorek"> Wtorek</label>
+              <label className="dni" htmlFor="myCheckbox_środa"> Środa</label>
+              <label className="dni" htmlFor="myCheckbox_czwartek"> Czwartek</label>
+              <label className="dni" htmlFor="myCheckbox_piątek"> Piątek</label>
+              <label className="dni" htmlFor="myCheckbox_sobota"> Sobota</label>
+              <label className="dni" htmlFor="myCheckbox_niedziela"> Niedziela</label>
+            </div>
+            <div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.monday_start} onChange={(e) => handleHourChange('monday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.monday_end} onChange={(e) => handleHourChange('monday', 'end', e.target.value)} />
+              </div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.tuesday_start} onChange={(e) => handleHourChange('tuesday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.tuesday_end} onChange={(e) => handleHourChange('tuesday', 'end', e.target.value)} />
+              </div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.wensday_start} onChange={(e) => handleHourChange('wensday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.wensday_end} onChange={(e) => handleHourChange('wensday', 'end', e.target.value)} />
+              </div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.thursday_start} onChange={(e) => handleHourChange('thursday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.thursday_end} onChange={(e) => handleHourChange('thursday', 'end', e.target.value)} />
+              </div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.friday_start} onChange={(e) => handleHourChange('friday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.friday_end} onChange={(e) => handleHourChange('friday', 'end', e.target.value)} />
+              </div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.saturday_start} onChange={(e) => handleHourChange('saturday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.saturday_end} onChange={(e) => handleHourChange('saturday', 'end', e.target.value)} />
+              </div>
+              <div className="checkbox-container">
+                <input type="time" className="godziny" value={hours.sunday_start} onChange={(e) => handleHourChange('sunday', 'start', e.target.value)} />
+                <p>-</p>
+                <input type="time" className="godziny" value={hours.sunday_end} onChange={(e) => handleHourChange('sunday', 'end', e.target.value)} />
+              </div>
+            </div>
+          </div>
+          <div id="przyciski">
+            <button type="button" className="zapis">ODWOŁAJ REZERWACJE</button>
+            <button type="button" className="zapis" onClick={saveHours}>ZAPISZ</button>
+            <button type="button" className="zapis">COFNIJ</button>
+          </div>
+        </div>
+
+        <div id="uslugi6">
+          <div id="uslugi2">
+            <div id="usługi3">
+              {reservations.length > 0 ? reservations.map((res, index) => (
+                <button
+                  key={index}
+                  className={`uslugi42 ${selectedReservation === res ? 'selected' : ''}`}
+                  onClick={() => handleReservationClick(res)}
+                >
+                  <p className="uslugi_napisy">{res.category} {res.booking_time}</p>
+                  <p className="uslugi_napisy">{res.service_name}</p>
+                  <p className="uslugi_napisy">Czas trwania: {res.execution_time}</p>
+                </button>
+              )) : (
+                <p className="uslugi4">Brak rezerwacji</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {selectedReservation && (
+          <div id="szczegoly">
+            <div id="back">
+              <div id="gora_szczegol">
+                <a id="godzina">{selectedReservation.booking_time}</a>
+              </div>
+              <p className="napis_tytul">Email:</p>
+              <p className="napis_reszta">{selectedReservation.email}</p>
+              <p className="napis_tytul">Numer tel:</p>
+              <p className="napis_reszta">{selectedReservation.sms}</p>
+              <p className="napis_tytul">Rodzaj usługi:</p>
+              <p className="napis_reszta">{selectedReservation.service_name}</p>
+              <p className="napis_tytul">Opis usługi:</p>
+              <p className="napis_reszta">{selectedReservation.opis}</p>
+              <div id="przyciski_szczegoly">
+                <button type="button" className="przycisk_szczegol" onClick={handleEditClick}>Zmień termin</button>
+                <button type="button" className="przycisk_szczegol">Anuluj rezerwację</button>
+              </div>
+              {/* Modal */}
+                {showModal && (
+                    <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={closeModal}>&times;</span>
+                        <h2>Zmień termin rezerwacji</h2>
+                        <label htmlFor="newDate">Nowa data:</label>
+                        <input type="date" id="newDate" value={newDate} onChange={(e) => setNewDate(new Date(e.target.value))} />
+                        <label htmlFor="newTime">Nowa godzina:</label>
+                        <input type="time" id="newTime" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+                        <button onClick={handleSaveClick}>Zapisz zmiany</button>
+                    </div>
+                    </div>
+                 )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const Footer = () => (
+    <footer className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+      <div className="flex gap-5 justify-between text-base">
+        <div className="flex gap-5 justify-between">
+          <a href="#" className="justify-center">O nas</a>
+          <a href="#" className="justify-center whitespace-nowrap">Kontakt</a>
+        </div>
+        <a href="#" className="justify-center whitespace-nowrap">FAQ</a>
+      </div>
+      <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
+      <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
+    </footer>
+  );
+
+  return (
+    <>
+      <Header />
+      <Body />
+      <Footer />
+    </>
+  );
+}
+
+export default Strona_zarządzania_firmą2;
