@@ -97,9 +97,6 @@ const handleNewsletterAcceptedChange = handleToggle(setNewsletterAccepted);
     }
   };
 
-  const handleLoginClick = () => {
-    navigate('/logowanie');
-  };
 
   const Button = ({ children, onClick, type = 'button' }) => (
     <button type={type} onClick={onClick} className="bg-white border border-black border-solid" style={{ borderRadius: '1rem', width: "100px", height: "50px", marginRight: "50px" }}>
@@ -108,18 +105,20 @@ const handleNewsletterAcceptedChange = handleToggle(setNewsletterAccepted);
   );
 
   const Header = () => (
-    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" style={{ marginBottom: "50px" }}>
+    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
+        src="bookit-logo.png"
         alt="Logo"
-        className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
       <div className="flex gap-3.5 items-start my-auto">
-        <button onClick={handleLoginClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Zaloguj się/załóż konto
         </button>
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Dodaj swoją firmę
         </button>
       </div>
