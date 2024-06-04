@@ -120,8 +120,9 @@ function Strona_tytulowa() {
     useEffect(() => {
         const fetchAuthStatus = async () => {
             try {
-                const response = await fetch('/api/czy_zalogowano');
+                const response = await fetch('https://book-it-back.vercel.app/api/czy_zalogowano');
                 const data = await response.json();
+                console.log('dupadupadupa1', data.email, data.company_or_user);
                 setAuthStatus(data);
             } catch (error) {
                 console.error('Error fetching auth status:', error);
@@ -141,7 +142,7 @@ function Strona_tytulowa() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('/api/wyloguj', {
+            const response = await fetch('https://book-it-back.vercel.app/api/wyloguj', {
                 method: 'GET',
             });
             if (response.ok) {
