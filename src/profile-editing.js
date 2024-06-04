@@ -79,6 +79,27 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
   const hours = reservationTime.getHours().toString().padStart(2, '0'); // Add leading zero if hour is single digit
   const minutes = reservationTime.getMinutes().toString().padStart(2, '0'); // Add leading zero if minute is single digit
 
+  useEffect(() => {
+    if (rating > 0) {
+      const email = "contact@bury.com"; // replace with actual email logic
+      const payload = { email, ocena: rating };
+      fetch('/api/user_page/oceny', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Odpowiedź z serwera:', data);
+        })
+        .catch(error => {
+          console.error('Błąd:', error);
+        });
+    }
+  }, [rating]);
+
   return (
     <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
       <header style={{ marginBottom: '1rem' }}>
@@ -107,10 +128,6 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
     </article>
   );
 }
-
-
-
-
 
 
 function ProfileForm({ onSubmit }) 
