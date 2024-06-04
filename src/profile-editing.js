@@ -36,35 +36,40 @@ const Footer = () =>
     );
 }
  
-function StarRating({ rating, setRating }) {
+function StarRating({ rating, setRating, disabled }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      {[...Array(5)].map((star, index) => {
-        index += 1;
-        return (
-          <button
-            type="button"
-            key={index}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '2rem',
-              color: index <= rating ? 'gold' : 'gray',
-            }}
-            onClick={() => setRating(index)}
-          >
-            <span>&#9733;</span>
-          </button>
-        );
-      })}
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+      {rating === 0 ? <p>Oceń wizytę:</p> : <p>Dziękujemy za opinię :)</p>}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        {[...Array(5)].map((star, index) => {
+          index += 1;
+          return (
+            <button
+              type="button"
+              key={index}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: disabled ? 'default' : 'pointer',
+                fontSize: '2rem',
+                color: index <= rating ? 'gold' : 'gray',
+                pointerEvents: disabled ? 'none' : 'auto',
+              }}
+              onClick={() => !disabled && setRating(index)}
+            >
+              <span>&#9733;</span> {/* Unicode character for star */}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
 function ReservationHistoryItem({ businessName, location, service, price, date }) {
-
   const [rating, setRating] = useState(0);
+
+  const isPastReservation = new Date(date) < new Date();
 
   return (
     <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white' }}>
@@ -81,7 +86,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
       <footer style={{ fontSize: '1.5rem', fontWeight: '500' }}>
         <p>Data: {date}</p>
         <div style={{ marginTop: '0.5rem' }}>
-          <StarRating rating={rating} setRating={setRating} />
+          <StarRating rating={rating} setRating={setRating} disabled={!isPastReservation} />
         </div>
       </footer>
     </article>
