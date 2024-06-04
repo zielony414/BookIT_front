@@ -36,7 +36,7 @@ export default class ImageUpload extends Component {
       data.append("files[]", this.state.image[i]);
     }
   
-    axios.post("book-it-back.vercel.app"+"/api/strona_rejestracji_firmy/zdjecia", data)
+    axios.post("http://127.0.0.1:5000/api/strona_rejestracji_firmy/zdjecia", data)
     .then((response) => {
             console.log(response)
         if (response.status === 201) {

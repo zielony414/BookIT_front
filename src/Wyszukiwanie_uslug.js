@@ -45,8 +45,8 @@ function Wyszukiwanie_uslug() {
   const fetchData = () => {
     console.log("Pobieranie danych...");
     Promise.all([
-      fetch('book-it-back.vercel.app'+"/api/strona_wyszukiwania_kategorie").then((res) => res.json()),
-      fetch('book-it-back.vercel.app'+"/api/strona_wyszukiwania_miasta").then((res) => res.json()),
+      fetch("/api/strona_wyszukiwania_kategorie").then((res) => res.json()),
+      fetch("/api/strona_wyszukiwania_miasta").then((res) => res.json()),
     ])
       .then(([categoriesData, citiesData]) => {
         setCategories(categoriesData.categories);
@@ -67,7 +67,7 @@ function Wyszukiwanie_uslug() {
     };
 
     try {
-      const response = await fetch('book-it-back.vercel.app'+"/api/wyszukiwanie", {
+      const response = await fetch("/api/wyszukiwanie", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ function Wyszukiwanie_uslug() {
       };
 
       try {
-        const response = await fetch('book-it-back.vercel.app'+"/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch("/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

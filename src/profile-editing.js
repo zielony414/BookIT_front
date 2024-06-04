@@ -83,7 +83,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
     if (rating > 0) {
       const email = company_email; // replace with actual email logic
       const payload = { email, ocena: rating };
-      fetch('book-it-back.vercel.app'+'/api/user_page/oceny', {
+      fetch('/api/user_page/oceny', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ function ProfileForm({ onSubmit })
     
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
-      fetch('book-it-back.vercel.app'+'/api/edit_profile', {
+      fetch('/edit_profile', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -286,7 +286,7 @@ function ProfilEditing()
     useEffect(() => {
       async function fetchReservations() {
         try {
-          const response = await fetch('book-it-back.vercel.app'+'/api/user_reservations');
+          const response = await fetch('/api/user_reservations');
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }

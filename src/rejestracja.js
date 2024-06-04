@@ -63,7 +63,7 @@ const handleNewsletterAcceptedChange = handleToggle(setNewsletterAccepted);
     }
 
     try {
-      const response = await fetch('book-it-back.vercel.app'+'/api/user_registration', {
+      const response = await fetch('/api/user_registration', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
