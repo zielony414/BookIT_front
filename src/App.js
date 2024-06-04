@@ -110,26 +110,96 @@ function Strona_tytulowa() {
     </p>
   );
 
-  const Header = () => (
-    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
-      <img
-        loading="lazy"
-        src="bookit-logo.png"
-        alt="Logo"
-        className="shrink-0 h-16 w-auto" 
-        role = "button"
-        onClick={() => navigate('/')}
-      />
-      <div className="flex gap-3.5 items-start my-auto">
-        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
-          Zaloguj się/załóż konto
-        </button>
-        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
-          Dodaj swoją firmę
-        </button>
-      </div>
-    </div>
-  );
+  const Header = () => {
+    const navigate = useNavigate();
+    const [authStatus, setAuthStatus] = useState({
+        email: '',
+        company_or_user: null,
+    });
+
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            try {
+                const response = await fetch('/api/czy_zalogowano');
+                const data = await response.json();
+                setAuthStatus(data);
+            } catch (error) {
+                console.error('Error fetching auth status:', error);
+            }
+        };
+
+        fetchAuthStatus();
+    }, []);
+
+    const handleProfileClick = () => {
+        if (authStatus.company_or_user === 1) {
+            navigate('/strona_zarządzania_firmą');
+        } else if (authStatus.company_or_user === 0) {
+            navigate('/profile-editing');
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('/api/wyloguj', {
+                method: 'GET',
+            });
+            if (response.ok) {
+                setAuthStatus({
+                    email: '',
+                    company_or_user: null,
+                });
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
+    return (
+        <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+            <img
+                loading="lazy"
+                src="bookit-logo.png"
+                alt="Logo"
+                className="shrink-0 h-16 w-auto" 
+                role="button"
+                onClick={() => navigate('/')}
+            />
+            {authStatus.company_or_user !== null ? (
+                <div className="flex gap-3.5 items-start my-auto">
+                    <button
+                        onClick={handleProfileClick}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        {authStatus.email}
+                    </button>
+                    <button
+                        onClick={handleLogout}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Wyloguj
+                    </button>
+                </div>
+            ) : (
+                <div className="flex gap-3.5 items-start my-auto">
+                    <button
+                        onClick={() => navigate('/logowanie')}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Zaloguj się/załóż konto
+                    </button>
+                    <button
+                        onClick={() => navigate('/rejestracja_firmy')}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Dodaj swoją firmę
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
   const Hero = ({ data }) => {
     const [searchTerm, setSearchTerm] = useState("");
