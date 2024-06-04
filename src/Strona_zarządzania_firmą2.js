@@ -32,10 +32,9 @@ function Strona_zarządzania_firmą2() {
   const [reservations, setReservations] = useState([]);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   const [newDate, setNewDate] = useState(new Date());
-  const [newTime, setNewTime] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [newTime, setNewTime] = useState('12:00');
   const company_id = 3;
 
   const fetchCompanyHours = async () => {
@@ -116,30 +115,51 @@ function Strona_zarządzania_firmą2() {
 
   const handleReservationClick = (reservation) => {
     setSelectedReservation(reservation);
-    setNewDate(new Date(reservation.booking_time));
-    setNewTime(reservation.booking_time.split(' ')[1]);
   };
 
   const handleEditClick = () => {
-    setShowModal(true);
+    setIsModalOpen(true);
   };
 
   const handleSaveClick = async () => {
     try {
-      const newBookingTime = `${newDate.toISOString().split('T')[0]} ${newTime}`;
-      const updatedReservation = { ...selectedReservation, booking_time: newBookingTime };
-      await axios.post('/api/update_reservation', { reservation: updatedReservation });
-      setSelectedReservation(updatedReservation);
-      setShowModal(false);
-      alert('Rezerwacja została zaktualizowana');
+      const updatedReservation = {
+        ...selectedReservation,
+        booking_time: `${newDate.toISOString().split('T')[0]} ${newTime}`,
+      };
+      await axios.post('/api/update_reservation', { reservation: updatedReservation});
+      alert('Rezerwacja została zmieniona');
+      setIsModalOpen(false);
       fetchReservations(newDate);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error updating reservation');
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
+  const handleDeleteClick = async () => {
+    try {
+      await axios.delete('/api/delete_reservation', { data: { id_rezerwacji: selectedReservation.id_rezerwacji } });
+      alert('Rezerwacja została usunięta');
+      setSelectedReservation(null);
+      fetchReservations(newDate);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error deleting reservation');
+    }
+  };
+
+  const handleDeleteAllClick = async () => {
+    try {
+      const day = String(newDate.getDate()).padStart(2, '0');
+      const month = String(newDate.getMonth() + 1).padStart(2, '0');
+      const year = newDate.getFullYear();
+      const formattedDate = `${year}-${month}-${day}`;
+      await axios.delete('/api/delete_reservations_by_date', { data: { reservation_date: formattedDate } });
+      alert('Wszystkie rezerwacje na dany dzień zostały usunięte');
+      setSelectedReservation(null);
+      fetchReservations(newDate);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error deleting all reservations');
+    }
   };
 
   const Header = () => (
@@ -224,7 +244,7 @@ function Strona_zarządzania_firmą2() {
             </div>
           </div>
           <div id="przyciski">
-            <button type="button" className="zapis">ODWOŁAJ REZERWACJE</button>
+            <button type="button" className="zapis" inClick={handleDeleteAllClick}>ODWOŁAJ WSZYSTKO</button>
             <button type="button" className="zapis" onClick={saveHours}>ZAPISZ</button>
             <button type="button" className="zapis">COFNIJ</button>
           </div>
@@ -266,26 +286,30 @@ function Strona_zarządzania_firmą2() {
               <p className="napis_reszta">{selectedReservation.opis}</p>
               <div id="przyciski_szczegoly">
                 <button type="button" className="przycisk_szczegol" onClick={handleEditClick}>Zmień termin</button>
-                <button type="button" className="przycisk_szczegol">Anuluj rezerwację</button>
+                <button type="button" className="przycisk_szczegol" onClick={handleDeleteClick}>Anuluj rezerwację</button>
               </div>
-              {/* Modal */}
-                {showModal && (
-                    <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={closeModal}>&times;</span>
-                        <h2>Zmień termin rezerwacji</h2>
-                        <label htmlFor="newDate">Nowa data:</label>
-                        <input type="date" id="newDate" value={newDate} onChange={(e) => setNewDate(new Date(e.target.value))} />
-                        <label htmlFor="newTime">Nowa godzina:</label>
-                        <input type="time" id="newTime" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
-                        <button onClick={handleSaveClick}>Zapisz zmiany</button>
-                    </div>
-                    </div>
-                 )}
             </div>
           </div>
         )}
       </div>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
+            <h2>Zmień termin rezerwacji</h2>
+            <div>
+              <label>Nowa data:    </label>
+              <input type="date" value={newDate.toISOString().split('T')[0]} onChange={(e) => setNewDate(new Date(e.target.value))} />
+            </div>
+            <div>
+              <label>Nowa godzina:    </label>
+              <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+            </div>
+            <button type="button" onClick={handleSaveClick} id="zmiana_terminu">Zapisz zmiany</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 
