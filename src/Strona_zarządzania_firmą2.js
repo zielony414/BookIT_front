@@ -39,7 +39,7 @@ function Strona_zarządzania_firmą2() {
 
   const fetchCompanyHours = async () => {
     try {
-      const response = await axios.post('/api/Strona_zarządzania_firmą2', { company_id });
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą2', { company_id });
       setHours(response.data);
       updateCheckboxes(response.data);
     } catch (err) {
@@ -49,7 +49,7 @@ function Strona_zarządzania_firmą2() {
 
   const fetchReservations = async (date) => {
     try {
-      const response = await axios.post('/api/Strona_zarządzania_firmą/reservations', { company_id, date });
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą/reservations', { company_id, date });
       setReservations(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error fetching reservations');
@@ -92,7 +92,7 @@ function Strona_zarządzania_firmą2() {
   const saveHours = async () => {
     try {
       console.log('Saving hours:', hours);
-      await axios.post('/api/update_company_hours', { company_id, hours });
+      await axios.post('https://book-it-back.vercel.app/api/update_company_hours', { company_id, hours });
       alert('Godziny pracy zostały zapisane');
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error saving hours');
@@ -127,7 +127,7 @@ function Strona_zarządzania_firmą2() {
         ...selectedReservation,
         booking_time: `${newDate.toISOString().split('T')[0]} ${newTime}`,
       };
-      await axios.post('/api/update_reservation', { reservation: updatedReservation});
+      await axios.post('https://book-it-back.vercel.app/api/update_reservation', { reservation: updatedReservation});
       alert('Rezerwacja została zmieniona');
       setIsModalOpen(false);
       fetchReservations(newDate);
@@ -138,7 +138,7 @@ function Strona_zarządzania_firmą2() {
 
   const handleDeleteClick = async () => {
     try {
-      await axios.delete('/api/delete_reservation', { data: { id_rezerwacji: selectedReservation.id_rezerwacji } });
+      await axios.delete('https://book-it-back.vercel.app/api/delete_reservation', { data: { id_rezerwacji: selectedReservation.id_rezerwacji } });
       alert('Rezerwacja została usunięta');
       setSelectedReservation(null);
       fetchReservations(newDate);

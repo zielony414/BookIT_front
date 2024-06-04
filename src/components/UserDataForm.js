@@ -6,7 +6,7 @@ const UserDataForm = ({ userId, getUserInfo }) => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`/api/user_info?user_id=${userId}`);
+        const response = await fetch(`https://book-it-back.vercel.app/api/user_info?user_id=${userId}`);
         const data = await response.json();
 
         if (!response.ok) {
