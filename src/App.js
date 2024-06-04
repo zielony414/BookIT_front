@@ -31,7 +31,7 @@ function Strona_tytulowa() {
   }, []);
   
 
-  const ImageCard = ({ name, logo, description }) => {
+  const ImageCard = ({ name, logo, description, onClick }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
@@ -47,6 +47,7 @@ function Strona_tytulowa() {
             className="relative flex flex-col items-center rounded-md overflow-hidden mb-4 w-[250px] h-[450px] group"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onClick={onClick}
         >
             <div className="w-full h-full flex items-center justify-center rounded-md">
                 <img
@@ -72,7 +73,7 @@ function Strona_tytulowa() {
       children
     );
   };
-  const Image = ({ src, alt, className }) =>
+  const Image = ({ src, alt, className}) =>
     React.createElement("img", {
       loading: "lazy",
       src: src,
@@ -311,6 +312,7 @@ function Strona_tytulowa() {
                 logo={card.logo}
                 description={card.description}
                 style={{ order: (index + imageIndex) % imageCards.length }}
+                onClick={() => navigate("/Strona wyboru usług",{ state: { name: card.name}})}
               />
             ))
           ) : (

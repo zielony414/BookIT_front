@@ -294,8 +294,8 @@ function Wyszukiwanie_uslug() {
         </div>
       );
     };
-
     return (
+      
       <div className="flex flex-col m-4 p-4">
         {filteredResults.length > 0 ? (
           filteredResults.map((item, index) => (
@@ -336,12 +336,16 @@ function Wyszukiwanie_uslug() {
                       </div>
                     </div>
                     {/* Second Column */}
-                    <div className="flex flex-col gap-3 w-1/2">
+                    <div className="flex flex-col gap-3 w-1/2 ">
                       <div className="flex-auto text-base font-medium max-md:max-w-full text-center">
                         {item.description}
                       </div>
                       <div className="flex flex-col flex-1 justify-center self-end mt-6 text-2xl font-medium text-center">
-                        <button className="justify-center px-10 py-3.5 bg-white rounded-[30px] max-md:px-5">
+                        <button 
+                        className="justify-center px-10 py-3.5 bg-white rounded-[30px] max-md:px-5"
+                        onClick={
+                          () => navigate("/Strona wyboru usług",{ state: { name: item.name}})
+                        }>
                           Zarezerwuj wizytę
                         </button>
                       </div>
