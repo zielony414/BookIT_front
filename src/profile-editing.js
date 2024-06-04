@@ -1,24 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./output.css";
 import { Link } from "react-router-dom";
   
 
-function Header() 
-{ 
-  
-    return ( 
-    <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
-        <img 
-            loading="lazy" 
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&" 
-            alt="Company logo" 
-            className="shrink-0 max-w-full aspect-[4.35] w-[230px]" 
-        /> 
-        <div className="flex gap-4 items-start my-auto"> 
-            <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Zaloguj się/załóż konto </Link> 
-            <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Dodaj swoją firmę </button> 
-        </div>
-    </header> 
+function Header() { return ( 
+  <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
+      <img 
+          loading="lazy" 
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&" 
+          alt="Company logo" 
+          className="shrink-0 max-w-full aspect-[4.35] w-[230px]" 
+      /> 
+      <div className="flex gap-4 items-start my-auto"> 
+          <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Zaloguj się/załóż konto </Link> 
+          <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Dodaj swoją firmę </button> 
+      </div>
+  </header> 
 );
 } 
 
@@ -38,19 +35,101 @@ const Footer = () =>
       </footer>
     );
 }
-
-function BookingHistory({ bookings }) 
-  {
-    return (
-      <section className="flex flex-col self-center px-5 mt-14 w-full max-w-6xl max-md:mt-10 max-md:max-w-full">
-        <h2 className="text-5xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl">
-          HISTORIA REZERWACJI
-        </h2>
-        Tutaj bedzie historia rezerwacji
-      </section>
-    );
+ 
+function StarRating({ rating, setRating, disabled }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+      {rating === 0 ? <p>Oceń wizytę:</p> : <p>Dziękujemy za opinię :)</p>}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        {[...Array(5)].map((star, index) => {
+          index += 1;
+          return (
+            <button
+              type="button"
+              key={index}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: disabled ? 'default' : 'pointer',
+                fontSize: '2rem',
+                color: index <= rating ? 'gold' : 'gray',
+                pointerEvents: disabled ? 'none' : 'auto',
+              }}
+              onClick={() => !disabled && setRating(index)}
+            >
+              <span>&#9733;</span> {/* Unicode character for star */}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
-  
+
+function ReservationHistoryItem({ businessName, location, service, price, date, company_email }) {
+  const [rating, setRating] = useState(0);
+
+  const isPastReservation = new Date(date) < new Date();
+
+  // Extract day, month, year, hour, and minute from the date
+  const reservationTime = new Date(date);
+  const day = reservationTime.getDate().toString().padStart(2, '0'); // Add leading zero if day is single digit
+  const month = (reservationTime.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if month is single digit
+  const year = reservationTime.getFullYear();
+  const hours = reservationTime.getHours().toString().padStart(2, '0'); // Add leading zero if hour is single digit
+  const minutes = reservationTime.getMinutes().toString().padStart(2, '0'); // Add leading zero if minute is single digit
+
+  useEffect(() => {
+    if (rating > 0) {
+      const email = company_email; // replace with actual email logic
+      const payload = { email, ocena: rating };
+      fetch('/api/user_page/oceny', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Odpowiedź z serwera:', data);
+        })
+        .catch(error => {
+          console.error('Błąd:', error);
+        });
+    }
+  }, [rating]);
+
+  return (
+    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+      <header style={{ marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.875rem', fontWeight: '500', marginBottom: '0.375rem' }}>{businessName}</h2>
+        <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{location}</p>
+      </header>
+      <section style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column' }}>
+        <p style={{ fontSize: '1.25rem', marginBottom: '0.875rem' }}>{service}</p>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <p style={{ fontSize: '1.875rem', fontWeight: '600', marginBottom: '0', marginRight: '0.5rem' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
+          </p>
+        </div>
+      </section>
+      <footer style={{ fontSize: '1.5rem', fontWeight: '500', marginTop: 'auto' }}>
+        {/* Display the full reservation date */}
+        <p>Data: {`${day}/${month}/${year}`}</p>
+        {/* Display the reservation time in a separate paragraph */}
+        <p>Godzina: {`${hours}:${minutes}`}</p>
+        {isPastReservation && (
+          <div style={{ marginTop: '0.5rem' }}>
+            <StarRating rating={rating} setRating={setRating} />
+          </div>
+        )}
+      </footer>
+    </article>
+  );
+}
+
+
 function ProfileForm({ onSubmit }) 
 {    
   
@@ -61,7 +140,7 @@ function ProfileForm({ onSubmit })
     const [stareHaslo, setStareHaslo] = useState('');
     const [noweHaslo, setNoweHaslo] = useState('');
     const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
-
+    
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
       fetch('/edit_profile', {
@@ -199,35 +278,47 @@ function ProfileForm({ onSubmit })
 
 function ProfilEditing() 
   {
+    
+    const [reservations, setReservations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+      async function fetchReservations() {
+        try {
+          const response = await fetch('/api/user_reservations');
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+  
+          // Formatowanie daty
+          const formattedData = data.map(service => ({
+            ...service,
+            booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
+          }));
+  
+          setReservations(formattedData);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchReservations();
+    }, []);
+  
 
     return (
         <main className="flex flex-col bg-white">
-            <header className="flex gap-5 justify-between pt-4 pr-14 pb-2.5 pl-4 w-full mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/7977c09fbdc7f424f43b6bac313c8c0b846a8486409cc547828cd66becea5790?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
-                    alt="Logo"
-                    className="shrink-0 max-w-full aspect-[4] w-[269px]"
-                />
-                <div className="flex gap-5 self-start px-3 py-1 mt-4 text-xl tracking-normal leading-5 bg-white rounded-[50px] text-stone-200 max-md:flex-wrap">
-                    <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/cfe0cb0d32b199a057494cc33d09f8174e60fc1e9c7999c63ddd34527a7a9b32?apiKey=fafb1adb41a64ae8909ced39c83205ff&"
-                        alt="Search Icon"
-                        className="shrink-0 aspect-[0.93] w-[42px]"
-                    />
-                    <div className="flex-auto my-auto max-md:max-w-full">
-                        Szukaj usług lub biznesów
-                    </div>
-                </div>
-                <div className="justify-center px-4 py-1.5 my-auto text-xs text-center text-black bg-white rounded-md border-b border-black border-solid">
-                    Zalogowany użytkownik
-                </div>
-            </header>
+            <Header />
 
-            <section className="mt-16 text-5xl font-light leading-6 text-black max-md:mt-10 max-md:max-w-full max-md:text-4xl">
-                EDYTUJ PROFIL
-            </section>
+            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+          {reservations.map((reservation, index) => (
+            <ReservationHistoryItem key={index} {...reservation} />
+          ))}
+        </section>
             <ProfileForm/>
 
             <section className="flex gap-5 justify-between items-start mt-20 w-full font-light max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">

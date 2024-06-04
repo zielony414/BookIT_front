@@ -9,21 +9,21 @@ function Strona_tytulowa() {
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       console.log("Pobieranie danych...");
       try {
         const [navData, imageCardData] = await Promise.all([
-          fetch("/api/nav_items").then((res) => res.json()),
-          fetch("/api/image_cards").then((res) => res.json())
+          fetch("https://book-it-back.vercel.app/api/nav_items").then((res) => res.json()),
+          fetch("https://book-it-back.vercel.app/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
-        console.error("Błąd podczas pobierania danych:", error);
+        ///console.error("Błąd pobierania danych:", error);
+        console.log(error);
         setData([]);
         setImageCards([]);
       }
@@ -33,7 +33,7 @@ function Strona_tytulowa() {
   }, []);
   
 
-  const ImageCard = ({ name, logo, description }) => {
+  const ImageCard = ({ name, logo, description, onClick }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
@@ -49,6 +49,7 @@ function Strona_tytulowa() {
             className="relative flex flex-col items-center rounded-md overflow-hidden mb-4 w-[250px] h-[450px] group"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onClick={onClick}
         >
             <div className="w-full h-full flex items-center justify-center rounded-md">
                 <img
@@ -74,7 +75,7 @@ function Strona_tytulowa() {
       children
     );
   };
-  const Image = ({ src, alt, className }) =>
+  const Image = ({ src, alt, className}) =>
     React.createElement("img", {
       loading: "lazy",
       src: src,
@@ -139,7 +140,7 @@ function Strona_tytulowa() {
         nazwa: searchTerm,
       };
       try {
-        const response = await fetch("/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch("https://book-it-back.vercel.app/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -149,7 +150,7 @@ function Strona_tytulowa() {
     
         if (response.ok) {
           const filteredData = await response.json();
-          navigate('/Wyszukiwanie usług', { state: { filteredData: filteredData.companies } });
+          navigate('/Wyszukiwanie usług', { state: {fromHomepage: true, filteredData: filteredData.companies } });
         } else {
           console.error("Failed to fetch filtered data");
         }
@@ -164,44 +165,6 @@ function Strona_tytulowa() {
         await handleSearch();
       }
     };
-
-    const handleFilter = async () => {
-      const filterData = {
-        kategoria: selectedCategory,
-        miasto: "Wszystkie",
-        sortowanie: "Najwyższa ocena",
-      };
-      try {
-        const response = await fetch("/api/wyszukiwanie", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(filterData),
-        });
-    
-        if (response.ok) {
-          const filteredData = await response.json();
-          navigate('/Wyszukiwanie usług', {
-            state: { 
-              filteredData: filteredData.companies,
-              selectedCategory: selectedCategory // Pass selected category to subpage
-            }
-          });
-        } else {
-          console.error("Failed to fetch filtered data");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    
-
-    useEffect(() => {
-      if (selectedCategory) {
-        handleFilter(); // Wywołaj funkcję handleFilter po ustawieniu kategorii
-      }
-    }, [selectedCategory]);
   
     return (
       <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
@@ -250,8 +213,7 @@ function Strona_tytulowa() {
                   key={index}
                   className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
                   onClick={() => {
-                    setSelectedCategory(item); // Ustaw wybraną kategorię po kliknięciu przycisku
-                    handleFilter(); // Wywołaj funkcję handleSearch po wybraniu kategorii
+                    navigate("/Wyszukiwanie usług",{ state: { fromHomepage: true, category: item }});
                   }}
                 >
                   <p className="text-lg">{item}</p>
@@ -352,6 +314,7 @@ function Strona_tytulowa() {
                 logo={card.logo}
                 description={card.description}
                 style={{ order: (index + imageIndex) % imageCards.length }}
+                onClick={() => navigate("/Strona wyboru usług",{ state: { name: card.name}})}
               />
             ))
           ) : (
