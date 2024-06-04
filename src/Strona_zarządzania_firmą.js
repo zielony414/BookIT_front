@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Strona_zarządzania_firmą.css";
 import Calendar from 'react-calendar';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Strona_zarządzania_firmą() {
   const [company, setCompany] = useState({
@@ -12,6 +13,7 @@ function Strona_zarządzania_firmą() {
   const [isEditing, setIsEditing] = useState(false);
   const [editField, setEditField] = useState('');
   const company_id = 3;
+  const navigate = useNavigate();
 
   const inputRef = useRef(null);
 
@@ -110,18 +112,12 @@ function Strona_zarządzania_firmą() {
     <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&"
-        alt="Company logo"
-        className="shrink-0 max-w-full aspect-[4.35] w-[230px]"
+        src="bookit-logo.png"
+        alt="Logo"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
-      <div className="flex gap-4 items-start my-auto">
-        <button to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
-          Zaloguj się/załóż konto
-        </button>
-        <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
-          Dodaj swoją firmę
-        </button>
-      </div>
     </header>
   );
 
@@ -197,7 +193,7 @@ function Strona_zarządzania_firmą() {
           </div>
           <div id="resaca">
             <Calendar onClickDay={handleDateChange} />
-            <button type="button" id="zarzadzanie_harmonogramem">ZARZĄDZANIE HARMONOGRAMEM</button>
+            <button type="button" onClick={() => navigate('/zarzadzaj_firma_szczegoly')} id="zarzadzanie_harmonogramem">ZARZĄDZANIE HARMONOGRAMEM</button>
           </div>
         </div>
 
@@ -223,7 +219,7 @@ function Strona_zarządzania_firmą() {
   );
 
   const Footer = () => (
-    <footer className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+    <div className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
       <div className="flex gap-5 justify-between text-base">
         <div className="flex gap-5 justify-between">
           <a href="#" className="justify-center">O nas</a>
@@ -233,7 +229,7 @@ function Strona_zarządzania_firmą() {
       </div>
       <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
       <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
-    </footer>
+    </div>
   );
 
   return (
