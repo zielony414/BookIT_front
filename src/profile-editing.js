@@ -111,7 +111,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
         <p style={{ fontSize: '1.25rem', marginBottom: '0.875rem' }}>{service}</p>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <p style={{ fontSize: '1.875rem', fontWeight: '600', marginBottom: '0', marginRight: '0.5rem' }}>
-            <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {booking_id} zł</span>
+            <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
           </p>
         </div>
       </section>
