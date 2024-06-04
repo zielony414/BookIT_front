@@ -279,15 +279,15 @@ function Wyszukiwanie_uslug() {
       const halfStars = rating % 1 !== 0 ? 1 : 0;
       const emptyStars = 5 - fullStars - halfStars;
       return (
-        <div className="flex items-center">
+        <div className="flex items-center bg-white p-0.5 rounded-lg shadow-md">
           {[...Array(fullStars)].map((_, i) => (
-            <span key={`full-${i}`} className="text-yellow-500">
+            <span key={`full-${i}`} className="text-yellow-500 text-2xl">
               ★
             </span>
           ))}
-          {halfStars === 1 && <span className="text-yellow-500">☆</span>}
+          {halfStars === 1 && <span className="text-yellow-500 text-2xl">☆</span>}
           {[...Array(emptyStars)].map((_, i) => (
-            <span key={`empty-${i}`} className="text-gray-400">
+            <span key={`empty-${i}`} className="text-gray-400 text-2xl">
               ★
             </span>
           ))}
@@ -315,7 +315,7 @@ function Wyszukiwanie_uslug() {
                   <div className="flex gap-5 mr-8">
                     {/* First Column */}
                     <div className="flex flex-col gap-3 w-1/2">
-                      <h1 className="text-3xl font-medium">{item.name}</h1>
+                      <h1 className="text-4xl font-medium" style={{marginBottom:"15px"}}>{item.name}</h1>
                       <div className="flex items-center gap-2 text-xl">
                         <img
                           src="https://cdn.builder.io/api/v1/image/assets/TEMP/d2d1ecd326255b82c2ece04b5eaa6aba202a956783c93e13939df9af7ba141e9?apiKey=d10d36f0508e433185a32e898689ca50&"
@@ -326,12 +326,13 @@ function Wyszukiwanie_uslug() {
                           {item.city} {item.address}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-base">
-                        <div>{item.reviews_no} opinii</div>
-                        <div>{generateStars(item.avg_rating)}</div>
+
+                      <div className="flex flex-col justify-between h-full text-xl whitespace-nowrap">
+                        <div> {item.category}</div>
                       </div>
-                      <div className="flex flex-col text-xl whitespace-nowrap">
-                        <div>Kategoria: {item.category}</div>
+                      <div className="flex items-center gap-3 text-base">
+                        <div>{generateStars(item.avg_rating)}</div>
+                        <div>{item.reviews_no} opinii</div>
                       </div>
                     </div>
                     {/* Second Column */}
