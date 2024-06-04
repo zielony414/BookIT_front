@@ -152,18 +152,12 @@ function Strona_zarządzania_firmą2() {
     <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&"
-        alt="Company logo"
-        className="shrink-0 max-w-full aspect-[4.35] w-[230px]"
+        src="bookit-logo.png"
+        alt="Logo"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
-      <div className="flex gap-4 items-start my-auto">
-        <button to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
-          Zaloguj się/załóż konto
-        </button>
-        <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
-          Dodaj swoją firmę
-        </button>
-      </div>
     </header>
   );
 
@@ -232,7 +226,7 @@ function Strona_zarządzania_firmą2() {
           <div id="przyciski">
 
             <button type="button" className="zapis" onClick={saveHours}>ZAPISZ</button>
-            <button type="button" className="zapis">COFNIJ</button>
+            <button type="button" className="zapis" onClick={() => navigate('/zarzadzaj_firma')}>COFNIJ</button>
           </div>
         </div>
 
