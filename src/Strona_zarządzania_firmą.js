@@ -17,7 +17,7 @@ function Strona_zarządzania_firmą() {
 
   const fetchCompanyDetails = async () => {
     try {
-      const response = await axios.post('/api/Strona_zarządzania_firmą', { company_id });
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą', { company_id });
       setCompany(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error connecting to the server');
@@ -26,7 +26,7 @@ function Strona_zarządzania_firmą() {
 
   const fetchReservations = async (date) => {
     try {
-      const response = await axios.post('/api/Strona_zarządzania_firmą/reservations', { company_id, date });
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą/reservations', { company_id, date });
       setReservations(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error fetching reservations');
@@ -56,7 +56,7 @@ function Strona_zarządzania_firmą() {
   const handleSaveClick = async () => {
     setIsEditing(false);
     try {
-      await axios.put('/api/Strona_zarządzania_firmą/update', {
+      await axios.put('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą/update', {
         company_id,
         field: editField,
         value: company[editField]
