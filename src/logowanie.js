@@ -59,7 +59,7 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
-        navigate('/zarzadzaj_firma');
+        navigate('/Strona_zarządzania_firmą');
       } else {
         alert(response.data.message);
       }
