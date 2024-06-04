@@ -833,6 +833,10 @@ video {
   margin-right: 60px;
 }
 
+.mr-\[150px\] {
+  margin-right: 150px;
+}
+
 .inline {
   display: inline;
 }
