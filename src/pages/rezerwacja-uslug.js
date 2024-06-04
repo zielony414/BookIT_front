@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "../output.css";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NewServicePicker from "../components/NewServicePicker";
 
 //Ta strona służy tylko do prezentacji komponentu NewServicePicker
