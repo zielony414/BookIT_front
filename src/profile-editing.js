@@ -71,6 +71,14 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
 
   const isPastReservation = new Date(date) < new Date();
 
+  // Pobierz dzień, miesiąc, rok, godzinę i minutę z daty
+  const reservationTime = new Date(date);
+  const day = reservationTime.getDate().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli dzień jest jednocyfrowy
+  const month = (reservationTime.getMonth() + 1).toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli miesiąc jest jednocyfrowy
+  const year = reservationTime.getFullYear();
+  const hours = reservationTime.getHours().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli godzina jest jednocyfrowa
+  const minutes = reservationTime.getMinutes().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli minuta jest jednocyfrowa
+
   return (
     <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white' }}>
       <header style={{ marginBottom: '1rem' }}>
@@ -84,7 +92,10 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
         </p>
       </section>
       <footer style={{ fontSize: '1.5rem', fontWeight: '500' }}>
-        <p>Data: {date}</p>
+        {/* Wyświetl pełną datę rezerwacji */}
+        <p>Data: {`${day}/${month}/${year}`}</p>
+        {/* Wyświetl godzinę rezerwacji w osobnym paragrafie */}
+        <p>Godzina: {`${hours}:${minutes}`}</p>
         <div style={{ marginTop: '0.5rem' }}>
           <StarRating rating={rating} setRating={setRating} disabled={!isPastReservation} />
         </div>
@@ -92,6 +103,8 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
     </article>
   );
 }
+
+
 
 
 
