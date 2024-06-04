@@ -1,4 +1,8 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from 'axios';
+import NewServicePicker from "./components/NewServicePicker";
 
 function SocialMediaLink({ url, platform, altText }) {
   return (
@@ -12,6 +16,33 @@ function SocialMediaLink({ url, platform, altText }) {
       <div className="flex-auto my-auto">{platform}</div>
     </div>
   );
+}
+
+
+
+function Header() {
+  const navigate = useNavigate();
+
+  return ( 
+  <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+    <img
+      loading="lazy"
+      src="bookit-logo.png"
+      alt="Logo"
+      className="shrink-0 h-16 w-auto" 
+      role = "button"
+      onClick={() => navigate('/')}
+    />
+    <div className="flex gap-3.5 items-start my-auto">
+      <button onClick={() => navigate('/profile-editing')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
+        Email
+      </button>
+      <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
+        Wyloguj
+      </button>
+    </div>
+  </div> 
+);
 }
 
 function ServiceItem({ serviceName, price, serviceTime }) {
@@ -37,7 +68,25 @@ function ServiceItem({ serviceName, price, serviceTime }) {
   );
 }
 
-function MyComponent() {
+function Strona_firmy() {
+  const company_name = "Mister Dapper";
+  const company_id = 1;
+  const [company, setCompany] = useState({
+    name: '', description: '', logo: '', numer: '', city: '', strona: '', address: '', facebook: '', instagram: '', linkedin: '', x: '', tiktok: ''
+  });
+  const [services, setServices] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [error, setError] = useState('');
+
+  const handleNext = () => {
+    navigate('../rezerwacja-logged', { state: { services, company_id }});
+  };
+
+  const handleServiceSelect = (selectedServices) => {
+    setServices(selectedServices);
+  };
+
   const socialMediaData = [
     { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a29484ee2bfa9fa553e53828e419621cd30545b7d30b0bbdf2b6d98b325d584c?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "mrdoppler.pl", altText: "Website" },
     { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/3f61d1ecefcf1626754503a46a82047d1290d86e3868395a6184fadb004cbe0a?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mister_doppler", altText: "Facebook" },
@@ -54,55 +103,48 @@ function MyComponent() {
     { serviceName: "Stylizacja włosów i brody", price: "25.00", serviceTime: "15 min" },
   ];
 
+  const fetchCompanyDetails = async () => {
+    try {
+      const response = await axios.post('/api/Strona_firmy', { company_id });
+      setCompany(response.data);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error connecting to the server');
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanyDetails();
+  }, []);
+
   return (
     <div className="flex flex-col bg-white">
-      <div className="flex gap-5 justify-between py-3 pr-16 pl-6 w-full mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
-        <div className="flex gap-5 text-xl tracking-normal leading-5 text-stone-200 max-md:flex-wrap max-md:max-w-full">
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/57979c604e163f9651267074746ac10da0b6cc1fc2881f563528b9f2623d807a?apiKey=d10d36f0508e433185a32e898689ca50&"
-            alt="Logo"
-            className="shrink-0 aspect-[4] basis-0 grow-0 w-fit"
-          />
-          <div className="flex flex-auto gap-5 self-start px-3.5 py-1 mt-4 bg-white rounded-[50px] max-md:flex-wrap">
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/2a376cc7832fed1c23014fb9f867bba7da6cbeb6c82d0cad6381eb3d9bb730d6?apiKey=d10d36f0508e433185a32e898689ca50&"
-              alt="Search Icon"
-              className="shrink-0 aspect-[0.95] w-[43px]"
-            />
-            <div className="flex-auto my-auto max-md:max-w-full">
-              Szukaj usług lub biznesów
-            </div>
-          </div>
-        </div>
-        <div className="justify-center px-4 py-1.5 my-auto text-xs text-center text-black bg-white rounded-md border-b border-black border-solid">
-          Zalogowany użytkownik
-        </div>
-      </div>
+      <Header />
+      {company.name}
       <div className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5">
         Wróć
       </div>
-      <div className="px-20 mt-6 w-full bg-stone-200 max-md:px-5 max-md:max-w-full">
+      <div className="px-20 mt-6 w-full bg-stone-200 max-md:px-5 max-md:max-w-full">        
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-          <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
+
+
+
+          {/*Ten div nizej bedzie zamieniony na komponent wczytujacy zdj, opinie itd*/}
+          <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">  
             <div className="self-stretch my-auto max-md:mt-10 max-md:max-w-full">
               <div className="flex gap-5 max-md:flex-col max-md:gap-0">
                 <div className="flex flex-col w-[41%] max-md:ml-0 max-md:w-full">
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/b17665d36b8fab533b946b2472da719128e4dec638c85eb69b51e96c3e3cdc58?apiKey=d10d36f0508e433185a32e898689ca50&"
-                    alt="Profile Picture"
+                  <img src={company.logo} id="logo_firmy" alt="logo firmy"
+                    loading="lazy"                                        
                     className="grow w-full shadow-sm aspect-[1.08] max-md:mt-9"
                   />
                 </div>
                 <div className="flex flex-col ml-5 w-[59%] max-md:ml-0 max-md:w-full">
                   <div className="flex flex-col self-stretch my-auto text-2xl text-black max-md:mt-10">
                     <div className="text-5xl font-medium max-md:text-4xl">
-                      Mister Dappler
+                      {company.name}
                     </div>
-                    <div className="mt-2.5">Rzeszów, ul. Staroniwska 41A</div>
-                    <div className="mt-6">tel. 529 285 952</div>
+                    <div className="mt-2.5">{company.city}, {company.address}</div>
+                    <div className="mt-6">tel. {company.numer}</div>
                     <div className="flex gap-3.5 mt-8 text-xl font-light">
                       <img
                         loading="lazy"
@@ -117,7 +159,10 @@ function MyComponent() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
+          {/*DIV POWYZEJ BEDZIE KOMPONENTNEm*/}
+
+          {/*PONIZSZY DIV - KOMPONENT POBIERAJACY ZDJECIA*/}
+          <div className="border border-black flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
             <div className="flex grow gap-5 items-center max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
               <img
                 loading="lazy"
@@ -139,9 +184,14 @@ function MyComponent() {
               />
             </div>
           </div>
+          {/*^^^ KOMPONENT TO BEDZIE ^^^*/}
+
+
+
         </div>
+
       </div>
-      <div className="self-center mt-9 w-full max-w-[1254px] max-md:max-w-full">
+      <div className="border border-black self-center mt-9 w-full max-w-[1254px] max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
           <div className="flex flex-col w-3/12 max-md:ml-0 max-md:w-full">
             <div className="flex flex-col px-5 pt-2 pb-4 w-full rounded-3xl bg-stone-200 max-md:mt-10">
@@ -161,25 +211,18 @@ function MyComponent() {
             </div>
           </div>
           <div className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
-            <div className="flex flex-col grow mt-56 text-black max-md:mt-10 max-md:max-w-full">
-              <div className="flex flex-col ml-16 max-w-full w-[613px]">
-                {servicesData.map((service, index) => (
-                  <ServiceItem
-                    key={index}
-                    serviceName={service.serviceName}
-                    price={service.price}
-                    serviceTime={service.serviceTime}
-                  />
-                ))}
-                <div className="flex gap-5 self-end px-5 mt-28 max-w-full text-xl w-[607px] max-md:flex-wrap max-md:mt-10">
-                  <div className="flex-auto my-auto text-right">
-                    *Cena usługi jest przybliżona
-                  </div>
-                  <div className="grow justify-center px-2.5 py-1.5 font-light text-center bg-white border border-black border-solid shadow-sm rounded-[30px] w-fit">
-                    Przejdź do podsumowania
-                  </div>
-                </div>
+            <div className=" border border-black flex flex-col grow mt-40 text-black max-md:mt-10 max-md:max-w-full">
+              <div className="mr-[150px]">
+                <NewServicePicker companyId={company_id} onServiceSelect={handleServiceSelect}/>
               </div>
+              <div className="flex gap-5 mr-[150px] self-end justify-between mt-10 max-w-full text-2xl font-light text-center whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-1">
+                <Link to="/" className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+                  Cofnij
+                </Link>
+                <button onClick={handleNext} className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+                  Dalej
+                </button>
+              </div>                                                      
             </div>
           </div>
         </div>
@@ -199,4 +242,4 @@ function MyComponent() {
   );
 }
 
-export default MyComponent;
+export default Strona_firmy;
