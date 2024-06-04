@@ -53,6 +53,7 @@ function Wyszukiwanie_uslug() {
 
   useEffect(() => {
     if (isFromHomepage === 0 && isCategorySelected === 0) {
+      console.log("Chuj mi w dupę");
       fetchData();
     }
   }, [isFromHomepage, isCategorySelected]);
