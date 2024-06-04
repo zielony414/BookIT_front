@@ -7,6 +7,7 @@ import Strona_firmy from './Strona_firmy';
 import Rezerwacja from './pages/rezerwacja-uslug';
 import Rezerwacja2 from './pages/rezerwacja-uslug2';
 import Rezerwacja_logged from './pages/rezerwacja-uslug-zalogowany';
+import Strona_zarządzania_firmą from './Strona_zarządzania_firmą';
 import reportWebVitals from './reportWebVitals';
 import Rejestracja from './rejestracja';
 import Logowanie from './logowanie';
@@ -29,6 +30,8 @@ root.render(
         <Route exact path="/rejestracja" element={<Rejestracja />} />
         <Route exact path="/logowanie" element={<Logowanie />} />
         <Route exact path="/profile-editing" element={<ProfilEditing />} />
+        <Route exact path="/Strona_zarządzania_firmą" element={<Strona_zarządzania_firmą />} />
+        <Route exact path="/Strona_firmy" element={<Strona_firmy />} />
       </Routes>
     </Router>
   </React.StrictMode>
