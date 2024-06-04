@@ -147,20 +147,6 @@ function Strona_zarządzania_firmą2() {
     }
   };
 
-  const handleDeleteAllClick = async () => {
-    try {
-      const day = String(newDate.getDate()).padStart(2, '0');
-      const month = String(newDate.getMonth() + 1).padStart(2, '0');
-      const year = newDate.getFullYear();
-      const formattedDate = `${year}-${month}-${day}`;
-      await axios.delete('/api/delete_reservations_by_date', { data: { reservation_date: formattedDate } });
-      alert('Wszystkie rezerwacje na dany dzień zostały usunięte');
-      setSelectedReservation(null);
-      fetchReservations(newDate);
-    } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error deleting all reservations');
-    }
-  };
 
   const Header = () => (
     <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
@@ -244,7 +230,7 @@ function Strona_zarządzania_firmą2() {
             </div>
           </div>
           <div id="przyciski">
-            <button type="button" className="zapis" inClick={handleDeleteAllClick}>ODWOŁAJ WSZYSTKO</button>
+
             <button type="button" className="zapis" onClick={saveHours}>ZAPISZ</button>
             <button type="button" className="zapis">COFNIJ</button>
           </div>
