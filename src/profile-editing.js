@@ -66,51 +66,68 @@ function StarRating({ rating, setRating, disabled }) {
   );
 }
 
-function ReservationHistoryItem({ businessName, location, service, price, date }) {
+function ReservationHistoryItem({ businessName, location, service, price, date, company_email }) {
   const [rating, setRating] = useState(0);
 
   const isPastReservation = new Date(date) < new Date();
 
-  // Pobierz dzień, miesiąc, rok, godzinę i minutę z daty
+  // Extract day, month, year, hour, and minute from the date
   const reservationTime = new Date(date);
-  const day = reservationTime.getDate().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli dzień jest jednocyfrowy
-  const month = (reservationTime.getMonth() + 1).toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli miesiąc jest jednocyfrowy
+  const day = reservationTime.getDate().toString().padStart(2, '0'); // Add leading zero if day is single digit
+  const month = (reservationTime.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if month is single digit
   const year = reservationTime.getFullYear();
-  const hours = reservationTime.getHours().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli godzina jest jednocyfrowa
-  const minutes = reservationTime.getMinutes().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli minuta jest jednocyfrowa
+  const hours = reservationTime.getHours().toString().padStart(2, '0'); // Add leading zero if hour is single digit
+  const minutes = reservationTime.getMinutes().toString().padStart(2, '0'); // Add leading zero if minute is single digit
+
+  useEffect(() => {
+    if (rating > 0) {
+      const email = company_email; // replace with actual email logic
+      const payload = { email, ocena: rating };
+      fetch('/api/user_page/oceny', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Odpowiedź z serwera:', data);
+        })
+        .catch(error => {
+          console.error('Błąd:', error);
+        });
+    }
+  }, [rating]);
 
   return (
     <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
-  <header style={{ marginBottom: '1rem' }}>
-    <h2 style={{ fontSize: '1.875rem', fontWeight: '500', marginBottom: '0.375rem' }}>{businessName}</h2>
-    <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{location}</p>
-  </header>
-  <section style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column' }}>
-    <p style={{ fontSize: '1.25rem', marginBottom: '0.875rem' }}>{service}</p>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <p style={{ fontSize: '1.875rem', fontWeight: '600', marginBottom: '0', marginRight: '0.5rem' }}>
-        <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
-      </p>
-    </div>
-  </section>
-  <footer style={{ fontSize: '1.5rem', fontWeight: '500', marginTop: 'auto' }}>
-    {/* Wyświetl pełną datę rezerwacji */}
-    <p>Data: {`${day}/${month}/${year}`}</p>
-    {/* Wyświetl godzinę rezerwacji w osobnym paragrafie */}
-    <p>Godzina: {`${hours}:${minutes}`}</p>
-    <div style={{ marginTop: '0.5rem' }}>
-      <StarRating rating={rating} setRating={setRating} disabled={!isPastReservation} />
-    </div>
-  </footer>
-</article>
-
-
+      <header style={{ marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.875rem', fontWeight: '500', marginBottom: '0.375rem' }}>{businessName}</h2>
+        <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{location}</p>
+      </header>
+      <section style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column' }}>
+        <p style={{ fontSize: '1.25rem', marginBottom: '0.875rem' }}>{service}</p>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <p style={{ fontSize: '1.875rem', fontWeight: '600', marginBottom: '0', marginRight: '0.5rem' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
+          </p>
+        </div>
+      </section>
+      <footer style={{ fontSize: '1.5rem', fontWeight: '500', marginTop: 'auto' }}>
+        {/* Display the full reservation date */}
+        <p>Data: {`${day}/${month}/${year}`}</p>
+        {/* Display the reservation time in a separate paragraph */}
+        <p>Godzina: {`${hours}:${minutes}`}</p>
+        {isPastReservation && (
+          <div style={{ marginTop: '0.5rem' }}>
+            <StarRating rating={rating} setRating={setRating} />
+          </div>
+        )}
+      </footer>
+    </article>
   );
 }
-
-
-
-
 
 
 function ProfileForm({ onSubmit }) 
