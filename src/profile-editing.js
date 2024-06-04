@@ -36,23 +36,53 @@ const Footer = () =>
     );
 }
  
+function StarRating({ rating, setRating }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      {[...Array(5)].map((star, index) => {
+        index += 1;
+        return (
+          <button
+            type="button"
+            key={index}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '2rem',
+              color: index <= rating ? 'gold' : 'gray',
+            }}
+            onClick={() => setRating(index)}
+          >
+            <span>&#9733;</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function ReservationHistoryItem({ businessName, location, service, price, date }) {
 
-  
+  const [rating, setRating] = useState(0);
+
   return (
-    <article className="py-1 pr-1 pl-5 mt-2.5 w-full rounded-3xl bg-white">
-      <header className="mb-4">
-        <h2 className="text-3xl font-medium">{businessName}</h2>
-        <p className="mt-1.5 text-xl">{location}</p>
+    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white' }}>
+      <header style={{ marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.875rem', fontWeight: '500' }}>{businessName}</h2>
+        <p style={{ marginTop: '0.375rem', fontSize: '1.25rem' }}>{location}</p>
       </header>
-      <section className="mb-4">
-        <p className="text-xl">{service}</p>
-        <p className="mt-3.5 text-3xl font-semibold">
-          <span className="text-2xl font-medium">Cena: {price} zł</span>
+      <section style={{ marginBottom: '1rem' }}>
+        <p style={{ fontSize: '1.25rem' }}>{service}</p>
+        <p style={{ marginTop: '0.875rem', fontSize: '1.875rem', fontWeight: '600' }}>
+          <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
         </p>
       </section>
-      <footer className="text-2xl font-medium">
+      <footer style={{ fontSize: '1.5rem', fontWeight: '500' }}>
         <p>Data: {date}</p>
+        <div style={{ marginTop: '0.5rem' }}>
+          <StarRating rating={rating} setRating={setRating} />
+        </div>
       </footer>
     </article>
   );
