@@ -8,55 +8,39 @@ function Wyszukiwanie_uslug() {
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [sorting, setSorting] = useState("Najwyższa ocena");
-  const [isFromHomepage, setIsFromHomepage] = useState(0);
-  const [isCategorySelected, setIsCategorySelected] = useState(0);
+  const [hasHandledFilter, setHasHandledFilter] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    let data = location.state?.filteredData || [];
-    setFilteredResults(data);
-    console.log("Wyszukiwanie usług");
-    if (location.state?.fromHomepage && location.state?.category) {
-      setIsCategorySelected(1);
-      setIsFromHomepage(1);
+    if (!location.state?.fromHomepage) {
+      handleFilter({ preventDefault: () => {} });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      location.state?.fromHomepage &&
+      location.state?.category &&
+      !hasHandledFilter
+    ) {
       setSelectedCategory(location.state.category);
       console.log(location.state.category);
       handleFilter({ preventDefault: () => {} }, location.state.category);
+      setHasHandledFilter(true);
+    }
+  }, [location.state, hasHandledFilter]);
+
+  useEffect(() => {
+    if (location.state?.fromHomepage && location.state?.filteredData) {
+      setFilteredResults(location.state.filteredData);
     }
   }, [location.state]);
 
-  
-
-  useEffect(() => {
-    const checkFilteredData = async () => {
-      console.log("Sprawdzanie danych...");
-      console.log("isFromHomepage:", isFromHomepage);
-    console.log("isCategorySelected:", isCategorySelected);
-    console.log("selectedCategory:", selectedCategory);
-    console.log(location.state.category);
-
-      if (
-        !isCategorySelected &&
-        !isFromHomepage &&
-        !location.state &&
-        filteredResults.length === 0
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 0)); // Opóźnienie wykonania sprawdzenia
-        handleFilter({ preventDefault: () => {} });
-      }
-    };
-
-    checkFilteredData();
-  }, [filteredResults, location.state]);
-
-  useEffect(() => {
-    if (isFromHomepage === 0 && isCategorySelected === 0) {
-      console.log("Chuj mi w dupę");
-      fetchData();
-    }
-  }, [isFromHomepage, isCategorySelected]);
+  useEffect(() => { 
+    fetchData();
+  }, []);
 
   const fetchData = () => {
     console.log("Pobieranie danych...");
@@ -142,15 +126,21 @@ function Wyszukiwanie_uslug() {
         loading="lazy"
         src="bookit-logo.png"
         alt="Logo"
-        className="shrink-0 h-16 w-auto" 
-        role = "button"
-        onClick={() => navigate('/')}
+        className="shrink-0 h-16 w-auto"
+        role="button"
+        onClick={() => navigate("/")}
       />
       <div className="flex gap-3.5 items-start my-auto">
-        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
+        <button
+          onClick={() => navigate("/logowanie")}
+          className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+        >
           Zaloguj się/załóż konto
         </button>
-        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
+        <button
+          onClick={() => navigate("/rejestracja_firmy")}
+          className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+        >
           Dodaj swoją firmę
         </button>
       </div>
@@ -283,7 +273,7 @@ function Wyszukiwanie_uslug() {
     );
   };
 
-  const MidBody = ({ filteredData }) => {
+  const MidBody = () => {
     const generateStars = (rating) => {
       const fullStars = Math.floor(rating);
       const halfStars = rating % 1 !== 0 ? 1 : 0;
@@ -319,7 +309,6 @@ function Wyszukiwanie_uslug() {
                     src={item.logo}
                     alt="Company logo"
                     className="grow shrink-0 max-w-full shadow-lg aspect-[1.06] w-[229px] max-md:mt-8"
-
                   />
                 </figure>
                 <div className="flex flex-col w-4/5 max-md:ml-0 max-md:w-full">
@@ -398,7 +387,7 @@ function Wyszukiwanie_uslug() {
     <>
       <Header />
       <Hero />
-      <MidBody filteredResults={filteredResults} />
+      <MidBody />
       <Footer />
     </>
   );

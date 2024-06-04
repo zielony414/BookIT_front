@@ -9,7 +9,6 @@ function Strona_tytulowa() {
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +22,6 @@ function Strona_tytulowa() {
         setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
-        console.error("Błąd podczas pobierania danych:", error);
         setData([]);
         setImageCards([]);
       }
@@ -149,7 +147,7 @@ function Strona_tytulowa() {
     
         if (response.ok) {
           const filteredData = await response.json();
-          navigate('/Wyszukiwanie usług', { state: { filteredData: filteredData.companies } });
+          navigate('/Wyszukiwanie usług', { state: {fromHomepage: true, filteredData: filteredData.companies } });
         } else {
           console.error("Failed to fetch filtered data");
         }
@@ -164,44 +162,6 @@ function Strona_tytulowa() {
         await handleSearch();
       }
     };
-
-    const handleFilter = async () => {
-      const filterData = {
-        kategoria: selectedCategory,
-        miasto: "Wszystkie",
-        sortowanie: "Najwyższa ocena",
-      };
-      try {
-        const response = await fetch("/api/wyszukiwanie", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(filterData),
-        });
-    
-        if (response.ok) {
-          const filteredData = await response.json();
-          navigate('/Wyszukiwanie usług', {
-            state: { 
-              filteredData: filteredData.companies,
-              selectedCategory: selectedCategory // Pass selected category to subpage
-            }
-          });
-        } else {
-          console.error("Failed to fetch filtered data");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    
-
-    useEffect(() => {
-      if (selectedCategory) {
-        handleFilter(); // Wywołaj funkcję handleFilter po ustawieniu kategorii
-      }
-    }, [selectedCategory]);
   
     return (
       <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
@@ -250,8 +210,7 @@ function Strona_tytulowa() {
                   key={index}
                   className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
                   onClick={() => {
-                    setSelectedCategory(item); // Ustaw wybraną kategorię po kliknięciu przycisku
-                    handleFilter(); // Wywołaj funkcję handleSearch po wybraniu kategorii
+                    navigate("/Wyszukiwanie usług",{ state: { fromHomepage: true, category: item }});
                   }}
                 >
                   <p className="text-lg">{item}</p>
