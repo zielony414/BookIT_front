@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Strona_zarządzania_firmą.css";
 import Calendar from 'react-calendar';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Strona_zarządzania_firmą2() {
   const [hours, setHours] = useState({
@@ -36,6 +37,7 @@ function Strona_zarządzania_firmą2() {
   const [newDate, setNewDate] = useState(new Date());
   const [newTime, setNewTime] = useState('12:00');
   const company_id = 3;
+  const navigate = useNavigate();
 
   const fetchCompanyHours = async () => {
     try {

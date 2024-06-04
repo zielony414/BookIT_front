@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Strona_zarządzania_firmą.css";
 import Calendar from 'react-calendar';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Strona_zarządzania_firmą() {
   const [company, setCompany] = useState({
@@ -12,6 +13,7 @@ function Strona_zarządzania_firmą() {
   const [isEditing, setIsEditing] = useState(false);
   const [editField, setEditField] = useState('');
   const company_id = 3;
+  const navigate = useNavigate();
 
   const inputRef = useRef(null);
 
