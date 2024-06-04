@@ -80,27 +80,31 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
   const minutes = reservationTime.getMinutes().toString().padStart(2, '0'); // Dodaj wiodący zerowy znak, jeśli minuta jest jednocyfrowa
 
   return (
-    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white' }}>
-      <header style={{ marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.875rem', fontWeight: '500' }}>{businessName}</h2>
-        <p style={{ marginTop: '0.375rem', fontSize: '1.25rem' }}>{location}</p>
-      </header>
-      <section style={{ marginBottom: '1rem' }}>
-        <p style={{ fontSize: '1.25rem' }}>{service}</p>
-        <p style={{ marginTop: '0.875rem', fontSize: '1.875rem', fontWeight: '600' }}>
-          <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
-        </p>
-      </section>
-      <footer style={{ fontSize: '1.5rem', fontWeight: '500' }}>
-        {/* Wyświetl pełną datę rezerwacji */}
-        <p>Data: {`${day}/${month}/${year}`}</p>
-        {/* Wyświetl godzinę rezerwacji w osobnym paragrafie */}
-        <p>Godzina: {`${hours}:${minutes}`}</p>
-        <div style={{ marginTop: '0.5rem' }}>
-          <StarRating rating={rating} setRating={setRating} disabled={!isPastReservation} />
-        </div>
-      </footer>
-    </article>
+    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+  <header style={{ marginBottom: '1rem' }}>
+    <h2 style={{ fontSize: '1.875rem', fontWeight: '500', marginBottom: '0.375rem' }}>{businessName}</h2>
+    <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{location}</p>
+  </header>
+  <section style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column' }}>
+    <p style={{ fontSize: '1.25rem', marginBottom: '0.875rem' }}>{service}</p>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <p style={{ fontSize: '1.875rem', fontWeight: '600', marginBottom: '0', marginRight: '0.5rem' }}>
+        <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Cena: {price} zł</span>
+      </p>
+    </div>
+  </section>
+  <footer style={{ fontSize: '1.5rem', fontWeight: '500', marginTop: 'auto' }}>
+    {/* Wyświetl pełną datę rezerwacji */}
+    <p>Data: {`${day}/${month}/${year}`}</p>
+    {/* Wyświetl godzinę rezerwacji w osobnym paragrafie */}
+    <p>Godzina: {`${hours}:${minutes}`}</p>
+    <div style={{ marginTop: '0.5rem' }}>
+      <StarRating rating={rating} setRating={setRating} disabled={!isPastReservation} />
+    </div>
+  </footer>
+</article>
+
+
   );
 }
 
