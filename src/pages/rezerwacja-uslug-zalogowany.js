@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import MyDatePicker from "../components/MyDatePicker";
 import TimePicker from "../components/TimePicker";
+import UserDataForm from "../components/UserDataForm";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 
 function Header() { return ( 
@@ -20,7 +21,13 @@ function Header() { return (
 );
 }
 
-function ContactForm_logged() {
+function ContactForm_logged({userId, getUserInfo, setContact, setOtherUserData}) {
+  //do tej funkcji argument musi być przekazywany przez funkcję pobierająca id aktualnego usera
+
+  const handleContactChange = (event) => {
+    setContact(parseInt(event.target.value)); // Konwertowanie wartości na liczbę całkowitą
+  };
+
   return (
     <section className="flex flex-col self-stretch font-light max-md:max-w-full">
       <div className="flex items-start max-md:flex-wrap">
@@ -30,7 +37,8 @@ function ContactForm_logged() {
             </FormLabel>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue="first-option"
+              defaultValue={1}
+              onChange={handleContactChange}
               name="radio-buttons-group"
               sx={{
                 '& .MuiSvgIcon-root': {
@@ -39,7 +47,7 @@ function ContactForm_logged() {
               }}
             >
               <FormControlLabel 
-                value="first-option" 
+                value={1}                 
                 control={<Radio />}  
                 label="Użyj swoich danych:" 
                 sx={{
@@ -47,13 +55,9 @@ function ContactForm_logged() {
                   fontSize: '1.3rem', 
                   },
                 }}/>
-              <div className="self-end ml-5 mb-5 mr-45 -mb-px text-xl text-zinc-700">
-                Marek Marucha +48 491 829 184
-                <br />
-                mmarucha@gmail.com
-              </div>
+              <UserDataForm userId={userId} getUserInfo={getUserInfo} />
               <FormControlLabel 
-                value="second-option" 
+                value={0} 
                 control={<Radio />} 
                 label="Inne dane kontaktowe:" 
                 sx={{
@@ -63,24 +67,16 @@ function ContactForm_logged() {
                 }}/>              
             </RadioGroup>
           </FormControl>
-      </div>
-      
-      <div className="flex flex-col max-md:mt-10 max-md:max-w-[sm]"> {/* Lub max-w-[md] */}
-        <label htmlFor="name" className="text-lg leading-6 text-zinc-800 max-md:max-w-full"> Imię </label>
-        <input
-          type="text" id="name" placeholder="Wprowadź swoje imię" aria-label="Wprowadź swoje imię"
-          className="justify-center items-start px-5 py-3 mt-3 text-sm bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
-        />
-      </div>
+      </div>    
 
-      <div className="flex flex-col mt-8 max-md:mt-10 max-md:max-w-[sm]"> {/* Lub max-w-[md] */}
+      <div className="flex flex-col mt-5 max-md:mt-10 max-md:max-w-[sm]"> 
         <label htmlFor="email" className="text-lg leading-6 text-zinc-800 max-md:max-w-full"> Email </label>
         <input
           type="email" id="email" placeholder="Wprowadź swój email" aria-label="Wprowadź swój email"
           className="justify-center items-start px-5 py-3 mt-3 text-sm bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
         />
       </div>
-      <div className="flex flex-col mt-8 max-md:mt-10 max-md:max-w-[sm]"> {/* Lub max-w-[md] */}
+      <div className="flex flex-col mt-8 max-md:mt-10 max-md:max-w-[sm]"> 
         <label htmlFor="phone" className="text-lg leading-6 text-zinc-800 max-md:max-w-full"> Numer telefonu </label>
         <input
           type="tel" id="phone" placeholder="Wprowadź swój numer telefonu" aria-label="Wprowadź swój numer telefonu"
@@ -110,8 +106,14 @@ const Footer = () => {
 }
 
 function Summary(props) {
-  // Obliczanie sumy cen usług
+  // Obliczanie sumy cen usług i czasu wykonania
   const totalSum = props.services.reduce((sum, service) => sum + service.cost, 0);
+  const totalTime = props.services.reduce((totalTime, service) => totalTime + service.time_minutes, 0);
+
+  useEffect(() => {
+      props.SumUpTime(totalTime);
+      props.SumUpCost(totalSum);
+    }, [totalTime, totalSum, props]);
 
   return (
     <div className="w-[350px]">
@@ -119,37 +121,106 @@ function Summary(props) {
       {props.services.map((service) => (
         <div key={service.name} className="flex text-xl justify-between">
           <span>{service.name}</span>
-          <span className="font-bold">{service.cost} zł</span>
+          <span className="font-bold">{service.time_minutes}min  {service.cost}zł</span>
         </div>
       ))}
       <div className="shrink-0 mt-4 mb-4 h-0.5 border border-solid bg-stone-300 bg-opacity-70 border-stone-300 border-opacity-70" />
-      <h2 className="self-end text-2xl font-semibold max-md:mr-2.5">Suma: {totalSum} zł</h2>
+      <h2 className="self-end text-2xl font-semibold max-md:mr-2.5">Łączny czas: {totalTime}min</h2>
+      <h2 className="self-end text-2xl font-semibold max-md:mr-2.5">Suma: {totalSum}zł</h2>      
     </div>
   );
 }
 
 const Rezerwacja_logged = () => {
   const location = useLocation();
-  const companyId = 1;
   const { services } = location.state || { services: [] };
-  const [sum, setSum] = useState(0);
-  const [time, setTime] = useState();
+  const { companyId} = location.state || {companyId: 1};
+  const [userId] = useState(4);
+  const [userData, setUserData] = useState(null);
+  const [otherUserData, setOtherUserData] = useState(null)
   const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState('');
+  const [totalTime, setTotalTime] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
+  const [isFree, setIsFree] = useState(3);
+  const [contact, setContact] = useState(1)
 
-  const handleConfirm = async () => {
+  const handleConfirmAddBooking = async () => {
+    for (const service of services) {
+      const localBookingDateTime = new Date(date);
+      const [hours, minutes] = time.split(':');
+      localBookingDateTime.setHours(hours);
+      localBookingDateTime.setMinutes(minutes);
+      localBookingDateTime.setSeconds('00');
+  
+      const year = localBookingDateTime.getFullYear();
+      const month = String(localBookingDateTime.getMonth() + 1).padStart(2, '0');
+      const day = String(localBookingDateTime.getDate()).padStart(2, '0');
+      const hour = String(localBookingDateTime.getHours()).padStart(2, '0');
+      const minute = String(localBookingDateTime.getMinutes()).padStart(2, '0');
+      const second = String(localBookingDateTime.getSeconds()).padStart(2, '0');
+  
+      const bookingDateTimeString = `${year}-${month}-${day} ${hour}:${minute}:${second}`;  
+      
+      
+      const bookingData = {
+        company_id: companyId,
+        user_id: userId,
+        service_id: service.id,
+        booking_datetime: bookingDateTimeString,
+        booking_date: date.toISOString().split('T')[0],
+        time: time,
+        totalTime: totalTime,
+        confirm_mail: 1,
+        reminder_mail: 1,
+        confirm_sms: 1,
+        reminder_sms: 1,
+      };
+          
+      try {
+        const response = await fetch('/api/add_booking', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bookingData),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const data = await response.json();
+        console.log('Booking confirmed:', data);
+      } catch (error) {
+        console.error('Error confirming booking:', error);
+      }
+    }
+  };
+
+  const handleConfirmDaySchedule = async () => {
+    //ta funkcja ogarnia UTC (strefy czasowe) zeby sie data nie cofnela do tylu przypadkiem
+    const getLocalDateString = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+  
     const bookingData = {
       company_id: companyId,
-      user_id: 1,  // przykładowy user_id
-      service_id: 1,  
-      booking_time: services.time,
-      confirm_mail: 1,
-      reminder_mail: 1,
-      confirm_sms: 1,
-      reminder_sms: 1,
+      service_ids: services.map(service => service.id),
+      date: getLocalDateString(date),
+      time: time,
+      totalTime: totalTime,
+      email: userData.email,
+      total_cost: totalCost,
     };
 
+    console.log("DATA DEBUG: ", bookingData.date)
+
     try {
-      const response = await fetch('/api/add_booking', {
+      const response = await fetch('/api/add_to_day_schedule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,55 +233,97 @@ const Rezerwacja_logged = () => {
       }
 
       const data = await response.json();
-      console.log('Booking confirmed:', data);
+      setIsFree(data.is_free)
+
+      console.log('Day schedule updated:', data.message, " and ", data.is_free );
     } catch (error) {
-      console.error('Error confirming booking:', error);
+      console.error('Error updating day schedule:', error);
     }
   };
 
+  const handleConfirm = async () => {
+    {/*await handleConfirmAddBooking();*/}
+    await handleConfirmDaySchedule();
+  };
+
+  const setText = (state) => {
+    if (state==3) {
+      return (
+        <div>
+          Wybierz datę i godzinę zanim potwierdzisz
+        </div>
+      )
+    }
+    if (state==1) {
+      return (
+        <div>
+          Usługa została potwierdzona, proszę sprawdzić pocztę.
+        </div>
+      )
+    }
+    if (state==0) {
+      return (
+        <div>
+          Wybrana data jest niedostępna. Spróbuj wybrać inną datę.
+        </div>
+      )
+    }
+  }
+
   const Sum = (number) => {
-    setSum(number);
+    setTotalTime(number);
+  };
+
+  const SumTotalCost = (number) => {
+    setTotalCost(number)
   }
 
   const PickTime = (pickedTime) => {
-    setTime(prevTime => pickedTime)
-  }
+    setTime(pickedTime);
+  };
 
   const PickDate = (pickedDate) => {
-    setDate(prevDate => pickedDate)
-  }
- 
+    setDate(pickedDate);
+  };
+
+  const getUserInfo = (info) => {
+    setUserData(info);
+  };  
+
   return (
     <div className="flex flex-col bg-white">
       <Header />
       <main className="flex flex-col px-10 mt-8 w-full max-md:px-5 max-md:mt-10 max-md:max-w-full">
         <div className="flex gap-5 justify-between items-start max-md:flex-wrap max-md:max-w-full">
-          <ContactForm_logged />
+          <ContactForm_logged userId={userId} getUserInfo={getUserInfo} setContact={setContact} setOtherUserData={setOtherUserData} />
           <div>
-            <div className="flex flex-col items-start mt-0 text-3xl font-semibold text-black max-md:max-w-full"> 
-              <h3 className="ml-6 font-semibold mb-5 max-md:ml-2.5">Wybierz datę</h3> 
-              <MyDatePicker PickDate={PickDate} />          
-            </div> 
-            <div className="mt-8">
-                <TimePicker PickTime={PickTime} />
+            <div className="flex flex-col items-start mt-0 text-3xl font-semibold text-black max-md:max-w-full">
+              <h3 className="ml-6 font-semibold mb-5 max-md:ml-2.5">Wybierz datę</h3>
+              <MyDatePicker PickDate={PickDate} />              
             </div>
-            Czas: {time} <br />
-            Data: {date.toDateString()}        
+            <div className="mt-8">
+              <TimePicker PickTime={PickTime} />
+            </div>
           </div>
-          <Summary services={services} Sum={Sum} />
+          <Summary services={services} SumUpTime={Sum} SumUpCost={SumTotalCost} />          
         </div>
-        <div className="flex gap-5 mb-10 justify-between self-end mr-14 max-w-full text-2xl font-light text-center text-black whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-2.5">
-          <Link to="/rezerwacja" 
-            className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"> 
-              Cofnij 
-          </Link>
-          <button 
-            onClick={handleConfirm}
-            className="justify-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"> 
-              Zatwierdź 
-          </button>
+        <div className="flex flex-col text-right">
+          <div className="flex gap-5 mb-5 justify-between self-end mr-14 max-w-full text-2xl font-light text-center text-black whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-2.5">                              
+            <Link to="/rezerwacja"
+              className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+              Cofnij
+            </Link>
+            <button
+              onClick={handleConfirm}
+              className="justify-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+              Zatwierdź
+            </button>
+          </div>
+          <div className="mr-[60px]">
+            {setText(isFree)}
+          </div>
         </div>
-      </main>      
+      </main>
       <Footer />
     </div>
   );

@@ -49,7 +49,7 @@ const Rezerwacja = () => {
   const navigate = useNavigate();
 
   const handleNext = () => {
-    navigate('../rezerwacja2', { state: { services } });
+    navigate('../rezerwacja-logged', { state: { services, companyId }});
   };
 
   const handleServiceSelect = (selectedServices) => {
