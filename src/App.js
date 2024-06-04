@@ -9,14 +9,15 @@ function Strona_tytulowa() {
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
+  const site_link = "book-it-back.vercel.app";
 
   useEffect(() => {
     const fetchData = async () => {
       console.log("Pobieranie danych...");
       try {
         const [navData, imageCardData] = await Promise.all([
-          fetch("/api/nav_items").then((res) => res.json()),
-          fetch("/api/image_cards").then((res) => res.json())
+          fetch(site_link+"/api/nav_items").then((res) => res.json()),
+          fetch(site_link+"/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
@@ -139,7 +140,7 @@ function Strona_tytulowa() {
         nazwa: searchTerm,
       };
       try {
-        const response = await fetch("/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch(site_link+"/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

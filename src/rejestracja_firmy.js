@@ -142,7 +142,7 @@ const handleSubmit = async () => {
   };
 
   try {
-      const response = await fetch('/api/strona_rejestracji_firmy/create', {
+      const response = await fetch('book-it-back.vercel.app'+'/api/strona_rejestracji_firmy/create', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -318,7 +318,7 @@ const handleFinish = () => {
       };
 
       try {
-        const response = await fetch('/api/strona_rejestracji_firmy/usługa', {
+        const response = await fetch('book-it-back.vercel.app'+'/api/strona_rejestracji_firmy/usługa', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
