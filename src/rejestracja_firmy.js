@@ -153,11 +153,12 @@ const handleSubmit = async () => {
       const data = await response.json();
       if (response.ok) {
           console.log('Form submitted successfully:', data);
+          alert('Dane poprawne. Kontynuuj');
           // Reset form fields if needed
           
-
       } else {
           console.error('Error submitting form:', data.error);
+          alert('Niepoprawne dane. Sprawdź wypełnione pola.');
       }
   } catch (error) {
       console.error('An error occurred while submitting the form:', error);
@@ -165,7 +166,7 @@ const handleSubmit = async () => {
 };
 
 const handleFinish = () => {
-  navigate('/Strona_tytulowa');
+  navigate('/logowanie');
 };
 
   
@@ -236,22 +237,24 @@ const handleFinish = () => {
       );
 
   const Header = () => (
-    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" >
+    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
+        src="bookit-logo.png"
         alt="Logo"
-        className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
-      <div className="flex gap-3.5 items-start my-auto">
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
-          Zaloguj się/załóż konto
-        </button>
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
-          Dodaj swoją firmę
-        </button>
-      </div>
+    <div className="flex gap-3.5 items-start my-auto">
+      <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
+        Zaloguj się/załóż konto
+      </button>
+      <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
+        Dodaj swoją firmę
+      </button>
     </div>
+  </div>
   );
 
   const DodajUsluge = () => {
@@ -315,7 +318,7 @@ const handleFinish = () => {
       };
 
       try {
-        const response = await fetch('/api/add_service', {
+        const response = await fetch('/api/strona_rejestracji_firmy/usługa', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -335,10 +338,10 @@ const handleFinish = () => {
           setMinutes(30);
           setPrice(0);
           setServices([...services, newService]);
-          navigate('/logowanie'); // Replace with the desired route after adding the service
         } else {
           setError(data.error);
           setMessage(null);
+          alert(response.data.message);
         }
       } catch (error) {
         console.error('Błąd połączenia z serwerem!', error);

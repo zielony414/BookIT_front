@@ -9,14 +9,6 @@ function Strona_tytulowa() {
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("");
-
-  const handleLoginClick = () => {
-    navigate('/logowanie');
-  };
-  const handleFirmRegistrationClick = () => {
-    navigate('/rejestracja_firmy');
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +22,6 @@ function Strona_tytulowa() {
         setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
-        console.error("Błąd podczas pobierania danych:", error);
         setData([]);
         setImageCards([]);
       }
@@ -120,18 +111,17 @@ function Strona_tytulowa() {
     <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
       <img
         loading="lazy"
-        ///src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
         src="bookit-logo.png"
         alt="Logo"
-        className="shrink-0 max-w-full aspect-[9.16] w-[280px]" /// TODO - zrobić żeby działało
+        className="shrink-0 h-16 w-auto" 
         role = "button"
         onClick={() => navigate('/')}
       />
       <div className="flex gap-3.5 items-start my-auto">
-        <button onClick={handleLoginClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Zaloguj się/załóż konto
         </button>
-        <button onClick={handleFirmRegistrationClick} className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Dodaj swoją firmę
         </button>
       </div>
@@ -157,7 +147,7 @@ function Strona_tytulowa() {
     
         if (response.ok) {
           const filteredData = await response.json();
-          navigate('/Wyszukiwanie usług', { state: { filteredData: filteredData.companies } });
+          navigate('/Wyszukiwanie usług', { state: {fromHomepage: true, filteredData: filteredData.companies } });
         } else {
           console.error("Failed to fetch filtered data");
         }
@@ -172,44 +162,6 @@ function Strona_tytulowa() {
         await handleSearch();
       }
     };
-
-    const handleFilter = async () => {
-      const filterData = {
-        kategoria: selectedCategory,
-        miasto: "Wszystkie",
-        sortowanie: "Najwyższa ocena",
-      };
-      try {
-        const response = await fetch("/api/wyszukiwanie", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(filterData),
-        });
-    
-        if (response.ok) {
-          const filteredData = await response.json();
-          navigate('/Wyszukiwanie usług', {
-            state: { 
-              filteredData: filteredData.companies,
-              selectedCategory: selectedCategory // Pass selected category to subpage
-            }
-          });
-        } else {
-          console.error("Failed to fetch filtered data");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    
-
-    useEffect(() => {
-      if (selectedCategory) {
-        handleFilter(); // Wywołaj funkcję handleFilter po ustawieniu kategorii
-      }
-    }, [selectedCategory]);
   
     return (
       <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
@@ -258,8 +210,7 @@ function Strona_tytulowa() {
                   key={index}
                   className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
                   onClick={() => {
-                    setSelectedCategory(item); // Ustaw wybraną kategorię po kliknięciu przycisku
-                    handleFilter(); // Wywołaj funkcję handleSearch po wybraniu kategorii
+                    navigate("/Wyszukiwanie usług",{ state: { fromHomepage: true, category: item }});
                   }}
                 >
                   <p className="text-lg">{item}</p>

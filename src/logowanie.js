@@ -16,6 +16,11 @@ function Logowanie() {
     }
   };
 
+  const handleFinish = () => {
+    navigate('/');
+  };
+  
+
   const handleUserLoginSubmit = async (event) => {
     event.preventDefault();
     const email = event.target.email.value;
@@ -30,12 +35,13 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
+        navigate('/');
       } else {
         alert(response.data.message);
       }
     } catch (error) {
-      console.error('There was an error logging in!', error);
-      alert('An error occurred during login. Please try again.');
+      console.error('Błąd logowania!', error);
+      alert('Niepoprawne dane logowania. Spróbuj ponownie.');
     }
   };
 
@@ -53,28 +59,31 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
+        navigate('/company_manage');
       } else {
         alert(response.data.message);
       }
     } catch (error) {
-      console.error('There was an error logging in!', error);
-      alert('An error occurred during login. Please try again.');
+      console.error('Błąd logowania!', error);
+      alert('Niepoprawne dane logowania. Spróbuj ponownie.');
     }
   };
 
   const Header = () => (
-    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full" style={{ marginBottom: "100px" }}>
+    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
+        src="bookit-logo.png"
         alt="Logo"
-        className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
       <div className="flex gap-3.5 items-start my-auto">
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Zaloguj się/załóż konto
         </button>
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Dodaj swoją firmę
         </button>
       </div>
