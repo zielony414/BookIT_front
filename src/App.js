@@ -22,7 +22,8 @@ function Strona_tytulowa() {
         setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
-        console.log("Error");
+        console.error("Błąd pobierania danych:", error);
+        console.log(error);
         setData([]);
         setImageCards([]);
       }
