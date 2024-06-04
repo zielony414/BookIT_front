@@ -81,7 +81,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
 
   useEffect(() => {
     if (rating > 0) {
-      const email = "contact@bury.com"; // replace with actual email logic
+      const email = company_email; // replace with actual email logic
       const payload = { email, ocena: rating };
       fetch('/api/user_page/oceny', {
         method: 'POST',
@@ -119,7 +119,6 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
         <p>Data: {`${day}/${month}/${year}`}</p>
         {/* Display the reservation time in a separate paragraph */}
         <p>Godzina: {`${hours}:${minutes}`}</p>
-        <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Email: {company_email}</span>
         {isPastReservation && (
           <div style={{ marginTop: '0.5rem' }}>
             <StarRating rating={rating} setRating={setRating} />
