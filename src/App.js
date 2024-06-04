@@ -16,7 +16,7 @@ function Strona_tytulowa() {
       try {
         const [navData, imageCardData] = await Promise.all([
           fetch("https://book-it-back.vercel.app/api/nav_items").then((res) => res.json()),
-          fetch("/api/image_cards").then((res) => res.json())
+          fetch("https://book-it-back.vercel.app/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
@@ -140,7 +140,7 @@ function Strona_tytulowa() {
         nazwa: searchTerm,
       };
       try {
-        const response = await fetch("/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch("https://book-it-back.vercel.app/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
