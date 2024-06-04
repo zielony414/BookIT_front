@@ -66,7 +66,7 @@ function StarRating({ rating, setRating, disabled }) {
   );
 }
 
-function ReservationHistoryItem({ businessName, location, service, price, date }) {
+function ReservationHistoryItem({ businessName, location, service, price, date, company_email }) {
   const [rating, setRating] = useState(0);
 
   const isPastReservation = new Date(date) < new Date();
@@ -119,6 +119,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date }
         <p>Data: {`${day}/${month}/${year}`}</p>
         {/* Display the reservation time in a separate paragraph */}
         <p>Godzina: {`${hours}:${minutes}`}</p>
+        <span style={{ fontSize: '1.5rem', fontWeight: '500' }}>Email: {company_email}</span>
         {isPastReservation && (
           <div style={{ marginTop: '0.5rem' }}>
             <StarRating rating={rating} setRating={setRating} />
