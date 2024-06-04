@@ -69,14 +69,15 @@ function ServiceItem({ serviceName, price, serviceTime }) {
 }
 
 function Strona_firmy() {
-  const company_name = "Mister Dapper";
+  const location = useLocation();
+  const companyname = location.state || {};
+  const company_name = companyname.name;
   const company_id = 1;
   const [company, setCompany] = useState({
     name: '', description: '', logo: '', numer: '', city: '', strona: '', address: '', facebook: '', instagram: '', linkedin: '', x: '', tiktok: ''
   });
   const [services, setServices] = useState([]);
   const navigate = useNavigate();
-  const location = useLocation();
   const [error, setError] = useState('');
 
   const handleNext = () => {
@@ -97,15 +98,9 @@ function Strona_firmy() {
     { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/ac0ad10c5866d7b3ba125ce6ed1c98475328812161faf2c5d83b31e8f940126e?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mr_doppler", altText: "Pinterest" },
   ];
 
-  const servicesData = [
-    { serviceName: "Strzyżenie brody", price: "40.00", serviceTime: "20 min" },
-    { serviceName: "Strzyżenie męskie", price: "60.00", serviceTime: "45 min" },
-    { serviceName: "Stylizacja włosów i brody", price: "25.00", serviceTime: "15 min" },
-  ];
-
   const fetchCompanyDetails = async () => {
     try {
-      const response = await axios.post('/api/Strona_firmy', { company_id });
+      const response = await axios.post('/api/Strona_firmy', {company_name});
       setCompany(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error connecting to the server');
@@ -116,13 +111,15 @@ function Strona_firmy() {
     fetchCompanyDetails();
   }, []);
 
+  
+
   return (
     <div className="flex flex-col bg-white">
       <Header />
-      {company.name}
-      <div className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5">
+      {companyname.name}
+      <button onClick={() => navigate('/Wyszukiwanie usług')} className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5">
         Wróć
-      </div>
+      </button>
       <div className="px-20 mt-6 w-full bg-stone-200 max-md:px-5 max-md:max-w-full">        
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
 
@@ -211,11 +208,11 @@ function Strona_firmy() {
             </div>
           </div>
           <div className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
-            <div className=" border border-black flex flex-col grow mt-40 text-black max-md:mt-10 max-md:max-w-full">
-              <div className="mr-[150px]">
+            <div className="flex flex-col mr-[150px] grow mt-40 text-black max-md:mt-10 max-md:max-w-full">
+              <div className="">
                 <NewServicePicker companyId={company_id} onServiceSelect={handleServiceSelect}/>
               </div>
-              <div className="flex gap-5 mr-[150px] self-end justify-between mt-10 max-w-full text-2xl font-light text-center whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-1">
+              <div className="flex gap-5 mr-[110px] self-end justify-between mt-10 max-w-full text-2xl font-light text-center whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-1">
                 <Link to="/" className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
                   Cofnij
                 </Link>
