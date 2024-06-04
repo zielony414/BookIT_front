@@ -15,8 +15,8 @@ function Strona_tytulowa() {
       console.log("Pobieranie danych...");
       try {
         const [navData, imageCardData] = await Promise.all([
-          fetch("https://book-it-back.vercel.app/api/nav_items").then((res) => res.json()),
-          fetch("https://book-it-back.vercel.app/api/image_cards").then((res) => res.json())
+          fetch("https://bookit-back.vercel.app/api/nav_items").then((res) => res.json()),
+          fetch("https://bookit-back.vercel.app/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
@@ -120,7 +120,7 @@ function Strona_tytulowa() {
     useEffect(() => {
         const fetchAuthStatus = async () => {
             try {
-                const response = await fetch('https://book-it-back.vercel.app/api/czy_zalogowano');
+                const response = await fetch('https://bookit-back.vercel.app/api/czy_zalogowano');
                 const data = await response.json();
                 console.log('dupadupadupa1', data.email, data.company_or_user);
                 setAuthStatus(data);
@@ -142,7 +142,7 @@ function Strona_tytulowa() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('https://book-it-back.vercel.app/api/wyloguj', {
+            const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
                 method: 'GET',
             });
             if (response.ok) {
@@ -211,7 +211,7 @@ function Strona_tytulowa() {
         nazwa: searchTerm,
       };
       try {
-        const response = await fetch("https://book-it-back.vercel.app/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch("https://bookit-back.vercel.app/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

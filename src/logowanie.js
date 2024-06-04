@@ -27,7 +27,7 @@ function Logowanie() {
     const password = event.target.password.value;
 
     try {
-      const response = await axios.post('https://book-it-back.vercel.app/api/strona_logowania/user', {
+      const response = await axios.post('https://bookit-back.vercel.app/api/strona_logowania/user', {
         user_login: email,
         user_password: password
       });
@@ -51,7 +51,7 @@ function Logowanie() {
     const password = event.target.company_password.value;
 
     try {
-      const response = await axios.post('https://book-it-back.vercel.app/api/strona_logowania/company', {
+      const response = await axios.post('https://bookit-back.vercel.app/api/strona_logowania/company', {
         company_login: email,
         company_password: password
       });

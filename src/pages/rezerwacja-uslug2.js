@@ -139,7 +139,7 @@ const Rezerwacja_logged = () => {
     };
 
     try {
-      const response = await fetch('https://book-it-back.vercel.app/api/add_booking', {
+      const response = await fetch('https://bookit-back.vercel.app/api/add_booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
