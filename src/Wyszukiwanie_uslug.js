@@ -371,7 +371,7 @@ function Wyszukiwanie_uslug() {
       cas =
         "flex flex-col items-start px-8 pt-5 pb-3.5 w-full text-white bg-black max-md:px-5 max-md:max-w-full";
     return (
-      <footer className={cas}>
+      <div className={cas}>
         <nav className="flex gap-5 justify-between text-base">
           <div className="flex gap-4">
             <NavLink>O nas</NavLink>
@@ -383,7 +383,7 @@ function Wyszukiwanie_uslug() {
         <div className="justify-center mt-4 text-xs font-light">
           © 2024 PRZ All Rights Reserved
         </div>
-      </footer>
+      </div>
     );
   };
 

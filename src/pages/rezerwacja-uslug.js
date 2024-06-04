@@ -33,7 +33,7 @@ function Header() {
 
 const Footer = () => {
   return (
-    <footer className="flex flex-col items-start px-10 pt-5 mt-[200px] pb-3.5 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+    <div className="flex flex-col items-start px-10 pt-5 mt-[200px] pb-3.5 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
       <div className="flex gap-5 justify-between text-base">
         <div className="flex gap-5 justify-between">
           <a href="#" className="justify-center">O nas</a>
@@ -43,7 +43,7 @@ const Footer = () => {
       </div>
       <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
       <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
-    </footer>
+    </div>
   );
 }
 

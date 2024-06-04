@@ -402,34 +402,20 @@ function Strona_tytulowa() {
   );
 
   const Footer = () => {
-    return React.createElement(
-      "footer",
-      {
-        className:
-          "flex flex-col items-start px-8 pt-5 pb-3.5 mt-24 w-full text-white bg-black max-md:px-5 max-md:mt-10 max-md:max-w-full",
-      },
-      React.createElement(
-        "nav",
-        { className: "flex gap-5 justify-between text-base" },
-        React.createElement(
-          "div",
-          { className: "flex gap-4" },
-          React.createElement(NavLink, null, "O nas"),
-          React.createElement(NavLink, null, "Kontakt")
-        ),
-        React.createElement(NavLink, null, "FAQ")
-      ),
-      React.createElement("div", {
-        className:
-          "shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full",
-      }),
-      React.createElement(
-        "div",
-        { className: "justify-center mt-4 text-xs font-light" },
-        "© 2024 PRZ All Rights Reserved "
-      )
+    return (
+      <div className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+        <div className="flex gap-5 justify-between text-base">
+          <div className="flex gap-5 justify-between">
+            <a href="#" className="justify-center">O nas</a>
+            <a href="#" className="justify-center whitespace-nowrap">Kontakt</a>
+          </div>
+          <a href="#" className="justify-center whitespace-nowrap">FAQ</a>
+        </div>
+        <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
+        <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
+      </div>
     );
-  };
+  }
 
   return (
     <>
