@@ -4,7 +4,6 @@ import MyDatePicker from "../components/MyDatePicker";
 import TimePicker from "../components/TimePicker";
 import UserDataForm from "../components/UserDataForm";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 function Header() {
   const navigate = useNavigate();

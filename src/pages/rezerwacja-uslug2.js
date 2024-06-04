@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import MyDatePicker from "../components/MyDatePicker";
 import TimePicker from "../components/TimePicker";
-import { useNavigate } from 'react-router-dom';
 
 
 function Header() {
