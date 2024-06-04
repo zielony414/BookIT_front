@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import "./output.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from 'react-router-dom';
 
 function Strona_tytulowa() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,71 +113,157 @@ function Strona_tytulowa() {
     <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5de238929a006710f45648794a40a0622297cdbc516015bb550d2db71268e5c?apiKey=d10d36f0508e433185a32e898689ca50&"
+        src="bookit-logo.png"
         alt="Logo"
-        className="shrink-0 max-w-full aspect-[4.17] w-[262px]"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
       <div className="flex gap-3.5 items-start my-auto">
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Zaloguj się/załóż konto
         </button>
-        <button className="justify-center px-2.5 py-1.5 bg-white rounded-md border-b border-black border-solid">
+        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
           Dodaj swoją firmę
         </button>
       </div>
     </div>
   );
 
-  const Hero = ({ data }) => (
-    <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
-      <img
-        loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/10fbef2836b96a649d95600569a3c9f1049330147f43590e33d4d81ff4c7ccd4?apiKey=d10d36f0508e433185a32e898689ca50&"
-        alt="Background"
-        className="object-cover absolute inset-0 w-full h-full"
-      />
-      <div className="relative text-5xl font-medium text-center max-md:max-w-full max-md:text-4xl">
-        Zarezerwuj to co potrzebujesz
-      </div>
-      <div className="relative mt-3.5 text-2xl font-light text-center max-md:max-w-full">
-        Odkrywaj najlepszych specjalistów wokół siebie, <br /> wszystko czego
-        potrzebujesz w jednym miejscu
-      </div>
-      <form className="flex relative gap-5 px-6 py-2 mt-7 tracking-normal bg-white leading-[90%] rounded-full text-stone-200 max-md:flex-wrap w-[450px] max-w-md">
+  const Hero = ({ data }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
+  
+    const handleSearch = async () => {
+      const filterData = {
+        nazwa: searchTerm,
+      };
+      try {
+        const response = await fetch("/api/wyszukiwanie_po_nazwie", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(filterData),
+        });
+    
+        if (response.ok) {
+          const filteredData = await response.json();
+          navigate('/Wyszukiwanie usług', { state: { filteredData: filteredData.companies } });
+        } else {
+          console.error("Failed to fetch filtered data");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+  
+    const handleKeyDown = async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        await handleSearch();
+      }
+    };
+
+    const handleFilter = async () => {
+      const filterData = {
+        kategoria: selectedCategory,
+        miasto: "Wszystkie",
+        sortowanie: "Najwyższa ocena",
+      };
+      try {
+        const response = await fetch("/api/wyszukiwanie", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(filterData),
+        });
+    
+        if (response.ok) {
+          const filteredData = await response.json();
+          navigate('/Wyszukiwanie usług', {
+            state: { 
+              filteredData: filteredData.companies,
+              selectedCategory: selectedCategory // Pass selected category to subpage
+            }
+          });
+        } else {
+          console.error("Failed to fetch filtered data");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+
+    useEffect(() => {
+      if (selectedCategory) {
+        handleFilter(); // Wywołaj funkcję handleFilter po ustawieniu kategorii
+      }
+    }, [selectedCategory]);
+  
+    return (
+      <div className="flex overflow-hidden relative flex-col items-center px-5 pt-8 pb-16 w-full text-xl text-black min-h-[450px] max-md:max-w-full">
         <img
           loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/076444189e401938838e6a6b8094a3e4bcb51ab5cdafc308724bbfb8f96bb2a8?apiKey=d10d36f0508e433185a32e898689ca50&"
-          alt="Search icon"
-          className="shrink-0 aspect-square w-[45px]"
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/10fbef2836b96a649d95600569a3c9f1049330147f43590e33d4d81ff4c7ccd4?apiKey=d10d36f0508e433185a32e898689ca50&"
+          alt="Background"
+          className="object-cover absolute inset-0 w-full h-full"
         />
-        <label htmlFor="search" className="sr-only">
-          Szukaj usług lub biznesów
-        </label>
-        <input
-          type="text"
-          id="search"
-          placeholder="Szukaj usług dzięki lokalizacji"
-          aria-label="Szukaj usług dzięki lokalizacji"
-          className="flex-grow text-black text-lg w-[350px]"
-        />
-      </form>
-      <div className="flex justify-center items-center flex-col text-center mt-4 p-10">
-        <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
-          <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full justify-center items-center ">
-            {data.map((item, index) => (
-              <button
-                key={index}
-                className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
-              >
-                <p className="text-lg">{item}</p>
-                <span className="text-xs font-light">{item.name}</span>
-              </button>
-            ))}
+        <div className="relative text-5xl font-medium text-center max-md:max-w-full max-md:text-4xl">
+          Zarezerwuj to co potrzebujesz
+        </div>
+        <div className="relative mt-3.5 text-2xl font-light text-center max-md:max-w-full">
+          Odkrywaj najlepszych specjalistów wokół siebie, <br /> wszystko czego potrzebujesz w jednym miejscu
+        </div>
+        <form className="flex relative gap-5 px-6 py-2 mt-7 tracking-normal bg-white leading-[90%] rounded-full text-stone-200 max-md:flex-wrap w-[450px] max-w-md" onSubmit={(e) => e.preventDefault()}>
+          <img
+            loading="lazy"
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/076444189e401938838e6a6b8094a3e4bcb51ab5cdafc308724bbfb8f96bb2a8?apiKey=d10d36f0508e433185a32e898689ca50&"
+            alt="Search icon"
+            className="shrink-0 aspect-square w-[45px]"
+            onClick={handleSearch}
+            role="button"
+          />
+          <label htmlFor="search" className="sr-only">
+            Szukaj usług lub biznesów
+          </label>
+          <input
+            type="text"
+            id="search"
+            placeholder="Szukaj usług"
+            aria-label="Szukaj usług"
+            className="flex-grow text-black text-lg w-[350px]"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+            onKeyDown={handleKeyDown}
+          />
+        </form>
+        <div className="flex justify-center items-center flex-col text-center mt-4 p-10">
+          <div className="flex relative flex-col items-center self-stretch px-16 pb-2.5  w-full text-center mix-blend-overlay bg-stone-200 max-md:px-5 max-md:max-w-full">
+            <div className="flex z-10 gap-5 w-full max-w-[1075px] max-md:flex-wrap max-md:max-w-full justify-center items-center ">
+              {data.map((item, index) => (
+                <button
+                  key={index}
+                  className="flex flex-col justify-center items-center gap-1.5 mt-1.5 mb-1.5"
+                  onClick={() => {
+                    setSelectedCategory(item); // Ustaw wybraną kategorię po kliknięciu przycisku
+                    handleFilter(); // Wywołaj funkcję handleSearch po wybraniu kategorii
+                  }}
+                >
+                  <p className="text-lg">{item}</p>
+                  <span className="text-xs font-light">{item.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
   
 
   const UPPBody = ({ imageCards, sliderRef }) => {
