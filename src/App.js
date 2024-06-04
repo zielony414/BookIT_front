@@ -15,14 +15,14 @@ function Strona_tytulowa() {
       console.log("Pobieranie danych...");
       try {
         const [navData, imageCardData] = await Promise.all([
-          fetch("/api/nav_items").then((res) => res.json()),
+          fetch("https://book-it-back.vercel.app/api/nav_items").then((res) => res.json()),
           fetch("/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
-        console.error("Błąd pobierania danych:", error);
+        ///console.error("Błąd pobierania danych:", error);
         console.log(error);
         setData([]);
         setImageCards([]);
