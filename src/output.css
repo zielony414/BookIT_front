@@ -829,6 +829,10 @@ video {
   margin-top: 14rem;
 }
 
+.mr-\[60px\] {
+  margin-right: 60px;
+}
+
 .inline {
   display: inline;
 }
