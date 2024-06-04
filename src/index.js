@@ -12,6 +12,8 @@ import Rejestracja from './rejestracja';
 import Logowanie from './logowanie';
 import Rejestracja_firmy from './rejestracja_firmy';
 import ProfilEditing from './profile-editing';
+import Strona_zarządzania_firma from './Strona_zarządzania_firmą'
+import Strona_zarządzania_firma_szczegoly from './Strona_zarządzania_firmą2'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -29,6 +31,8 @@ root.render(
         <Route exact path="/rejestracja" element={<Rejestracja />} />
         <Route exact path="/logowanie" element={<Logowanie />} />
         <Route exact path="/profile-editing" element={<ProfilEditing />} />
+        <Route exact path="/zarzadzaj_firma" element={<Strona_zarządzania_firma />} />
+        <Route exact path="/zarzadzaj_firma_szczegoly" element={<Strona_zarządzania_firma_szczegoly />} />
       </Routes>
     </Router>
   </React.StrictMode>
