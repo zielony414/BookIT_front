@@ -20,21 +20,23 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 
   <Router>
-    <Routes>
-      <Route exact path="/" element={<Strona_tytulowa />} />
-      <Route exact path="/Wyszukiwanie usług" element={<Wyszukiwanie_uslug />} />
-      <Route exact path="/rejestracja_firmy" element={<Rejestracja_firmy />} />
-      <Route exact path="/Strona wyboru usług" element={<Strona_firmy />} />
-      <Route exact path="/rezerwacja" element={<Rezerwacja />} />
-      <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
-      <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
-      <Route exact path="/rejestracja" element={<Rejestracja />} />
-      <Route exact path="/logowanie" element={<Logowanie />} />
-      <Route exact path="/profile-editing" element={<ProfilEditing />} />
-      <Route exact path="/zarzadzaj_firma_szczegoly" element={<Strona_zarządzania_firma_szczegoly />} />
-      <Route exact path="/Strona_zarządzania_firmą" element={<Strona_zarządzania_firmą />} />
-      <Route exact path="/Strona_firmy" element={<Strona_firmy />} />
-    </Routes>
+    <CookiesProvider>
+      <Routes>
+        <Route exact path="/" element={<Strona_tytulowa />} />
+        <Route exact path="/Wyszukiwanie usług" element={<Wyszukiwanie_uslug />} />
+        <Route exact path="/rejestracja_firmy" element={<Rejestracja_firmy />} />
+        <Route exact path="/Strona wyboru usług" element={<Strona_firmy />} />
+        <Route exact path="/rezerwacja" element={<Rezerwacja />} />
+        <Route exact path="/rezerwacja2" element={<Rezerwacja2 />} />
+        <Route exact path="/rezerwacja-logged" element={<Rezerwacja_logged />} />
+        <Route exact path="/rejestracja" element={<Rejestracja />} />
+        <Route exact path="/logowanie" element={<Logowanie />} />
+        <Route exact path="/profile-editing" element={<ProfilEditing />} />
+        <Route exact path="/zarzadzaj_firma_szczegoly" element={<Strona_zarządzania_firma_szczegoly />} />
+        <Route exact path="/Strona_zarządzania_firmą" element={<Strona_zarządzania_firmą />} />
+        <Route exact path="/Strona_firmy" element={<Strona_firmy />} />
+      </Routes>
+    </CookiesProvider>
   </Router>
 
 );
