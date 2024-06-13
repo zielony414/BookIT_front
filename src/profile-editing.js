@@ -22,7 +22,7 @@ function Header() { return (
 const Footer = () => 
 {
     return (
-      <footer className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-16 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+      <div className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-16 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
         <div className="flex gap-5 justify-between text-base">
           <div className="flex gap-5 justify-between">
             <a href="#" className="justify-center">O nas</a>
@@ -32,14 +32,14 @@ const Footer = () =>
         </div>
         <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
         <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
-      </footer>
+      </div>
     );
 }
  
 function StarRating({ rating, setRating, disabled }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-      {disabled ? <p>Dziękujemy za opinię :)</p> : <p>Oceń wizytę:</p>}
+      {rating === 0 ? <p>Oceń wizytę:</p> : <p>Dziękujemy za opinię :)</p>}
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         {[...Array(5)].map((star, index) => {
           index += 1;
@@ -56,7 +56,6 @@ function StarRating({ rating, setRating, disabled }) {
                 pointerEvents: disabled ? 'none' : 'auto',
               }}
               onClick={() => !disabled && setRating(index)}
-              disabled={disabled}
             >
               <span>&#9733;</span> {/* Unicode character for star */}
             </button>
@@ -67,7 +66,7 @@ function StarRating({ rating, setRating, disabled }) {
   );
 }
 
-function ReservationHistoryItem({ businessName, location, service, price, date, company_email, user_rating, booking_id }) {
+function ReservationHistoryItem({ businessName, location, service, price, date, company_email }) {
   const [rating, setRating] = useState(0);
 
   const isPastReservation = new Date(date) < new Date();
@@ -83,8 +82,8 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
   useEffect(() => {
     if (rating > 0) {
       const email = company_email; // replace with actual email logic
-      const payload = { email, ocena: rating , booking_id: booking_id};
-      fetch('/api/user_page/oceny', {
+      const payload = { email, ocena: rating };
+      fetch('https://bookit-back.vercel.app/api/user_page/oceny', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +121,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
         <p>Godzina: {`${hours}:${minutes}`}</p>
         {isPastReservation && (
           <div style={{ marginTop: '0.5rem' }}>
-            <StarRating rating={rating} setRating={setRating} disabled={user_rating !== 0} />
+            <StarRating rating={rating} setRating={setRating} />
           </div>
         )}
       </footer>
@@ -287,7 +286,7 @@ function ProfilEditing()
     useEffect(() => {
       async function fetchReservations() {
         try {
-          const response = await fetch('/api/user_reservations');
+          const response = await fetch('https://bookit-back.vercel.app/api/user_reservations');
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }

@@ -9,7 +9,7 @@ const ServicePicker = ({ companyId, onSelectService }) => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch(`/api/services?company_id=${companyId}`);
+        const response = await fetch(`https://bookit-back.vercel.app/api/services?company_id=${companyId}`);
         const data = await response.json();
 
         if (!response.ok) {

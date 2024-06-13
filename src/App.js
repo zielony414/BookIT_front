@@ -15,14 +15,15 @@ function Strona_tytulowa() {
       console.log("Pobieranie danych...");
       try {
         const [navData, imageCardData] = await Promise.all([
-          fetch("/api/nav_items").then((res) => res.json()),
-          fetch("/api/image_cards").then((res) => res.json())
+          fetch("https://bookit-back.vercel.app/api/nav_items").then((res) => res.json()),
+          fetch("https://bookit-back.vercel.app/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
         setImageCards(imageCardData.companies || []);
       } catch (error) {
-        console.log("Error");
+        ///console.error("Błąd pobierania danych:", error);
+        console.log(error);
         setData([]);
         setImageCards([]);
       }
@@ -109,26 +110,97 @@ function Strona_tytulowa() {
     </p>
   );
 
-  const Header = () => (
-    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
-      <img
-        loading="lazy"
-        src="bookit-logo.png"
-        alt="Logo"
-        className="shrink-0 h-16 w-auto" 
-        role = "button"
-        onClick={() => navigate('/')}
-      />
-      <div className="flex gap-3.5 items-start my-auto">
-        <button onClick={() => navigate('/logowanie')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
-          Zaloguj się/załóż konto
-        </button>
-        <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
-          Dodaj swoją firmę
-        </button>
-      </div>
-    </div>
-  );
+  const Header = () => {
+    const navigate = useNavigate();
+    const [authStatus, setAuthStatus] = useState({
+        email: '',
+        company_or_user: null,
+    });
+
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            try {
+                const response = await fetch('https://bookit-back.vercel.app/api/czy_zalogowano');
+                const data = await response.json();
+                console.log('dupadupadupa1', data.email, data.company_or_user);
+                setAuthStatus(data);
+            } catch (error) {
+                console.error('Error fetching auth status:', error);
+            }
+        };
+
+        fetchAuthStatus();
+    }, []);
+
+    const handleProfileClick = () => {
+        if (authStatus.company_or_user === 1) {
+            navigate('/strona_zarządzania_firmą');
+        } else if (authStatus.company_or_user === 0) {
+            navigate('/profile-editing');
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
+                method: 'GET',
+            });
+            if (response.ok) {
+                setAuthStatus({
+                    email: '',
+                    company_or_user: null,
+                });
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
+    return (
+        <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+            <img
+                loading="lazy"
+                src="bookit-logo.png"
+                alt="Logo"
+                className="shrink-0 h-16 w-auto" 
+                role="button"
+                onClick={() => navigate('/')}
+            />
+            {authStatus.company_or_user !== null ? (
+                <div className="flex gap-3.5 items-start my-auto">
+                    <button
+                        onClick={handleProfileClick}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        {authStatus.email}
+                    </button>
+                    <button
+                        onClick={handleLogout}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Wyloguj
+                    </button>
+                </div>
+            ) : (
+                <div className="flex gap-3.5 items-start my-auto">
+                    <button
+                        onClick={() => navigate('/logowanie')}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Zaloguj się/załóż konto
+                    </button>
+                    <button
+                        onClick={() => navigate('/rejestracja_firmy')}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Dodaj swoją firmę
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
   const Hero = ({ data }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -139,7 +211,7 @@ function Strona_tytulowa() {
         nazwa: searchTerm,
       };
       try {
-        const response = await fetch("/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch("https://bookit-back.vercel.app/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -401,34 +473,20 @@ function Strona_tytulowa() {
   );
 
   const Footer = () => {
-    return React.createElement(
-      "footer",
-      {
-        className:
-          "flex flex-col items-start px-8 pt-5 pb-3.5 mt-24 w-full text-white bg-black max-md:px-5 max-md:mt-10 max-md:max-w-full",
-      },
-      React.createElement(
-        "nav",
-        { className: "flex gap-5 justify-between text-base" },
-        React.createElement(
-          "div",
-          { className: "flex gap-4" },
-          React.createElement(NavLink, null, "O nas"),
-          React.createElement(NavLink, null, "Kontakt")
-        ),
-        React.createElement(NavLink, null, "FAQ")
-      ),
-      React.createElement("div", {
-        className:
-          "shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full",
-      }),
-      React.createElement(
-        "div",
-        { className: "justify-center mt-4 text-xs font-light" },
-        "© 2024 PRZ All Rights Reserved "
-      )
+    return (
+      <div className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+        <div className="flex gap-5 justify-between text-base">
+          <div className="flex gap-5 justify-between">
+            <a href="#" className="justify-center">O nas</a>
+            <a href="#" className="justify-center whitespace-nowrap">Kontakt</a>
+          </div>
+          <a href="#" className="justify-center whitespace-nowrap">FAQ</a>
+        </div>
+        <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
+        <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
+      </div>
     );
-  };
+  }
 
   return (
     <>

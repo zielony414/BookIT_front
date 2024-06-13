@@ -27,7 +27,7 @@ function Logowanie() {
     const password = event.target.password.value;
 
     try {
-      const response = await axios.post('/api/strona_logowania/user', {
+      const response = await axios.post('https://bookit-back.vercel.app/api/strona_logowania/user', {
         user_login: email,
         user_password: password
       });
@@ -51,7 +51,7 @@ function Logowanie() {
     const password = event.target.company_password.value;
 
     try {
-      const response = await axios.post('/api/strona_logowania/company', {
+      const response = await axios.post('https://bookit-back.vercel.app/api/strona_logowania/company', {
         company_login: email,
         company_password: password
       });
@@ -59,7 +59,7 @@ function Logowanie() {
       if (response.status === 200) {
         alert(response.data.message);
         // Handle successful login (e.g., redirect to another page)
-        navigate('/company_manage');
+        navigate('/Strona_zarządzania_firmą');
       } else {
         alert(response.data.message);
       }
@@ -99,7 +99,7 @@ function Logowanie() {
   };
 
   const Footer = () => (
-    <footer className="flex flex-col items-start px-8 pt-5 pb-3.5 mt-24 w-full text-white bg-black max-md:px-5 max-md:mt-10 max-md:max-w-full">
+    <div className="flex flex-col items-start px-8 pt-5 pb-3.5 mt-24 w-full text-white bg-black max-md:px-5 max-md:mt-10 max-md:max-w-full">
       <nav className="flex gap-5 justify-between text-base">
         <div className="flex gap-4">
           <div>O nas</div>
@@ -111,7 +111,7 @@ function Logowanie() {
       <div className="justify-center mt-4 text-xs font-light">
         © 2024 PRZ All Rights Reserved
       </div>
-    </footer>
+    </div>
   );
 
   const Input = ({ label, placeholder, name, type = "text" }) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Strona_zarządzania_firmą.css";
 import Calendar from 'react-calendar';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Strona_zarządzania_firmą2() {
   const [hours, setHours] = useState({
@@ -36,10 +37,11 @@ function Strona_zarządzania_firmą2() {
   const [newDate, setNewDate] = useState(new Date());
   const [newTime, setNewTime] = useState('12:00');
   const company_id = 3;
+  const navigate = useNavigate();
 
   const fetchCompanyHours = async () => {
     try {
-      const response = await axios.post('/api/Strona_zarządzania_firmą2', { company_id });
+      const response = await axios.post('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą2', { company_id });
       setHours(response.data);
       updateCheckboxes(response.data);
     } catch (err) {
@@ -49,7 +51,7 @@ function Strona_zarządzania_firmą2() {
 
   const fetchReservations = async (date) => {
     try {
-      const response = await axios.post('/api/Strona_zarządzania_firmą/reservations', { company_id, date });
+      const response = await axios.post('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą/reservations', { company_id, date });
       setReservations(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error fetching reservations');
@@ -92,7 +94,7 @@ function Strona_zarządzania_firmą2() {
   const saveHours = async () => {
     try {
       console.log('Saving hours:', hours);
-      await axios.post('/api/update_company_hours', { company_id, hours });
+      await axios.post('https://bookit-back.vercel.app/api/update_company_hours', { company_id, hours });
       alert('Godziny pracy zostały zapisane');
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error saving hours');
@@ -127,7 +129,7 @@ function Strona_zarządzania_firmą2() {
         ...selectedReservation,
         booking_time: `${newDate.toISOString().split('T')[0]} ${newTime}`,
       };
-      await axios.post('/api/update_reservation', { reservation: updatedReservation});
+      await axios.post('https://bookit-back.vercel.app/api/update_reservation', { reservation: updatedReservation});
       alert('Rezerwacja została zmieniona');
       setIsModalOpen(false);
       fetchReservations(newDate);
@@ -138,7 +140,7 @@ function Strona_zarządzania_firmą2() {
 
   const handleDeleteClick = async () => {
     try {
-      await axios.delete('/api/delete_reservation', { data: { id_rezerwacji: selectedReservation.id_rezerwacji } });
+      await axios.delete('https://bookit-back.vercel.app/api/delete_reservation', { data: { id_rezerwacji: selectedReservation.id_rezerwacji } });
       alert('Rezerwacja została usunięta');
       setSelectedReservation(null);
       fetchReservations(newDate);
@@ -147,37 +149,17 @@ function Strona_zarządzania_firmą2() {
     }
   };
 
-  const handleDeleteAllClick = async () => {
-    try {
-      const day = String(newDate.getDate()).padStart(2, '0');
-      const month = String(newDate.getMonth() + 1).padStart(2, '0');
-      const year = newDate.getFullYear();
-      const formattedDate = `${year}-${month}-${day}`;
-      await axios.delete('/api/delete_reservations_by_date', { data: { reservation_date: formattedDate } });
-      alert('Wszystkie rezerwacje na dany dzień zostały usunięte');
-      setSelectedReservation(null);
-      fetchReservations(newDate);
-    } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error deleting all reservations');
-    }
-  };
 
   const Header = () => (
     <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&"
-        alt="Company logo"
-        className="shrink-0 max-w-full aspect-[4.35] w-[230px]"
+        src="bookit-logo.png"
+        alt="Logo"
+        className="shrink-0 h-16 w-auto" 
+        role = "button"
+        onClick={() => navigate('/')}
       />
-      <div className="flex gap-4 items-start my-auto">
-        <button to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
-          Zaloguj się/załóż konto
-        </button>
-        <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5">
-          Dodaj swoją firmę
-        </button>
-      </div>
     </header>
   );
 
@@ -244,9 +226,9 @@ function Strona_zarządzania_firmą2() {
             </div>
           </div>
           <div id="przyciski">
-            <button type="button" className="zapis" inClick={handleDeleteAllClick}>ODWOŁAJ WSZYSTKO</button>
+
             <button type="button" className="zapis" onClick={saveHours}>ZAPISZ</button>
-            <button type="button" className="zapis">COFNIJ</button>
+            <button type="button" className="zapis" onClick={() => navigate('/zarzadzaj_firma')}>COFNIJ</button>
           </div>
         </div>
 
@@ -314,7 +296,7 @@ function Strona_zarządzania_firmą2() {
   );
 
   const Footer = () => (
-    <footer className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
+    <div className="flex flex-col items-start px-10 pt-5 pb-3.5 mt-8 w-full text-white bg-black max-md:px-5 max-md:max-w-full">
       <div className="flex gap-5 justify-between text-base">
         <div className="flex gap-5 justify-between">
           <a href="#" className="justify-center">O nas</a>
@@ -324,7 +306,7 @@ function Strona_zarządzania_firmą2() {
       </div>
       <div className="shrink-0 self-stretch mt-2 bg-white border border-white border-solid h-[5px] max-md:max-w-full" />
       <div className="justify-center mt-4 text-xs font-light"> © 2024 PRZ All Rights Reserved{" "} </div>
-    </footer>
+    </div>
   );
 
   return (

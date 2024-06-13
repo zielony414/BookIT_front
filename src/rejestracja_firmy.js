@@ -142,7 +142,7 @@ const handleSubmit = async () => {
   };
 
   try {
-      const response = await fetch('/api/strona_rejestracji_firmy/create', {
+      const response = await fetch('https://bookit-back.vercel.app/api/strona_rejestracji_firmy/create', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ const handleFinish = () => {
 
 
       const Footer = () => (
-        <footer className="flex flex-col items-start px-8 pt-5 pb-3.5 mt-24 w-full text-white bg-black max-md:px-5 max-md:mt-10 max-md:max-w-full">
+        <div className="flex flex-col items-start px-8 pt-5 pb-3.5 mt-24 w-full text-white bg-black max-md:px-5 max-md:mt-10 max-md:max-w-full">
           <nav className="flex gap-5 justify-between text-base">
             <div className="flex gap-4">
               <div>O nas</div>
@@ -233,7 +233,7 @@ const handleFinish = () => {
           <div className="justify-center mt-4 text-xs font-light">
             © 2024 PRZ All Rights Reserved
           </div>
-        </footer>
+        </div>
       );
 
   const Header = () => (
@@ -318,7 +318,7 @@ const handleFinish = () => {
       };
 
       try {
-        const response = await fetch('/api/strona_rejestracji_firmy/usługa', {
+        const response = await fetch('https://bookit-back.vercel.app/api/strona_rejestracji_firmy/usługa', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
