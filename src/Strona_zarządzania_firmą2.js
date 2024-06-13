@@ -195,7 +195,6 @@ function Strona_zarządzania_firmą2() {
                 alt="Logo"
                 className="shrink-0 h-16 w-auto" 
                 role="button"
-                onClick={() => navigate('/')}
             />
             {authStatus.company_or_user !== null ? (
                 <div className="flex gap-3.5 items-start my-auto">
