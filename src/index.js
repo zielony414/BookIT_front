@@ -14,6 +14,7 @@ import Logowanie from './logowanie';
 import Rejestracja_firmy from './rejestracja_firmy';
 import ProfilEditing from './profile-editing';
 import Strona_zarządzania_firma_szczegoly from './Strona_zarządzania_firmą2';
+import { CookiesProvider } from './components/CookiesManager';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
