@@ -10,6 +10,7 @@ function Strona_tytulowa() {
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
+  const { cookies, clearCookies } = useCookiesContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,7 +114,6 @@ function Strona_tytulowa() {
 
   const Header = () => {
     const navigate = useNavigate();
-    const { cookies, clearCookies } = useCookiesContext();
     const [authStatus, setAuthStatus] = useState({
         email: cookies.email || '',
         company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
