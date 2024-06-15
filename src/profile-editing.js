@@ -405,7 +405,7 @@ function ProfilEditing()
                 </div>
                 <div className="flex flex-col mt-4 text-xl leading-6 text-right">
                     <p className="underline text-zinc-800">
-                        Anuluj subskrypcje
+                        {cookies.email}
                     </p>
                     <p className="self-end mt-8 text-red-600 underline">Usuń konto</p>
                 </div>
