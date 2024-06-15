@@ -349,22 +349,33 @@ function ProfilEditing()
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const { cookies, clearCookies } = useCookiesContext();
+  const [authStatus, setAuthStatus] = useState({
+      email: cookies.email || '',
+      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+  });
 
     useEffect(() => {
       async function fetchReservations() {
         try {
-          const response = await fetch('https://bookit-back.vercel.app/api/user_reservations');
+          const response = await fetch('https://bookit-back.vercel.app/api/user_reservations', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
+            }
+          });
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-  
+    
           // Formatowanie daty
           const formattedData = data.map(service => ({
             ...service,
             booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
           }));
-  
+    
           setReservations(formattedData);
         } catch (error) {
           setError(error);
@@ -372,9 +383,9 @@ function ProfilEditing()
           setLoading(false);
         }
       }
-  
+    
       fetchReservations();
-    }, []);
+    }, [cookies.email]);
   
 
     return (
