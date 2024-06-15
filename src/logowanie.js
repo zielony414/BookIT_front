@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
 
 function Logowanie() {
   const navigate = useNavigate();
-
+  const { setEmail, setIsCompany, setIsUser } = useCookiesContext()
   const handleRegisterClick = () => {
     navigate('/rejestracja');
   };
@@ -16,9 +17,6 @@ function Logowanie() {
     }
   };
 
-  const handleFinish = () => {
-    navigate('/');
-  };
   
 
   const handleUserLoginSubmit = async (event) => {
@@ -34,7 +32,12 @@ function Logowanie() {
 
       if (response.status === 200) {
         alert(response.data.message);
+        // Ustaw ciasteczka po pomyślnym logowaniu użytkownika
+        setEmail(email);
+        setIsUser(true);
+        setIsCompany(false);
         // Handle successful login (e.g., redirect to another page)
+        
         navigate('/');
       } else {
         alert(response.data.message);
@@ -58,6 +61,10 @@ function Logowanie() {
 
       if (response.status === 200) {
         alert(response.data.message);
+        // Ustaw ciasteczka po pomyślnym logowaniu firmy
+        setEmail(email);
+        setIsCompany(true);
+        setIsUser(false);
         // Handle successful login (e.g., redirect to another page)
         navigate('/Strona_zarządzania_firmą');
       } else {

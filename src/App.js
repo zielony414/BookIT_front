@@ -3,12 +3,14 @@ import "./output.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
+import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
 
 function Strona_tytulowa() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
+  const { cookies, clearCookies } = useCookiesContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,24 +115,9 @@ function Strona_tytulowa() {
   const Header = () => {
     const navigate = useNavigate();
     const [authStatus, setAuthStatus] = useState({
-        email: '',
-        company_or_user: null,
+        email: cookies.email || '',
+        company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
     });
-
-    useEffect(() => {
-        const fetchAuthStatus = async () => {
-            try {
-                const response = await fetch('https://bookit-back.vercel.app/api/czy_zalogowano');
-                const data = await response.json();
-                console.log('dupadupadupa1', data.email, data.company_or_user);
-                setAuthStatus(data);
-            } catch (error) {
-                console.error('Error fetching auth status:', error);
-            }
-        };
-
-        fetchAuthStatus();
-    }, []);
 
     const handleProfileClick = () => {
         if (authStatus.company_or_user === 1) {
@@ -146,6 +133,7 @@ function Strona_tytulowa() {
                 method: 'GET',
             });
             if (response.ok) {
+                clearCookies();
                 setAuthStatus({
                     email: '',
                     company_or_user: null,
