@@ -7,30 +7,40 @@ import { CookiesProvider, useCookiesContext } from "./components/CookiesManager"
 
 function Strona_zarządzania_firmą() {
   const [company, setCompany] = useState({
-    name: '', description: '', logo: '', numer: '', strona: '', facebook: '', instagram: '', linkedin: '', x: '', tiktok: ''
+    name: '', description: '', logo: '', tel_nr: '', Site_link: '', Facebook_link: '', Instagram_link: '', Linkedin_link: '', X_link: '', Tiktok_link: ''
   });
   const [reservations, setReservations] = useState([]);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editField, setEditField] = useState('');
-  const company_id = 3;
   const navigate = useNavigate();
   const { cookies, clearCookies } = useCookiesContext();
   const inputRef = useRef(null);
 
+  const email = cookies.email;
+
   const fetchCompanyDetails = async () => {
     try {
-      const response = await axios.post('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą', { company_id });
-      setCompany(response.data);
+      console.log('Sending email to server:', email);
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarzadzania_firma', {email});
+      console.log('Server response:', response);
+      setCompany(response.data.data); // Update to access the correct object
     } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error connecting to the server');
+      console.error('Error fetching company details:', err);
+      if (axios.isAxiosError(err)) {
+        console.error('Axios error response:', err.response);
+        setError(err.response ? err.response.data.error : 'Error connecting to the server');
+      } else {
+        setError('Unexpected error');
+      }
     }
   };
 
   const fetchReservations = async (date) => {
     try {
-      const response = await axios.post('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą/reservations', { company_id, date });
-      setReservations(response.data);
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarzadzania_firma/reservations', { email, date });
+      console.log('Fetched reservations:', response.data); // Log response data
+      setReservations(response.data.data); // Ensure accessing correct data
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error fetching reservations');
       setReservations([]); // Clear reservations on error
@@ -59,8 +69,8 @@ function Strona_zarządzania_firmą() {
   const handleSaveClick = async () => {
     setIsEditing(false);
     try {
-      await axios.put('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą/update', {
-        company_id,
+      await axios.put('https://book-it-back.vercel.app/api/Strona_zarzadzania_firma/update', {
+        email,
         field: editField,
         value: company[editField]
       });
@@ -184,7 +194,7 @@ function Strona_zarządzania_firmą() {
             )}
         </div>
     );
-};
+  };
 
   const Body = () => (
     <div id="body2">
