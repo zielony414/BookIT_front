@@ -167,12 +167,12 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
   }, [rating]);
 
   return (
-    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column', overflow: 'scroll' }}>
       <header style={{ marginBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.875rem', fontWeight: '500', marginBottom: '0.375rem' }}>{businessName}</h2>
         <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{location}</p>
       </header>
-      <section style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column' }}>
+      <section style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column'}}>
         <p style={{ fontSize: '1.25rem', marginBottom: '0.875rem' }}>{service}</p>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <p style={{ fontSize: '1.875rem', fontWeight: '600', marginBottom: '0', marginRight: '0.5rem' }}>
