@@ -70,53 +70,47 @@ function ServiceItem({ serviceName, price, serviceTime }) {
 
 function Strona_firmy() {
   const location = useLocation();
-  const companyname = location.state || {};
-  const company_name = companyname.name;
-  const company_id = 1;
+  const companyInfo = location.state || {};
+  const company_name = companyInfo.name;
+  const company_id = 2;
   const [company, setCompany] = useState({
-    name: '', description: '', logo: '', numer: '', city: '', strona: '', address: '', facebook: '', instagram: '', linkedin: '', x: '', tiktok: ''
+    ID: 0, name: '', description: '', logo: '', numer: '', city: '', strona: '', address: '', facebook: '', instagram: '', linkedin: '', x: '', tiktok: ''
   });
   const [services, setServices] = useState([]);
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
   const handleNext = () => {
-    navigate('../rezerwacja-logged', { state: { services, company_id }});
+    navigate('../rezerwacja-logged', { state: { services, company_name }});
   };
 
   const handleServiceSelect = (selectedServices) => {
     setServices(selectedServices);
   };
 
-  const socialMediaData = [
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a29484ee2bfa9fa553e53828e419621cd30545b7d30b0bbdf2b6d98b325d584c?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "mrdoppler.pl", altText: "Website" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/3f61d1ecefcf1626754503a46a82047d1290d86e3868395a6184fadb004cbe0a?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mister_doppler", altText: "Facebook" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a8df4e89ff886f8f3b169db09c7371f3152dc114b3e9d168b35a04fcda517dc4?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/in/misterdoppler", altText: "LinkedIn" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/c863b5fa7baa0dab9bbcd2ec292794c8c4a25bec8afcc63e440d70dc15024a00?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mr_doppler", altText: "Instagram" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/28b0c9d290d499b97f2e895bbb54b3dcdfac9e5bdb80ec0dba14d3b9df1917f6?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mr_doppler", altText: "Twitter" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a423b996c3a576e765ef76805827b651a39c2fbe713333bb2b2ba3d020908b21?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mr_doppler", altText: "YouTube" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/ac0ad10c5866d7b3ba125ce6ed1c98475328812161faf2c5d83b31e8f940126e?apiKey=d10d36f0508e433185a32e898689ca50&", platform: "/mr_doppler", altText: "Pinterest" },
-  ];
-
-  const fetchCompanyDetails = async () => {
-    try {
-      const response = await axios.post('/api/Strona_firmy', {company_name});
-      setCompany(response.data);
-    } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error connecting to the server');
-    }
-  };
-
   useEffect(() => {
-    fetchCompanyDetails();
-  }, []);
+    if (company_id) {
+      axios.post('https://book-it-back.vercel.app/api/Strona_firmy', { company_name })
+        .then(response => {
+          setCompany(response.data);
+        })
+        .catch(error => {
+          setError('Company not found');
+        });
+    }
+  }, [company_id]);
 
-  
+  const socialMediaData = [
+    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a29484ee2bfa9fa553e53828e419621cd30545b7d30b0bbdf2b6d98b325d584c?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.strona, altText: "Website" },
+    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/3f61d1ecefcf1626754503a46a82047d1290d86e3868395a6184fadb004cbe0a?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.facebook, altText: "Facebook" },
+    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a8df4e89ff886f8f3b169db09c7371f3152dc114b3e9d168b35a04fcda517dc4?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.linkedin, altText: "LinkedIn" },
+    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/c863b5fa7baa0dab9bbcd2ec292794c8c4a25bec8afcc63e440d70dc15024a00?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.instagram, altText: "Instagram" },
+    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/28b0c9d290d499b97f2e895bbb54b3dcdfac9e5bdb80ec0dba14d3b9df1917f6?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.x, altText: "X" },
+  ];
 
   return (
     <div className="flex flex-col bg-white">
-      <Header />
-      {companyname.name}
+      <Header />      
       <button onClick={() => navigate('/Wyszukiwanie usług')} className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5">
         Wróć
       </button>
@@ -159,7 +153,7 @@ function Strona_firmy() {
           {/*DIV POWYZEJ BEDZIE KOMPONENTNEm*/}
 
           {/*PONIZSZY DIV - KOMPONENT POBIERAJACY ZDJECIA*/}
-          <div className="border border-black flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
+          <div className=" flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
             <div className="flex grow gap-5 items-center max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
               <img
                 loading="lazy"
@@ -188,7 +182,7 @@ function Strona_firmy() {
         </div>
 
       </div>
-      <div className="border border-black self-center mt-9 w-full max-w-[1254px] max-md:max-w-full">
+      <div className="self-center mt-9 w-full max-w-[1254px] max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
           <div className="flex flex-col w-3/12 max-md:ml-0 max-md:w-full">
             <div className="flex flex-col px-5 pt-2 pb-4 w-full rounded-3xl bg-stone-200 max-md:mt-10">
@@ -210,10 +204,10 @@ function Strona_firmy() {
           <div className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
             <div className="flex flex-col mr-[150px] grow mt-40 text-black max-md:mt-10 max-md:max-w-full">
               <div className="">
-                <NewServicePicker companyId={company_id} onServiceSelect={handleServiceSelect}/>
+                <NewServicePicker companyId={company.ID} onServiceSelect={handleServiceSelect}/>
               </div>
               <div className="flex gap-5 mr-[110px] self-end justify-between mt-10 max-w-full text-2xl font-light text-center whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-1">
-                <Link to="/" className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+                <Link to="/Wyszukiwanie usług" className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
                   Cofnij
                 </Link>
                 <button onClick={handleNext} className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">

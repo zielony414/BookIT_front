@@ -4,6 +4,7 @@ import MyDatePicker from "../components/MyDatePicker";
 import TimePicker from "../components/TimePicker";
 import UserDataForm from "../components/UserDataForm";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import axios from 'axios';
 
 function Header() {
   const navigate = useNavigate();
@@ -139,11 +140,17 @@ function Summary(props) {
   );
 }
 
-const Rezerwacja_logged = () => {
+function Rezerwacja_logged() {
+
+  const navigate = useNavigate();
   const location = useLocation();
+  const company_id = 7;
   const { services } = location.state || { services: [] };
-  const { companyId} = location.state || {companyId: 1};
-  const [userId] = useState(4);
+  const { company_name} = location.state || {};  
+  const [company, setCompany] = useState({
+    ID: 0, name: '', description: ''
+  });
+  const [userId] = useState(7);
   const [userData, setUserData] = useState(null);
   const [otherUserData, setOtherUserData] = useState(null)
   const [date, setDate] = useState(new Date());
@@ -152,6 +159,23 @@ const Rezerwacja_logged = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [isFree, setIsFree] = useState(3);
   const [contact, setContact] = useState(1)
+
+  
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (company_id) {
+      axios.post('https://book-it-back.vercel.app/api/Strona_firmy', { company_name })
+        .then(response => {
+          setCompany(response.data);
+        })
+        .catch(error => {
+          setError('Company not found');
+        });
+    }
+  }, [company_id]);
+
+  const companyId = company.ID;
 
   const handleConfirmAddBooking = async () => {
     for (const service of services) {
@@ -170,7 +194,7 @@ const Rezerwacja_logged = () => {
   
       const bookingDateTimeString = `${year}-${month}-${day} ${hour}:${minute}:${second}`;  
       
-      
+      console.log("ID FIRMY: ", {companyId});
       const bookingData = {
         company_id: companyId,
         user_id: userId,
@@ -254,6 +278,12 @@ const Rezerwacja_logged = () => {
     await handleConfirmDaySchedule();
   };
 
+  const handleBack = () => {
+    navigate('/Strona wyboru usług', { state: {name: company_name}});
+  };
+
+  
+
   const setText = (state) => {
     if (state==3) {
       return (
@@ -265,7 +295,7 @@ const Rezerwacja_logged = () => {
     if (state==1) {
       return (
         <div>
-          Usługa została potwierdzona, proszę sprawdzić pocztę.
+          Usługa została potwierdzona.
         </div>
       )
     }
@@ -317,10 +347,10 @@ const Rezerwacja_logged = () => {
         </div>
         <div className="flex flex-col text-right">
           <div className="flex gap-5 mb-5 justify-between self-end mr-14 max-w-full text-2xl font-light text-center text-black whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-2.5">                              
-            <Link to="/rezerwacja"
+            <button onClick={handleBack}
               className="justify-center items-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
               Cofnij
-            </Link>
+            </button>
             <button
               onClick={handleConfirm}
               className="justify-center px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
