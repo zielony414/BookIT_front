@@ -167,7 +167,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
   }, [rating]);
 
   return (
-    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column', overflow: 'scroll' }}>
+    <article style={{ padding: '1rem', marginTop: '0.625rem', width: '100%', borderRadius: '1.875rem', backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
       <header style={{ marginBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.875rem', fontWeight: '500', marginBottom: '0.375rem' }}>{businessName}</h2>
         <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>{location}</p>
@@ -392,7 +392,7 @@ function ProfilEditing()
         <main className="flex flex-col bg-white">
             <Header />
 
-            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full overflow:auto">
           {reservations.map((reservation, index) => (
             <ReservationHistoryItem key={index} {...reservation} />
           ))}
