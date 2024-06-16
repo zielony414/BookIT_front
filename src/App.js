@@ -3,20 +3,22 @@ import "./output.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
+import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
 
 function Strona_tytulowa() {
   const [data, setData] = useState([]);
   const [imageCards, setImageCards] = useState([]);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
+  const { cookies, clearCookies } = useCookiesContext();
 
   useEffect(() => {
     const fetchData = async () => {
       console.log("Pobieranie danych...");
       try {
         const [navData, imageCardData] = await Promise.all([
-          fetch("https://book-it-back.vercel.app/api/nav_items").then((res) => res.json()),
-          fetch("https://book-it-back.vercel.app/api/image_cards").then((res) => res.json())
+          fetch("https://bookit-back.vercel.app/api/nav_items").then((res) => res.json()),
+          fetch("https://bookit-back.vercel.app/api/image_cards").then((res) => res.json())
         ]);
   
         setData(navData.nav_items);
@@ -113,23 +115,9 @@ function Strona_tytulowa() {
   const Header = () => {
     const navigate = useNavigate();
     const [authStatus, setAuthStatus] = useState({
-        email: '',
-        company_or_user: null,
+        email: cookies.email || '',
+        company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
     });
-
-    useEffect(() => {
-        const fetchAuthStatus = async () => {
-            try {
-                const response = await fetch('/api/czy_zalogowano');
-                const data = await response.json();
-                setAuthStatus(data);
-            } catch (error) {
-                console.error('Error fetching auth status:', error);
-            }
-        };
-
-        fetchAuthStatus();
-    }, []);
 
     const handleProfileClick = () => {
         if (authStatus.company_or_user === 1) {
@@ -141,10 +129,11 @@ function Strona_tytulowa() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('/api/wyloguj', {
+            const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
                 method: 'GET',
             });
             if (response.ok) {
+                clearCookies();
                 setAuthStatus({
                     email: '',
                     company_or_user: null,
@@ -210,7 +199,7 @@ function Strona_tytulowa() {
         nazwa: searchTerm,
       };
       try {
-        const response = await fetch("https://book-it-back.vercel.app/api/wyszukiwanie_po_nazwie", {
+        const response = await fetch("https://bookit-back.vercel.app/api/wyszukiwanie_po_nazwie", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

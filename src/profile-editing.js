@@ -1,23 +1,89 @@
 import React, { useEffect, useState } from 'react';
 import "./output.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
   
 
-function Header() { return ( 
-  <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full"> 
-      <img 
-          loading="lazy" 
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1881cefb472dc9fb0438a60e74e4b960e1e91330c8b9f5af952e28bc8f48cf9?apiKey=88baf2bf66c748bd80f6f382a2c28dd5&" 
-          alt="Company logo" 
-          className="shrink-0 max-w-full aspect-[4.35] w-[230px]" 
-      /> 
-      <div className="flex gap-4 items-start my-auto"> 
-          <Link to="/rezerwacja-logged" className="justify-center px-7 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Zaloguj się/załóż konto </Link> 
-          <button className="justify-center px-6 py-1.5 bg-white rounded-md border-b border-black border-solid max-md:px-5"> Dodaj swoją firmę </button> 
+
+
+const Header = () => {
+  const navigate = useNavigate();
+  const { cookies, clearCookies } = useCookiesContext();
+  const [authStatus, setAuthStatus] = useState({
+      email: cookies.email || '',
+      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+  });
+
+  const handleProfileClick = () => {
+      if (authStatus.company_or_user === 1) {
+          navigate('/strona_zarządzania_firmą');
+      } else if (authStatus.company_or_user === 0) {
+          navigate('/profile-editing');
+      }
+  };
+
+  const handleLogout = async () => {
+      try {
+          const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
+              method: 'GET',
+          });
+          if (response.ok) {
+              clearCookies();
+              setAuthStatus({
+                  email: '',
+                  company_or_user: null,
+              });
+              navigate('/');
+          }
+      } catch (error) {
+          console.error('Error logging out:', error);
+      }
+  };
+
+  return (
+      <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+          <img
+              loading="lazy"
+              src="bookit-logo.png"
+              alt="Logo"
+              className="shrink-0 h-16 w-auto" 
+              role="button"
+              onClick={() => navigate('/')}
+          />
+          {authStatus.company_or_user !== null ? (
+              <div className="flex gap-3.5 items-start my-auto">
+                  <button
+                      onClick={handleProfileClick}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      {authStatus.email}
+                  </button>
+                  <button
+                      onClick={handleLogout}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      Wyloguj
+                  </button>
+              </div>
+          ) : (
+              <div className="flex gap-3.5 items-start my-auto">
+                  <button
+                      onClick={() => navigate('/logowanie')}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      Zaloguj się/załóż konto
+                  </button>
+                  <button
+                      onClick={() => navigate('/rejestracja_firmy')}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      Dodaj swoją firmę
+                  </button>
+              </div>
+          )}
       </div>
-  </header> 
-);
-} 
+  );
+}; 
 
 const Footer = () => 
 {
@@ -83,7 +149,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
     if (rating > 0) {
       const email = company_email; // replace with actual email logic
       const payload = { email, ocena: rating };
-      fetch('https://book-it-back.vercel.app/api/user_page/oceny', {
+      fetch('https://bookit-back.vercel.app/api/user_page/oceny', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -283,21 +349,33 @@ function ProfilEditing()
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const { cookies, clearCookies } = useCookiesContext();
+  const [authStatus, setAuthStatus] = useState({
+      email: cookies.email || '',
+      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+  });
+
     useEffect(() => {
       async function fetchReservations() {
         try {
-          const response = await fetch('https://book-it-back.vercel.app/api/user_reservations');
+          const response = await fetch('https://bookit-back.vercel.app/api/user_reservations', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
+            }
+          });
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-  
+    
           // Formatowanie daty
           const formattedData = data.map(service => ({
             ...service,
             booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
           }));
-  
+    
           setReservations(formattedData);
         } catch (error) {
           setError(error);
@@ -305,9 +383,9 @@ function ProfilEditing()
           setLoading(false);
         }
       }
-  
+    
       fetchReservations();
-    }, []);
+    }, [cookies.email]);
   
 
     return (
@@ -327,7 +405,7 @@ function ProfilEditing()
                 </div>
                 <div className="flex flex-col mt-4 text-xl leading-6 text-right">
                     <p className="underline text-zinc-800">
-                        Anuluj sybskrypcję newslettera
+                        {cookies.email}
                     </p>
                     <p className="self-end mt-8 text-red-600 underline">Usuń konto</p>
                 </div>

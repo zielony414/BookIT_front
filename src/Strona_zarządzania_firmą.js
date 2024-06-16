@@ -3,6 +3,7 @@ import "./Strona_zarządzania_firmą.css";
 import Calendar from 'react-calendar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
 
 function Strona_zarządzania_firmą() {
   const [company, setCompany] = useState({
@@ -14,12 +15,12 @@ function Strona_zarządzania_firmą() {
   const [editField, setEditField] = useState('');
   const company_id = 3;
   const navigate = useNavigate();
-
+  const { cookies, clearCookies } = useCookiesContext();
   const inputRef = useRef(null);
 
   const fetchCompanyDetails = async () => {
     try {
-      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą', { company_id });
+      const response = await axios.post('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą', { company_id });
       setCompany(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error connecting to the server');
@@ -28,7 +29,7 @@ function Strona_zarządzania_firmą() {
 
   const fetchReservations = async (date) => {
     try {
-      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą/reservations', { company_id, date });
+      const response = await axios.post('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą/reservations', { company_id, date });
       setReservations(response.data);
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error fetching reservations');
@@ -58,7 +59,7 @@ function Strona_zarządzania_firmą() {
   const handleSaveClick = async () => {
     setIsEditing(false);
     try {
-      await axios.put('https://book-it-back.vercel.app/api/Strona_zarządzania_firmą/update', {
+      await axios.put('https://bookit-back.vercel.app/api/Strona_zarządzania_firmą/update', {
         company_id,
         field: editField,
         value: company[editField]
@@ -108,18 +109,82 @@ function Strona_zarządzania_firmą() {
     }
   };
 
-  const Header = () => (
-    <header className="flex gap-5 justify-between px-7 py-2 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:px-5 max-md:max-w-full">
-      <img
-        loading="lazy"
-        src="bookit-logo.png"
-        alt="Logo"
-        className="shrink-0 h-16 w-auto" 
-        role = "button"
-        onClick={() => navigate('/')}
-      />
-    </header>
-  );
+  const Header = () => {
+    const navigate = useNavigate();
+    const [authStatus, setAuthStatus] = useState({
+        email: cookies.email || '',
+        company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+    });
+
+    const handleProfileClick = () => {
+        if (authStatus.company_or_user === 1) {
+            navigate('/strona_zarządzania_firmą');
+        } else if (authStatus.company_or_user === 0) {
+            navigate('/profile-editing');
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
+                method: 'GET',
+            });
+            if (response.ok) {
+                clearCookies();
+                setAuthStatus({
+                    email: '',
+                    company_or_user: null,
+                });
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
+    return (
+        <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+            <img
+                loading="lazy"
+                src="bookit-logo.png"
+                alt="Logo"
+                className="shrink-0 h-16 w-auto" 
+                role="button"
+            />
+            {authStatus.company_or_user !== null ? (
+                <div className="flex gap-3.5 items-start my-auto">
+                    <button
+                        onClick={handleProfileClick}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        {authStatus.email}
+                    </button>
+                    <button
+                        onClick={handleLogout}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Wyloguj
+                    </button>
+                </div>
+            ) : (
+                <div className="flex gap-3.5 items-start my-auto">
+                    <button
+                        onClick={() => navigate('/logowanie')}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Zaloguj się/załóż konto
+                    </button>
+                    <button
+                        onClick={() => navigate('/rejestracja_firmy')}
+                        className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                    >
+                        Dodaj swoją firmę
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
   const Body = () => (
     <div id="body2">

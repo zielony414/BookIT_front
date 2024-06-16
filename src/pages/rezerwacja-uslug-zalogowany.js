@@ -5,30 +5,88 @@ import TimePicker from "../components/TimePicker";
 import UserDataForm from "../components/UserDataForm";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import axios from 'axios';
+import { CookiesProvider, useCookiesContext } from "../components/CookiesManager";
 
-function Header() {
+
+
+const Header = () => {
   const navigate = useNavigate();
-  return ( 
-  <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
-    <img
-      loading="lazy"
-      src="bookit-logo.png"
-      alt="Logo"
-      className="shrink-0 h-16 w-auto" 
-      role = "button"
-      onClick={() => navigate('/')}
-    />
-    <div className="flex gap-3.5 items-start my-auto">
-      <button onClick={() => navigate('/profile-editing')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
-        Email
-      </button>
-      <button onClick={() => navigate('/rejestracja_firmy')} className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid">
-        Wyloguj
-      </button>
-    </div>
-  </div> 
-);
-}
+  const { cookies, clearCookies } = useCookiesContext();
+  const [authStatus, setAuthStatus] = useState({
+      email: cookies.email || '',
+      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+  });
+
+  const handleProfileClick = () => {
+      if (authStatus.company_or_user === 1) {
+          navigate('/strona_zarządzania_firmą');
+      } else if (authStatus.company_or_user === 0) {
+          navigate('/profile-editing');
+      }
+  };
+
+  const handleLogout = async () => {
+      try {
+          const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
+              method: 'GET',
+          });
+          if (response.ok) {
+              clearCookies();
+              setAuthStatus({
+                  email: '',
+                  company_or_user: null,
+              });
+              navigate('/');
+          }
+      } catch (error) {
+          console.error('Error logging out:', error);
+      }
+  };
+
+  return (
+      <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+          <img
+              loading="lazy"
+              src="bookit-logo.png"
+              alt="Logo"
+              className="shrink-0 h-16 w-auto" 
+              role="button"
+              onClick={() => navigate('/')}
+          />
+          {authStatus.company_or_user !== null ? (
+              <div className="flex gap-3.5 items-start my-auto">
+                  <button
+                      onClick={handleProfileClick}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      {authStatus.email}
+                  </button>
+                  <button
+                      onClick={handleLogout}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      Wyloguj
+                  </button>
+              </div>
+          ) : (
+              <div className="flex gap-3.5 items-start my-auto">
+                  <button
+                      onClick={() => navigate('/logowanie')}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      Zaloguj się/załóż konto
+                  </button>
+                  <button
+                      onClick={() => navigate('/rejestracja_firmy')}
+                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+                  >
+                      Dodaj swoją firmę
+                  </button>
+              </div>
+          )}
+      </div>
+  );
+};
 
 function ContactForm_logged({userId, getUserInfo, setContact, setOtherUserData}) {
   //do tej funkcji argument musi być przekazywany przez funkcję pobierająca id aktualnego usera
@@ -210,7 +268,7 @@ function Rezerwacja_logged() {
       };
           
       try {
-        const response = await fetch('https://book-it-back.vercel.app/api/add_booking', {
+        const response = await fetch('https://bookit-back.vercel.app/api/add_booking', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -252,7 +310,7 @@ function Rezerwacja_logged() {
     console.log("DATA DEBUG: ", bookingData.date)
 
     try {
-      const response = await fetch('https://book-it-back.vercel.app/api/add_to_day_schedule', {
+      const response = await fetch('https://bookit-back.vercel.app/api/add_to_day_schedule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
