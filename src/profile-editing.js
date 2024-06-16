@@ -392,7 +392,7 @@ function ProfilEditing()
         <main className="flex flex-col bg-white">
             <Header />
 
-            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full overflow:auto">
+            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full overflow-x-auto whitespace-nowrap w-full">
           {reservations.map((reservation, index) => (
             <ReservationHistoryItem key={index} {...reservation} />
           ))}
