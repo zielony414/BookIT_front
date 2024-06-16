@@ -697,6 +697,10 @@ video {
   margin-right: 2rem;
 }
 
+.mr-\[110px\] {
+  margin-right: 110px;
+}
+
 .mr-\[150px\] {
   margin-right: 150px;
 }
@@ -825,10 +829,6 @@ video {
   margin-top: auto;
 }
 
-.mr-\[110px\] {
-  margin-right: 110px;
-}
-
 .inline {
   display: inline;
 }
@@ -847,10 +847,6 @@ video {
 
 .aspect-\[1\.82\] {
   aspect-ratio: 1.82;
-}
-
-.aspect-\[4\.35\] {
-  aspect-ratio: 4.35;
 }
 
 .aspect-\[5\.56\] {
@@ -947,10 +943,6 @@ video {
 
 .w-\[229px\] {
   width: 229px;
-}
-
-.w-\[230px\] {
-  width: 230px;
 }
 
 .w-\[242px\] {
