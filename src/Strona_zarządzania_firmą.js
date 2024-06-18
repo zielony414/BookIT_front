@@ -37,15 +37,15 @@ function Strona_zarządzania_firmą() {
   };
 
   const fetchReservations = async (date) => {
-    try {
-      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarzadzania_firma/reservations', { email, date });
-      console.log('Fetched reservations:', response.data); // Log response data
-      setReservations(response.data.data); // Ensure accessing correct data
-    } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error fetching reservations');
-      setReservations([]); // Clear reservations on error
-    }
-  };
+  try {
+    const response = await axios.post('https://book-it-back.vercel.app/api/Strona_zarzadzania_firma/reservations', { email, date });
+    console.log('Fetched reservations:', response.data); // Log response data
+    setReservations(response.data.data); // Ensure accessing correct data
+  } catch (err) {
+    setError(err.response ? err.response.data.error : 'Error fetching reservations');
+    setReservations([]); // Clear reservations on error
+  }
+};
 
   useEffect(() => {
     fetchCompanyDetails();
