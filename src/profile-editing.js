@@ -209,7 +209,7 @@ function ProfileForm({ onSubmit })
     
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
-      fetch('/edit_profile', {
+      fetch('https://book-it-back.vercel.app/edit_profile', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ function ProfileForm({ onSubmit })
           className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
           id="email"
           type="email"
-          placeholder="kontakt@roksa.pl"
+          placeholder="twój@email.pl"
           aria-label="Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
