@@ -206,9 +206,26 @@ function ProfileForm({ onSubmit })
     const [stareHaslo, setStareHaslo] = useState('');
     const [noweHaslo, setNoweHaslo] = useState('');
     const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
+    const [user_data, setUser] = useState({
+      id: '', email: '', password: '', tel_nr: '', gender: '', address: ''
+    });
     
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
+      try {
+        console.log('Sending email to server:', email);
+        const response = axios.post('https://book-it-back.vercel.app//api/user_info_by_email', {email});
+        console.log('Server response:', response);
+        setUser(response.user_data.data); // Update to access the correct object
+      } catch (err) {
+        console.error('Error fetching user details:', err);
+        if (axios.isAxiosError(err)) {
+          console.error('Axios error response:', err.response);
+          setError(err.response ? err.response.data.error : 'Error connecting to the server');
+        } else {
+          setError('Unexpected error');
+        }
+      }
       fetch('https://book-it-back.vercel.app/api/edit_profile', {
           method: 'POST',
           headers: {
@@ -250,7 +267,7 @@ function ProfileForm({ onSubmit })
           type="email"
           placeholder="twój@email.pl"
           aria-label="Email"
-          value={email}
+          value={user_data.email}
           onChange={(event) => setEmail(event.target.value)}
         />
         <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">NR TELEFONU</h2>
@@ -261,7 +278,7 @@ function ProfileForm({ onSubmit })
           type="text"
           placeholder="+48 420 213 769"
           aria-label="Numer telefonu"
-          value={nrTelefonu}
+          value={user_data.tel_nr}
           onChange={(event) => setnrTelefonu(event.target.value)}
         />
         <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">MIASTO</h2>
@@ -272,7 +289,7 @@ function ProfileForm({ onSubmit })
           type="text"
           placeholder="Lipinki Łużyckie"
           aria-label="Miasto"
-          value={miasto}
+          value={user_data.miasto}
           onChange={(event) => setMiasto(event.target.value)}
         />
         <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">PŁEĆ</h2>
@@ -281,7 +298,7 @@ function ProfileForm({ onSubmit })
           className="label justify-center items-start px-6 py-12 text-lg whitespace-nowrap bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
           id="gender"
           aria-label="Płeć"
-          value={plec}
+          value={user_data.plec}
           onChange={(event) => setPlec(event.target.value)}
         >
           <option value="Mezczyzna">Mężczyzna</option>
