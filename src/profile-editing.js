@@ -209,7 +209,7 @@ function ProfileForm({ onSubmit })
     
     const handleSave = () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
-      fetch('https://book-it-back.vercel.app/edit_profile', {
+      fetch('https://book-it-back.vercel.app/api/edit_profile', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
