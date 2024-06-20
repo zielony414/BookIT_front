@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import NewServicePicker from "./components/NewServicePicker";
-import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
-
-
-
+import {
+  CookiesProvider,
+  useCookiesContext,
+} from "./components/CookiesManager";
 
 function SocialMediaLink({ url, platform, altText }) {
   return (
@@ -22,84 +22,121 @@ function SocialMediaLink({ url, platform, altText }) {
   );
 }
 
+const generateStars = (rating) => {
+  // Ensure rating is a number and handle edge cases
+  if (typeof rating !== 'number' || isNaN(rating) || rating < 0) {
+    return null; // Or handle gracefully as per your UI/UX requirements
+  }
 
+  const fullStars = Math.floor(rating);
+  const halfStars = rating % 1 !== 0 ? 1 : 0;
+  const emptyStars = 5 - fullStars - halfStars;
+
+  // Validate lengths to avoid invalid array creation
+  const fullStarsArray = Array.from({ length: fullStars }, (_, i) => (
+    <span key={`full-${i}`} className="text-yellow-500 text-2xl">
+      ★
+    </span>
+  ));
+
+  const halfStarElement = halfStars === 1 ? (
+    <span className="text-yellow-500 text-2xl">☆</span>
+  ) : null;
+
+  const emptyStarsArray = Array.from({ length: emptyStars }, (_, i) => (
+    <span key={`empty-${i}`} className="text-gray-400 text-2xl">
+      ★
+    </span>
+  ));
+
+  return (
+    <div className="flex items-center bg-white p-0.5 rounded-lg shadow-md">
+      {fullStarsArray}
+      {halfStarElement}
+      {emptyStarsArray}
+    </div>
+  );
+};
 
 const Header = () => {
   const navigate = useNavigate();
   const { cookies, clearCookies } = useCookiesContext();
   const [authStatus, setAuthStatus] = useState({
-      email: cookies.email || '',
-      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+    email: cookies.email || "",
+    company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
   });
 
   const handleProfileClick = () => {
-      if (authStatus.company_or_user === 1) {
-          navigate('/strona_zarządzania_firmą');
-      } else if (authStatus.company_or_user === 0) {
-          navigate('/profile-editing');
-      }
+    if (authStatus.company_or_user === 1) {
+      navigate("/strona_zarządzania_firmą");
+    } else if (authStatus.company_or_user === 0) {
+      navigate("/profile-editing");
+    }
   };
 
   const handleLogout = async () => {
-      try {
-          const response = await fetch('https://bookit-back.vercel.app/api/wyloguj', {
-              method: 'GET',
-          });
-          if (response.ok) {
-              clearCookies();
-              setAuthStatus({
-                  email: '',
-                  company_or_user: null,
-              });
-              navigate('/');
-          }
-      } catch (error) {
-          console.error('Error logging out:', error);
+    try {
+      const response = await fetch(
+        "https://bookit-back.vercel.app/api/wyloguj",
+        {
+          method: "GET",
+        }
+      );
+      if (response.ok) {
+        clearCookies();
+        setAuthStatus({
+          email: "",
+          company_or_user: null,
+        });
+        navigate("/");
       }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
-      <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
-          <img
-              loading="lazy"
-              src="bookit-logo.png"
-              alt="Logo"
-              className="shrink-0 h-16 w-auto" 
-              role="button"
-              onClick={() => navigate('/')}
-          />
-          {authStatus.company_or_user !== null ? (
-              <div className="flex gap-3.5 items-start my-auto">
-                  <button
-                      onClick={handleProfileClick}
-                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
-                  >
-                      {authStatus.email}
-                  </button>
-                  <button
-                      onClick={handleLogout}
-                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
-                  >
-                      Wyloguj
-                  </button>
-              </div>
-          ) : (
-              <div className="flex gap-3.5 items-start my-auto">
-                  <button
-                      onClick={() => navigate('/logowanie')}
-                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
-                  >
-                      Zaloguj się/załóż konto
-                  </button>
-                  <button
-                      onClick={() => navigate('/rejestracja_firmy')}
-                      className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
-                  >
-                      Dodaj swoją firmę
-                  </button>
-              </div>
-          )}
-      </div>
+    <div className="flex gap-5 justify-between px-5 py-1.5 w-full text-xs text-center text-black mix-blend-darken bg-stone-200 max-md:flex-wrap max-md:max-w-full">
+      <img
+        loading="lazy"
+        src="bookit-logo.png"
+        alt="Logo"
+        className="shrink-0 h-16 w-auto"
+        role="button"
+        onClick={() => navigate("/")}
+      />
+      {authStatus.company_or_user !== null ? (
+        <div className="flex gap-3.5 items-start my-auto">
+          <button
+            onClick={handleProfileClick}
+            className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+          >
+            {authStatus.email}
+          </button>
+          <button
+            onClick={handleLogout}
+            className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+          >
+            Wyloguj
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-3.5 items-start my-auto">
+          <button
+            onClick={() => navigate("/logowanie")}
+            className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+          >
+            Zaloguj się/załóż konto
+          </button>
+          <button
+            onClick={() => navigate("/rejestracja_firmy")}
+            className="justify-center px-2.5 py-3.5 bg-white rounded-md border-b border-black border-solid"
+          >
+            Dodaj swoją firmę
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -130,17 +167,32 @@ function Strona_firmy() {
   const location = useLocation();
   const companyInfo = location.state || {};
   const company_name = companyInfo.name;
+  console.log(company_name);
   const company_id = 2;
   const [company, setCompany] = useState({
-    ID: 0, name: '', description: '', logo: '', numer: '', city: '', strona: '', address: '', facebook: '', instagram: '', linkedin: '', x: '', tiktok: ''
+    ID: 0,
+    name: "",
+    description: "",
+    logo: "",
+    numer: "",
+    city: "",
+    strona: "",
+    address: "",
+    facebook: "",
+    instagram: "",
+    linkedin: "",
+    x: "",
+    tiktok: "",
+    avg_rating: "",
+    reviews_no: 0,
   });
+  console.log('CHUJ', company);
   const [services, setServices] = useState([]);
   const navigate = useNavigate();
-  const [error, setError] = useState('');
-
+  const [error, setError] = useState("");
 
   const handleNext = () => {
-    navigate('../rezerwacja-logged', { state: { services, company_name }});
+    navigate("../rezerwacja-logged", { state: { services, company_name } });
   };
 
   const handleServiceSelect = (selectedServices) => {
@@ -149,42 +201,68 @@ function Strona_firmy() {
 
   useEffect(() => {
     if (company_id) {
-      axios.post('https://book-it-back.vercel.app/api/Strona_firmy', { company_name })
-        .then(response => {
+      axios
+        .post("api/Strona_firmy", {
+          company_name,
+        })
+        .then((response) => {
           setCompany(response.data);
         })
-        .catch(error => {
-          setError('Company not found');
+        .catch((error) => {
+          setError("Company not found");
         });
     }
   }, [company_id]);
 
   const socialMediaData = [
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a29484ee2bfa9fa553e53828e419621cd30545b7d30b0bbdf2b6d98b325d584c?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.strona, altText: "Website" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/3f61d1ecefcf1626754503a46a82047d1290d86e3868395a6184fadb004cbe0a?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.facebook, altText: "Facebook" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a8df4e89ff886f8f3b169db09c7371f3152dc114b3e9d168b35a04fcda517dc4?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.linkedin, altText: "LinkedIn" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/c863b5fa7baa0dab9bbcd2ec292794c8c4a25bec8afcc63e440d70dc15024a00?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.instagram, altText: "Instagram" },
-    { url: "https://cdn.builder.io/api/v1/image/assets/TEMP/28b0c9d290d499b97f2e895bbb54b3dcdfac9e5bdb80ec0dba14d3b9df1917f6?apiKey=d10d36f0508e433185a32e898689ca50&", platform: company.x, altText: "X" },
+    {
+      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a29484ee2bfa9fa553e53828e419621cd30545b7d30b0bbdf2b6d98b325d584c?apiKey=d10d36f0508e433185a32e898689ca50&",
+      platform: company.strona,
+      altText: "Website",
+    },
+    {
+      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/3f61d1ecefcf1626754503a46a82047d1290d86e3868395a6184fadb004cbe0a?apiKey=d10d36f0508e433185a32e898689ca50&",
+      platform: company.facebook,
+      altText: "Facebook",
+    },
+    {
+      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a8df4e89ff886f8f3b169db09c7371f3152dc114b3e9d168b35a04fcda517dc4?apiKey=d10d36f0508e433185a32e898689ca50&",
+      platform: company.linkedin,
+      altText: "LinkedIn",
+    },
+    {
+      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/c863b5fa7baa0dab9bbcd2ec292794c8c4a25bec8afcc63e440d70dc15024a00?apiKey=d10d36f0508e433185a32e898689ca50&",
+      platform: company.instagram,
+      altText: "Instagram",
+    },
+    {
+      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/28b0c9d290d499b97f2e895bbb54b3dcdfac9e5bdb80ec0dba14d3b9df1917f6?apiKey=d10d36f0508e433185a32e898689ca50&",
+      platform: company.x,
+      altText: "X",
+    },
   ];
 
   return (
     <div className="flex flex-col bg-white">
-      <Header />      
-      <button onClick={() => navigate('/Wyszukiwanie usług')} className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5">
+      <Header />
+      <button
+        onClick={() => navigate("/Wyszukiwanie usług")}
+        className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5"
+      >
         Wróć
       </button>
-      <div className="px-20 mt-6 w-full bg-stone-200 max-md:px-5 max-md:max-w-full">        
+      <div className="px-20 mt-6 w-full bg-stone-200 max-md:px-5 max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-
-
-
           {/*Ten div nizej bedzie zamieniony na komponent wczytujacy zdj, opinie itd*/}
-          <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">  
+          <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
             <div className="self-stretch my-auto max-md:mt-10 max-md:max-w-full">
               <div className="flex gap-5 max-md:flex-col max-md:gap-0">
                 <div className="flex flex-col w-[41%] max-md:ml-0 max-md:w-full">
-                  <img src={company.logo} id="logo_firmy" alt="logo firmy"
-                    loading="lazy"                                        
+                  <img
+                    src={company.logo}
+                    id="logo_firmy"
+                    alt="logo firmy"
+                    loading="lazy"
                     className="grow w-full shadow-sm aspect-[1.08] max-md:mt-9"
                   />
                 </div>
@@ -193,16 +271,13 @@ function Strona_firmy() {
                     <div className="text-5xl font-medium max-md:text-4xl">
                       {company.name}
                     </div>
-                    <div className="mt-2.5">{company.city}, {company.address}</div>
+                    <div className="mt-2.5">
+                      {company.city}, {company.address}
+                    </div>
                     <div className="mt-6">tel. {company.numer}</div>
-                    <div className="flex gap-3.5 mt-8 text-xl font-light">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/d9dff8c69447b2449452fd2a05979a57808a0aff7656e6036b6224d1158fcb7a?apiKey=d10d36f0508e433185a32e898689ca50&"
-                        alt="Rating"
-                        className="aspect-[5.56] w-[229px]"
-                      />
-                      <div className="my-auto">345 opinii</div>
+                    <div className="flex items-center gap-3 text-base">
+                      <div>{generateStars(company.avg_rating)}</div>
+                      <div>{company.reviews_no} opinii</div>
                     </div>
                   </div>
                 </div>
@@ -235,11 +310,7 @@ function Strona_firmy() {
             </div>
           </div>
           {/*^^^ KOMPONENT TO BEDZIE ^^^*/}
-
-
-
         </div>
-
       </div>
       <div className="self-center mt-9 w-full max-w-[1254px] max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
@@ -263,16 +334,25 @@ function Strona_firmy() {
           <div className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
             <div className="flex flex-col mr-[150px] grow mt-40 text-black max-md:mt-10 max-md:max-w-full">
               <div className="">
-                <NewServicePicker companyId={company.ID} onServiceSelect={handleServiceSelect}/>
+                <NewServicePicker
+                  companyId={company.ID}
+                  onServiceSelect={handleServiceSelect}
+                />
               </div>
               <div className="flex gap-5 mr-[110px] self-end justify-between mt-10 max-w-full text-2xl font-light text-center whitespace-nowrap w-[414px] max-md:mt-10 max-md:mr-1">
-                <Link to="/Wyszukiwanie usług" className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+                <Link
+                  to="/Wyszukiwanie usług"
+                  className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
+                >
                   Cofnij
                 </Link>
-                <button onClick={handleNext} className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5">
+                <button
+                  onClick={handleNext}
+                  className="px-7 py-1.5 bg-white border border-black border-solid rounded-[30px] max-md:px-5"
+                >
                   Dalej
                 </button>
-              </div>                                                      
+              </div>
             </div>
           </div>
         </div>
