@@ -362,7 +362,7 @@ function ProfilEditing()
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'User-Email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
+              'email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
             }
           });
           if (!response.ok) {
