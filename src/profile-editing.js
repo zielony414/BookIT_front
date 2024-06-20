@@ -132,7 +132,7 @@ function StarRating({ rating, setRating, disabled }) {
   );
 }
 
-function ReservationHistoryItem({ businessName, location, service, price, date, company_email }) {
+function ReservationHistoryItem({ businessName, location, service, price, date, company_email, recensed }) {
   const [rating, setRating] = useState(0);
 
   const isPastReservation = new Date(date) < new Date();
@@ -185,6 +185,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
         <p>Data: {`${day}/${month}/${year}`}</p>
         {/* Display the reservation time in a separate paragraph */}
         <p>Godzina: {`${hours}:${minutes}`}</p>
+        <p>Czy bylo ocenione?: {`${!recensed}`}</p>
         {isPastReservation && (
           <div style={{ marginTop: '0.5rem' }}>
             <StarRating rating={rating} setRating={setRating} />
@@ -342,78 +343,72 @@ function ProfileForm({ onSubmit })
     );
 }
 
-function ProfilEditing() 
-  {
-    
-    const [reservations, setReservations] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+function ProfilEditing() {
+  const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const { cookies, clearCookies } = useCookiesContext();
+  const { cookies, clearCookies } = useCookiesContext();
   const [authStatus, setAuthStatus] = useState({
-      email: cookies.email || '',
-      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+    email: cookies.email || '',
+    company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
   });
 
-    useEffect(() => {
-      async function fetchReservations() {
-        try {
-          const response = await fetch('https://book-it-back.vercel.app/api/user_reservations', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'User-Email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
-            }
-          });
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-    
-          // Formatowanie daty
-          const formattedData = data.map(service => ({
-            ...service,
-            booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' })
-          }));
-    
-          setReservations(formattedData);
-        } catch (error) {
-          setError(error);
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    async function fetchReservations() {
+      try {
+        const response = await fetch('https://book-it-back.vercel.app/api/user_reservations', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Email': cookies.email, // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
+        const data = await response.json();
+
+        // Formatowanie daty
+        const formattedData = data.map(service => ({
+          ...service,
+          booking_time: new Date(service.booking_time).toLocaleString('pl-PL', { timeZone: 'UTC' }),
+          recensed: service.recensed || false, // Make sure recensed is added here
+        }));
+
+        setReservations(formattedData);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
       }
-    
-      fetchReservations();
-    }, [cookies.email]);
-  
+    }
 
-    return (
-        <main className="flex flex-col bg-white">
-            <Header />
+    fetchReservations();
+  }, [cookies.email]);
 
-            <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full overflow:auto">
-          {reservations.map((reservation, index) => (
-            <ReservationHistoryItem key={index} {...reservation} />
-          ))}
-        </section>
-            <ProfileForm/>
+  return (
+    <main className="flex flex-col bg-white">
+      <Header />
 
-            <section className="flex gap-5 justify-between items-start mt-20 w-full font-light max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
-                <div className="flex gap-5 justify-between text-2xl text-center text-black whitespace-nowrap max-md:flex-wrap max-md:max-w-full">
-                    
-                </div>
-                <div className="flex flex-col mt-4 text-xl leading-6 text-right">
-                    <p className="underline text-zinc-800">
-                        Anuluj subskrypcję
-                    </p>
-                    <p className="self-end mt-8 text-red-600 underline">Usuń konto</p>
-                </div>
-            </section>
+      <section className="flex gap-5 self-center px-2.5 py-2.5 mt-11 rounded-3xl bg-stone-200 max-md:flex-wrap max-md:mt-10 max-md:max-w-full overflow:auto">
+        {reservations.map((reservation, index) => (
+          <ReservationHistoryItem key={index} {...reservation} />
+        ))}
+      </section>
+      <ProfileForm />
 
-            <Footer />
-        </main>
-    );
+      <section className="flex gap-5 justify-between items-start mt-20 w-full font-light max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
+        <div className="flex gap-5 justify-between text-2xl text-center text-black whitespace-nowrap max-md:flex-wrap max-md:max-w-full"></div>
+        <div className="flex flex-col mt-4 text-xl leading-6 text-right">
+          <p className="underline text-zinc-800">Anuluj subskrypcję</p>
+          <p className="self-end mt-8 text-red-600 underline">Usuń konto</p>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  );
 }
 
 export default ProfilEditing;
