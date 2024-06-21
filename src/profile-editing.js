@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "./output.css";
+import axios from 'axios';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CookiesProvider, useCookiesContext } from "./components/CookiesManager";
   
@@ -199,6 +200,7 @@ function ReservationHistoryItem({ businessName, location, service, price, date, 
 function ProfileForm({ onSubmit }) 
 {    
   
+    const [error, setError] = useState('');
     const [email, setEmail] = useState('');
     const [nrTelefonu, setnrTelefonu] = useState('');
     const [miasto, setMiasto] = useState('');
@@ -206,10 +208,40 @@ function ProfileForm({ onSubmit })
     const [stareHaslo, setStareHaslo] = useState('');
     const [noweHaslo, setNoweHaslo] = useState('');
     const [powtorzNoweHaslo, setPowtworzNoweHaslo] = useState('');
+    const [user_data, setUser] = useState({
+      id: '', email: '', password: '', tel_nr: '', gender: '', address: ''
+    });
     
-    const handleSave = () => {
+    useEffect(() => {
+      const fetchData = async () => {
+        if (!email) return; // Wait until email is set
+        console.log("Pobieranie danych użytkownika...");
+        try {
+          console.log('Sending email to server:', email);
+          const response = await axios.post('https://book-it-back.vercel.app/api/user_info_by_email', { email });
+          console.log('Server response:', response);
+          const userInfo = response.data.user_info;
+          //setUser(userInfo); // Correct object structure
+
+
+        } catch (err) {
+          console.error('Error fetching user details:', err);
+          if (axios.isAxiosError(err)) {
+            console.error('Axios error response:', err.response);
+            setError(err.response ? err.response.data.error : 'Error connecting to the server');
+          } else {
+            setError('Unexpected error');
+          }
+        }
+      };
+  
+      fetchData();
+    }, [email]);
+
+    const handleSave = async () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
-      fetch('/edit_profile', {
+      
+      fetch('https://book-it-back.vercel.app/api/edit_profile', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -236,110 +268,108 @@ function ProfileForm({ onSubmit })
   };
 
 
-    return (
-      <form className="mt-16 max-md:mt-10 max-md:max-w-full">
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-  <form className="mt-16 max-md:mt-10 max-md:max-w-full bg-white p-8 rounded-xl shadow-lg">
-    <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-      <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl">EMAIL</h2>
-        <label htmlFor="email" className="sr-only">Email</label>
-        <input
-          className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="email"
-          type="email"
-          placeholder="kontakt@roksa.pl"
-          aria-label="Email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">NR TELEFONU</h2>
-        <label htmlFor="telephone" className="sr-only">Numer telefonu</label>
-        <input
-          className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="telephone"
-          type="text"
-          placeholder="+48 420 213 769"
-          aria-label="Numer telefonu"
-          value={nrTelefonu}
-          onChange={(event) => setnrTelefonu(event.target.value)}
-        />
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">MIASTO</h2>
-        <label htmlFor="city" className="sr-only">Miasto</label>
-        <input
-          className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="city"
-          type="text"
-          placeholder="Lipinki Łużyckie"
-          aria-label="Miasto"
-          value={miasto}
-          onChange={(event) => setMiasto(event.target.value)}
-        />
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">PŁEĆ</h2>
-        <label htmlFor="gender" className="sr-only">Płeć</label>
-        <select
-          className="label justify-center items-start px-6 py-12 text-lg whitespace-nowrap bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="gender"
-          aria-label="Płeć"
-          value={plec}
-          onChange={(event) => setPlec(event.target.value)}
-        >
-          <option value="Mezczyzna">Mężczyzna</option>
-          <option value="Kobieta">Kobieta</option>
-        </select>
-      </div>
-      
-      <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-0">STARE HASŁO</h2>
-        <label htmlFor="oldPassword" className="sr-only">Stare hasło</label>
-        <input
-          className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="oldPassword"
-          type="password"
-          placeholder="***************"
-          aria-label="Stare hasło"
-          value={stareHaslo}
-          onChange={(event) => setStareHaslo(event.target.value)}
-        />
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">NOWE HASŁO</h2>
-        <label htmlFor="newPassword" className="sr-only">Nowe hasło</label>
-        <input
-          className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="newPassword"
-          type="password"
-          placeholder="***************"
-          aria-label="Nowe hasło"
-          value={noweHaslo}
-          onChange={(event) => setNoweHaslo(event.target.value)}
-        />
-        <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">POWTÓRZ NOWE HASŁO</h2>
-        <label htmlFor="repeatNewPassword" className="sr-only">Powtórz nowe hasło</label>
-        <input
-          className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
-          id="repeatNewPassword"
-          type="password"
-          placeholder="***************"
-          aria-label="Powtórz nowe hasło"
-          value={powtorzNoweHaslo}
-          onChange={(event) => setPowtworzNoweHaslo(event.target.value)}
-        />
-      </div>
-    </div>
-    
-    <div className="flex gap-4 justify-center mt-8 max-md:flex-col max-md:gap-2">
-      <button className="w-1/2 px-7 py-1.5 bg-white border border-black border-solid rounded-full max-md:w-full">Anuluj</button>
-      <button 
-        className="w-1/2 px-7 py-1.5 bg-white border border-black border-solid rounded-full max-md:w-full"
-        onClick={handleSave}
-      >
-        Zapisz
-      </button>
-    </div>
-  </form>
-</div>
+  return (
+    <div className="mt-16 max-md:mt-10 max-md:max-w-full">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <form className="mt-16 max-md:mt-10 max-md:max-w-full bg-white p-8 rounded-xl shadow-lg" onSubmit={handleSave}>
+          <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+            <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl">EMAIL</h2>
+              <label htmlFor="email" className="sr-only">Email</label>
+              <input
+                className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="email"
+                type="email"
+                placeholder={user_data.email || "twój@email.pl"}
+                aria-label="Email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">NR TELEFONU</h2>
+              <label htmlFor="telephone" className="sr-only">Numer telefonu</label>
+              <input
+                className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="telephone"
+                type="text"
+                placeholder={user_data.tel_nr || "+48 420 213 769"}
+                aria-label="Numer telefonu"
+                value={nrTelefonu}
+                onChange={(event) => setnrTelefonu(event.target.value)}
+              />
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">MIASTO</h2>
+              <label htmlFor="city" className="sr-only">Miasto</label>
+              <input
+                className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="city"
+                type="text"
+                placeholder={user_data.address || "Lipinki Łużyckie"}
+                aria-label="Miasto"
+                value={miasto}
+                onChange={(event) => setMiasto(event.target.value)}
+              />
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">PŁEĆ</h2>
+              <label htmlFor="gender" className="sr-only">Płeć</label>
+              <select
+                className="label justify-center items-start px-6 py-12 text-lg whitespace-nowrap bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="gender"
+                aria-label="Płeć"
+                value={plec}
+                onChange={(event) => setPlec(event.target.value)}
+              >
+                <option value="Mezczyzna">Mężczyzna</option>
+                <option value="Kobieta">Kobieta</option>
+              </select>
+            </div>
 
-      </form>
-    );
+            <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-0">STARE HASŁO</h2>
+              <label htmlFor="oldPassword" className="sr-only">Stare hasło</label>
+              <input
+                className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="oldPassword"
+                type="password"
+                placeholder="***************"
+                aria-label="Stare hasło"
+                value={stareHaslo}
+                onChange={(event) => setStareHaslo(event.target.value)}
+              />
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">NOWE HASŁO</h2>
+              <label htmlFor="newPassword" className="sr-only">Nowe hasło</label>
+              <input
+                className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="newPassword"
+                type="password"
+                placeholder="***************"
+                aria-label="Nowe hasło"
+                value={noweHaslo}
+                onChange={(event) => setNoweHaslo(event.target.value)}
+              />
+              <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">POWTÓRZ NOWE HASŁO</h2>
+              <label htmlFor="repeatNewPassword" className="sr-only">Powtórz nowe hasło</label>
+              <input
+                className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
+                id="repeatNewPassword"
+                type="password"
+                placeholder="***************"
+                aria-label="Powtórz nowe hasło"
+                value={powtorzNoweHaslo}
+                onChange={(event) => setPowtworzNoweHaslo(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 justify-center mt-8 max-md:flex-col max-md:gap-2">
+            <button type="button" className="w-1/2 px-7 py-1.5 bg-white border border-black border-solid rounded-full max-md:w-full max-md:py-2.5">
+              Zmień email
+            </button>
+            <button type="submit" className="w-1/2 px-7 py-1.5 bg-black text-white border border-black border-solid rounded-full max-md:w-full max-md:py-2.5">
+              Zapisz
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 function ProfilEditing() 
@@ -362,7 +392,7 @@ function ProfilEditing()
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'User-Email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
+              'email': cookies.email // Zakładając, że `userEmail` jest zmienną przechowującą email użytkownika
             }
           });
           if (!response.ok) {
