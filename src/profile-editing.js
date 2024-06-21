@@ -220,7 +220,10 @@ function ProfileForm({ onSubmit })
           console.log('Sending email to server:', email);
           const response = await axios.post('https://book-it-back.vercel.app/api/user_info_by_email', { email });
           console.log('Server response:', response);
-          setUser(response.data.user_info); // Correct object structure
+          const userInfo = response.data.user_info;
+          //setUser(userInfo); // Correct object structure
+
+
         } catch (err) {
           console.error('Error fetching user details:', err);
           if (axios.isAxiosError(err)) {
@@ -277,9 +280,9 @@ function ProfileForm({ onSubmit })
                 className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
                 id="email"
                 type="email"
-                placeholder="twój@email.pl"
+                placeholder={user_data.email || "twój@email.pl"}
                 aria-label="Email"
-                value={user_data.email}
+                value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
               <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">NR TELEFONU</h2>
@@ -288,9 +291,9 @@ function ProfileForm({ onSubmit })
                 className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
                 id="telephone"
                 type="text"
-                placeholder="+48 420 213 769"
+                placeholder={user_data.tel_nr || "+48 420 213 769"}
                 aria-label="Numer telefonu"
-                value={user_data.tel_nr}
+                value={nrTelefonu}
                 onChange={(event) => setnrTelefonu(event.target.value)}
               />
               <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">MIASTO</h2>
@@ -299,9 +302,9 @@ function ProfileForm({ onSubmit })
                 className="label justify-center items-start px-6 py-12 text-lg bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
                 id="city"
                 type="text"
-                placeholder="Lipinki Łużyckie"
+                placeholder={user_data.address || "Lipinki Łużyckie"}
                 aria-label="Miasto"
-                value={user_data.miasto}
+                value={miasto}
                 onChange={(event) => setMiasto(event.target.value)}
               />
               <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-3">PŁEĆ</h2>
@@ -310,14 +313,14 @@ function ProfileForm({ onSubmit })
                 className="label justify-center items-start px-6 py-12 text-lg whitespace-nowrap bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 w-96 max-md:w-full"
                 id="gender"
                 aria-label="Płeć"
-                value={user_data.plec}
+                value={plec}
                 onChange={(event) => setPlec(event.target.value)}
               >
                 <option value="Mezczyzna">Mężczyzna</option>
                 <option value="Kobieta">Kobieta</option>
               </select>
             </div>
-            
+
             <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
               <h2 className="text-2xl font-light leading-6 text-black max-md:max-w-full max-md:text-4xl mt-0">STARE HASŁO</h2>
               <label htmlFor="oldPassword" className="sr-only">Stare hasło</label>
@@ -354,13 +357,12 @@ function ProfileForm({ onSubmit })
               />
             </div>
           </div>
-          
+
           <div className="flex gap-4 justify-center mt-8 max-md:flex-col max-md:gap-2">
-            <button type="button" className="w-1/2 px-7 py-1.5 bg-white border border-black border-solid rounded-full max-md:w-full">Anuluj</button>
-            <button 
-              type="submit" 
-              className="w-1/2 px-7 py-1.5 bg-white border border-black border-solid rounded-full max-md:w-full"
-            >
+            <button type="button" className="w-1/2 px-7 py-1.5 bg-white border border-black border-solid rounded-full max-md:w-full max-md:py-2.5">
+              Zmień email
+            </button>
+            <button type="submit" className="w-1/2 px-7 py-1.5 bg-black text-white border border-black border-solid rounded-full max-md:w-full max-md:py-2.5">
               Zapisz
             </button>
           </div>
