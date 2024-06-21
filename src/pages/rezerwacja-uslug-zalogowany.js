@@ -88,8 +88,12 @@ const Header = () => {
   );
 };
 
-function ContactForm_logged({userId, getUserInfo, setContact, setOtherUserData}) {
-  //do tej funkcji argument musi być przekazywany przez funkcję pobierająca id aktualnego usera
+function ContactForm_logged({ userId, getUserInfo, setContact, setOtherUserData }) {
+  const { cookies } = useCookiesContext();
+  const [authStatus, setAuthStatus] = useState({
+    email: cookies.email || '',
+    company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+  });
 
   const handleContactChange = (event) => {
     setContact(parseInt(event.target.value)); // Konwertowanie wartości na liczbę całkowitą
@@ -97,8 +101,10 @@ function ContactForm_logged({userId, getUserInfo, setContact, setOtherUserData})
 
   return (
     <section className="flex flex-col self-stretch font-light max-md:max-w-full">
-      <div className="flex items-start max-md:flex-wrap">
-        <FormControl>
+      {authStatus.company_or_user !== null ? (
+        // Zalogowany użytkownik
+        <div className="flex items-start max-md:flex-wrap">
+          <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">
               <div className="text-3xl font-semibold text-black">Dane kontaktowe</div>
             </FormLabel>
@@ -113,48 +119,56 @@ function ContactForm_logged({userId, getUserInfo, setContact, setOtherUserData})
                 },
               }}
             >
-              <FormControlLabel 
-                value={1}                 
-                control={<Radio />}  
-                label="Użyj swoich danych:" 
+              <FormControlLabel
+                value={1}
+                control={<Radio />}
+                label="Użyj swoich danych:"
                 sx={{
                   '& .MuiFormControlLabel-label': {
-                  fontSize: '1.3rem', 
+                    fontSize: '1.3rem',
                   },
-                }}/>
+                }}
+              />
               <UserDataForm userId={userId} getUserInfo={getUserInfo} />
-              <FormControlLabel 
-                value={0} 
-                control={<Radio />} 
-                label="Inne dane kontaktowe:" 
+              <FormControlLabel
+                value={0}
+                control={<Radio />}
+                label="Inne dane kontaktowe:"
                 sx={{
                   '& .MuiFormControlLabel-label': {
-                  fontSize: '1.3rem', 
+                    fontSize: '1.3rem',
                   },
-                }}/>              
+                }}
+              />
             </RadioGroup>
           </FormControl>
-      </div>    
+        </div>
+      ) : (
+        // Niezalogowany użytkownik
+        <div className="flex items-start max-md:flex-wrap">
+          <div className="text-3xl font-semibold text-black">Dane kontaktowe</div>
+          
+        </div>
+      )}
 
-      <div className="flex flex-col mt-5 max-md:mt-10 max-md:max-w-[sm]"> 
+      <div className="flex flex-col mt-5 max-md:mt-10 max-md:max-w-[sm]">
         <label htmlFor="email" className="text-lg leading-6 text-zinc-800 max-md:max-w-full"> Email </label>
         <input
           type="email" id="email" placeholder="Wprowadź swój email" aria-label="Wprowadź swój email"
           className="justify-center items-start px-5 py-3 mt-3 text-sm bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
         />
       </div>
-      <div className="flex flex-col mt-8 max-md:mt-10 max-md:max-w-[sm]"> 
+      <div className="flex flex-col mt-8 max-md:mt-10 max-md:max-w-[sm]">
         <label htmlFor="phone" className="text-lg leading-6 text-zinc-800 max-md:max-w-full"> Numer telefonu </label>
         <input
           type="tel" id="phone" placeholder="Wprowadź swój numer telefonu" aria-label="Wprowadź swój numer telefonu"
           className="justify-center items-start px-5 py-3 mt-3 text-sm bg-white rounded-xl border border-solid border-zinc-400 text-zinc-400 max-md:pr-5 max-md:max-w-full"
         />
       </div>
-
-
     </section>
   );
 }
+
 
 const Footer = () => {
   return (
@@ -199,7 +213,12 @@ function Summary(props) {
 }
 
 function Rezerwacja_logged() {
-
+  const { cookies, clearCookies } = useCookiesContext();
+  const [authStatus, setAuthStatus] = useState({
+      email: cookies.email || '',
+      company_or_user: cookies.isCompany ? 1 : cookies.isUser ? 0 : null,
+  });
+  const email = authStatus.email;
   const navigate = useNavigate();
   const location = useLocation();
   const company_id = 7;
@@ -208,7 +227,7 @@ function Rezerwacja_logged() {
   const [company, setCompany] = useState({
     ID: 0, name: '', description: ''
   });
-  const [userId] = useState(7);
+  const [userId, setUserID] = useState(1);
   const [userData, setUserData] = useState(null);
   const [otherUserData, setOtherUserData] = useState(null)
   const [date, setDate] = useState(new Date());
@@ -225,13 +244,24 @@ function Rezerwacja_logged() {
     if (company_id) {
       axios.post('https://book-it-back.vercel.app/api/Strona_firmy', { company_name })
         .then(response => {
-          setCompany(response.data);
+          setCompany(response.data[0]);
         })
         .catch(error => {
           setError('Company not found');
         });
+
+        axios.post('https://book-it-back.vercel.app/api/User_email_to_id', { email })
+        .then(response => {
+          console.log("Otrzymane dane:", response.data)
+          setUserID(response.data.id);
+        })
+        .catch(error => {
+          setError('User not found');
+        });
     }
   }, [company_id]);
+
+
 
   const companyId = company.ID;
 
@@ -268,7 +298,7 @@ function Rezerwacja_logged() {
       };
           
       try {
-        const response = await fetch('https://bookit-back.vercel.app/api/add_booking', {
+        const response = await fetch('https://book-it-back.vercel.app/api/add_booking', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -303,14 +333,14 @@ function Rezerwacja_logged() {
       date: getLocalDateString(date),
       time: time,
       totalTime: totalTime,
-      email: userData.email,
+      email: authStatus.email,
       total_cost: totalCost,
     };
 
     console.log("DATA DEBUG: ", bookingData.date)
 
     try {
-      const response = await fetch('https://bookit-back.vercel.app/api/add_to_day_schedule', {
+      const response = await fetch('https://book-it-back.vercel.app/api/add_to_day_schedule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -332,8 +362,9 @@ function Rezerwacja_logged() {
   };
 
   const handleConfirm = async () => {
-    {/*await handleConfirmAddBooking();*/}
+    await handleConfirmAddBooking();
     await handleConfirmDaySchedule();
+    console.log("dane uzytkownika: ", userData)
   };
 
   const handleBack = () => {

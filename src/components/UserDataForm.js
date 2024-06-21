@@ -11,8 +11,9 @@ const UserDataForm = ({ userId, getUserInfo }) => {
 
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${data.error}`);
-        }
 
+
+        }      
         setUserInfo(data);
         getUserInfo(data);
       } catch (error) {

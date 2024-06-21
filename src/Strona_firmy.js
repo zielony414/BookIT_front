@@ -266,7 +266,7 @@ function Strona_firmy() {
 
   const renderSocialMediaIcons = () => {
     return socialMediaData.map((social, index) => (
-      <a href={social.url} key={index} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 mb-[15px]">
+      <a href={social.url} key={index} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 mb-[5px]">
         <img src={social.iconUrl} alt={social.displayText} className="w-6 h-6" />
         <span className="text-blue-600 hover:underline">{social.displayText}</span>
       </a>
@@ -334,22 +334,10 @@ function Strona_firmy() {
             <div className="flex grow gap-5 items-center max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
               <img
                 loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/46f35761b4ab43fe0cd6819c7253ec2fc017fcd5bcb5d9169bf1d4edc80b25ca?apiKey=d10d36f0508e433185a32e898689ca50&"
-                alt="Icon 1"
-                className="shrink-0 self-stretch my-auto w-10 aspect-square"
-              />
-              <img
-                loading="lazy"
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/680537ec8ccc8a4353186a959eab1ef95fef5b649f7719c011f124817ffaee4a?apiKey=d10d36f0508e433185a32e898689ca50&"
                 alt="Banner"
                 className="self-stretch w-full aspect-[1.82] max-md:max-w-full"
-              />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/97b4fb2ba1237956974d1119188a8585fa741786490442361dcf10a4431bcc41?apiKey=d10d36f0508e433185a32e898689ca50&"
-                alt="Icon 2"
-                className="shrink-0 self-stretch my-auto w-10 aspect-square"
-              />
+              />              
             </div>
           </div>
           {/*^^^ KOMPONENT TO BEDZIE ^^^*/}
