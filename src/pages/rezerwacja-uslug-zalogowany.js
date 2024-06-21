@@ -227,7 +227,7 @@ function Rezerwacja_logged() {
   const [company, setCompany] = useState({
     ID: 0, name: '', description: ''
   });
-  const [userId, setUserID] = useState(1);
+  const [userId, setUserID] = useState(0);
   const [userData, setUserData] = useState(null);
   const [otherUserData, setOtherUserData] = useState(null)
   const [date, setDate] = useState(new Date());
@@ -298,7 +298,7 @@ function Rezerwacja_logged() {
       };
           
       try {
-        const response = await fetch('https://book-it-back.vercel.app/api/add_booking', {
+        const response = await fetch('/api/add_booking', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -340,7 +340,7 @@ function Rezerwacja_logged() {
     console.log("DATA DEBUG: ", bookingData.date)
 
     try {
-      const response = await fetch('https://book-it-back.vercel.app/api/add_to_day_schedule', {
+      const response = await fetch('/api/add_to_day_schedule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

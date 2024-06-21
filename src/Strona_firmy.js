@@ -22,6 +22,56 @@ function SocialMediaLink({ url, platform, altText }) {
   );
 }
 
+const defaultPhotos = {
+  1: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Fryzjer
+  2: 'https://unsplash.com/photos/person-holding-amber-glass-bottle-0MoF-Fe0w0Ahttps://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Masaż
+  3: 'https://unsplash.com/photos/a-small-dog-sitting-on-top-of-a-rock-Kcf0f_3di2U', 
+  4: 'https://images.unsplash.com/photo-1643185450492-6ba77dea00f6?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Uroda
+  5: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' // Siłownia
+};
+
+const CompanyPhotos = ({ companyId }) => {
+  const [photos, setPhotos] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      try {
+        const response = await axios.post('/api/Strona_firmy/zdjęcia', { ID: companyId });
+        if (response.data.companies && response.data.companies.length > 0) {
+          setPhotos(response.data.companies);
+        } else {
+          setPhotos([{ logo: defaultPhotos[companyId] }]);
+        }
+      } catch (error) {
+        setPhotos([{ logo: defaultPhotos[companyId] }]);
+      }
+    };
+
+    fetchPhotos();
+  }, [companyId]);
+
+  return (
+    <div className="border border-black flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
+      <div className="flex grow gap-5 items-center max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+        {error ? (
+          <p>{error}</p>
+        ) : (
+          photos.map((photo, index) => (
+            <img
+              key={index}
+              loading="lazy"
+              src={photo.logo}
+              alt={`Photo ${index + 1}`}
+              className="self-stretch w-full aspect-[1.82] max-md:max-w-full"
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
 const generateStars = (rating) => {
   // Konwertuj rating na liczbę i obsłuż przypadki brzegowe
   const parsedRating = parseFloat(rating);
@@ -330,16 +380,7 @@ function Strona_firmy() {
           {/*DIV POWYZEJ BEDZIE KOMPONENTNEm*/}
 
           {/*PONIZSZY DIV - KOMPONENT POBIERAJACY ZDJECIA*/}
-          <div className=" flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
-            <div className="flex grow gap-5 items-center max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/680537ec8ccc8a4353186a959eab1ef95fef5b649f7719c011f124817ffaee4a?apiKey=d10d36f0508e433185a32e898689ca50&"
-                alt="Banner"
-                className="self-stretch w-full aspect-[1.82] max-md:max-w-full"
-              />              
-            </div>
-          </div>
+            <CompanyPhotos companyId={company.ID}/>
           {/*^^^ KOMPONENT TO BEDZIE ^^^*/}
         </div>
       </div>
