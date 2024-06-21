@@ -23,16 +23,16 @@ function SocialMediaLink({ url, platform, altText }) {
 }
 
 const generateStars = (rating) => {
-  // Ensure rating is a number and handle edge cases
-  if (typeof rating !== 'number' || isNaN(rating) || rating < 0) {
-    return null; // Or handle gracefully as per your UI/UX requirements
+  // Konwertuj rating na liczbę i obsłuż przypadki brzegowe
+  const parsedRating = parseFloat(rating);
+  if (isNaN(parsedRating) || parsedRating < 0) {
+    return null; // Można też dodać komunikat o błędzie lub inny sposób obsługi błędu
   }
 
-  const fullStars = Math.floor(rating);
-  const halfStars = rating % 1 !== 0 ? 1 : 0;
+  const fullStars = Math.floor(parsedRating);
+  const halfStars = parsedRating % 1 !== 0 ? 1 : 0;
   const emptyStars = 5 - fullStars - halfStars;
 
-  // Validate lengths to avoid invalid array creation
   const fullStarsArray = Array.from({ length: fullStars }, (_, i) => (
     <span key={`full-${i}`} className="text-yellow-500 text-2xl">
       ★
@@ -40,7 +40,9 @@ const generateStars = (rating) => {
   ));
 
   const halfStarElement = halfStars === 1 ? (
-    <span className="text-yellow-500 text-2xl">☆</span>
+    <span key="half" className="text-yellow-500 text-2xl">
+      ☆
+    </span>
   ) : null;
 
   const emptyStarsArray = Array.from({ length: emptyStars }, (_, i) => (
@@ -57,6 +59,7 @@ const generateStars = (rating) => {
     </div>
   );
 };
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -185,8 +188,7 @@ function Strona_firmy() {
     tiktok: "",
     avg_rating: "",
     reviews_no: 0,
-  });
-  console.log('CHUJ', company);
+  });  
   const [services, setServices] = useState([]);
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -199,52 +201,93 @@ function Strona_firmy() {
     setServices(selectedServices);
   };
 
-  useEffect(() => {
-    if (company_id) {
-      axios
-        .post("api/Strona_firmy", {
-          company_name,
-        })
-        .then((response) => {
-          setCompany(response.data);
-        })
-        .catch((error) => {
-          setError("Company not found");
-        });
+  const fetchCompanyDetails = async () => {
+    try {
+      const response = await axios.post('https://book-it-back.vercel.app/api/Strona_firmy', { company_name });
+      console.log('Otrzymana odpowiedź:', response.data[0]);
+      setCompany(response.data[0]);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error connecting to the server');
     }
-  }, [company_id]);
+  };
 
-  const socialMediaData = [
-    {
-      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a29484ee2bfa9fa553e53828e419621cd30545b7d30b0bbdf2b6d98b325d584c?apiKey=d10d36f0508e433185a32e898689ca50&",
-      platform: company.strona,
-      altText: "Website",
-    },
-    {
-      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/3f61d1ecefcf1626754503a46a82047d1290d86e3868395a6184fadb004cbe0a?apiKey=d10d36f0508e433185a32e898689ca50&",
-      platform: company.facebook,
-      altText: "Facebook",
-    },
-    {
-      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/a8df4e89ff886f8f3b169db09c7371f3152dc114b3e9d168b35a04fcda517dc4?apiKey=d10d36f0508e433185a32e898689ca50&",
-      platform: company.linkedin,
-      altText: "LinkedIn",
-    },
-    {
-      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/c863b5fa7baa0dab9bbcd2ec292794c8c4a25bec8afcc63e440d70dc15024a00?apiKey=d10d36f0508e433185a32e898689ca50&",
-      platform: company.instagram,
-      altText: "Instagram",
-    },
-    {
-      url: "https://cdn.builder.io/api/v1/image/assets/TEMP/28b0c9d290d499b97f2e895bbb54b3dcdfac9e5bdb80ec0dba14d3b9df1917f6?apiKey=d10d36f0508e433185a32e898689ca50&",
-      platform: company.x,
-      altText: "X",
-    },
-  ];
+  useEffect(() => {
+    if (company_name) {
+      fetchCompanyDetails();
+    }
+  }, [company_name]);
 
+  console.log('Obiekt firmy', company);
+  console.log('ID firmy', company.ID);
+
+
+  const platforms = {
+    strona: {
+      baseUrl: "https://",
+      iconUrl: "https://github.com/simple-icons/simple-icons/blob/develop/icons/internetarchive.svg?raw=true",
+      displayText: "Website"
+    },
+    facebook: {
+      baseUrl: "https://facebook.com",
+      iconUrl: "https://github.com/simple-icons/simple-icons/blob/develop/icons/facebook.svg?raw=true",
+      displayText: "Facebook"
+    },
+    linkedin: {
+      baseUrl: "https://linkedin.com/in",
+      iconUrl: "https://github.com/simple-icons/simple-icons/blob/develop/icons/linkedin.svg?raw=true",
+      displayText: "LinkedIn"
+    },
+    instagram: {
+      baseUrl: "https://instagram.com",
+      iconUrl: "https://github.com/simple-icons/simple-icons/blob/develop/icons/instagram.svg?raw=true",
+      displayText: "Instagram"
+    },
+    x: {
+      baseUrl: "https://twitter.com",
+      iconUrl: "https://github.com/simple-icons/simple-icons/blob/develop/icons/x.svg?raw=true",
+      displayText: "Twitter (X)"
+    },
+    tiktok: {
+      baseUrl: "https://tiktok.com/@",
+      iconUrl: "https://github.com/simple-icons/simple-icons/blob/develop/icons/tiktok.svg?raw=true",
+      displayText: "TikTok"
+    }
+  };
+  
+
+  const socialMediaData = Object.entries(platforms)
+  .filter(([key]) => company[key]) // Filtruj tylko te platformy, które mają link
+  .map(([key, { baseUrl, iconUrl, displayText }]) => ({
+    url: baseUrl + company[key],
+    iconUrl,
+    displayText
+  }));
+
+
+  const renderSocialMediaIcons = () => {
+    return socialMediaData.map((social, index) => (
+      <a href={social.url} key={index} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 mb-[15px]">
+        <img src={social.iconUrl} alt={social.displayText} className="w-6 h-6" />
+        <span className="text-blue-600 hover:underline">{social.displayText}</span>
+      </a>
+    ));
+  };
+
+  const hasSocialMedia = () => {
+    return (
+      company.facebook ||
+      company.linkedin ||
+      company.instagram ||
+      company.x ||
+      company.tiktok ||
+      company.strona
+    );
+  };
+
+  console.log('AVG RATING', company.avg_rating);
   return (
     <div className="flex flex-col bg-white">
-      <Header />
+      <Header />      
       <button
         onClick={() => navigate("/Wyszukiwanie usług")}
         className="justify-center items-center px-7 py-1.5 mt-11 ml-28 max-w-full text-xl font-light text-center text-black bg-white border border-black border-solid shadow-sm rounded-[30px] w-[229px] max-md:px-5 max-md:mt-10 max-md:ml-2.5"
@@ -253,7 +296,7 @@ function Strona_firmy() {
       </button>
       <div className="px-20 mt-6 w-full bg-stone-200 max-md:px-5 max-md:max-w-full">
         <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-          {/*Ten div nizej bedzie zamieniony na komponent wczytujacy zdj, opinie itd*/}
+          {/*Ten div nizej wczytuje "zdjecia", opinie itd*/}
           <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
             <div className="self-stretch my-auto max-md:mt-10 max-md:max-w-full">
               <div className="flex gap-5 max-md:flex-col max-md:gap-0">
@@ -273,10 +316,10 @@ function Strona_firmy() {
                     </div>
                     <div className="mt-2.5">
                       {company.city}, {company.address}
-                    </div>
-                    <div className="mt-6">tel. {company.numer}</div>
-                    <div className="flex items-center gap-3 text-base">
-                      <div>{generateStars(company.avg_rating)}</div>
+                    </div>                    
+                    <div className="mt-6">tel. {company.numer}</div>                    
+                    <div className="flex items-center gap-3 text-base">                      
+                      <div>{generateStars(parseFloat(company.avg_rating))}</div>
                       <div>{company.reviews_no} opinii</div>
                     </div>
                   </div>
@@ -317,22 +360,17 @@ function Strona_firmy() {
           <div className="flex flex-col w-3/12 max-md:ml-0 max-md:w-full">
             <div className="flex flex-col px-5 pt-2 pb-4 w-full rounded-3xl bg-stone-200 max-md:mt-10">
               <div className="text-2xl font-medium leading-6 text-center text-black">
-                Znajdź nas na naszych social mediach!
+                {hasSocialMedia() ? "Znajdź nas na naszych social mediach!" : "Brak social mediów"}
               </div>
-              <div className="flex flex-col pr-5 pl-1.5 mt-5 text-xl leading-6 whitespace-nowrap text-zinc-800">
-                {socialMediaData.map((data, index) => (
-                  <SocialMediaLink
-                    key={index}
-                    url={data.url}
-                    platform={data.platform}
-                    altText={data.altText}
-                  />
-                ))}
-              </div>
+                {hasSocialMedia() && (
+                <div className="flex flex-col pr-5 pl-1.5 mt-5 text-xl leading-6 whitespace-nowrap text-zinc-800">
+                  {renderSocialMediaIcons()}  
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
-            <div className="flex flex-col mr-[150px] grow mt-40 text-black max-md:mt-10 max-md:max-w-full">
+          <div className=" flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
+            <div className="flex flex-col mr-[150px] grow mt-10 text-black max-md:mt-10 max-md:max-w-full">
               <div className="">
                 <NewServicePicker
                   companyId={company.ID}
