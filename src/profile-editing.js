@@ -213,15 +213,14 @@ function ProfileForm({ onSubmit })
     });
     
     useEffect(() => {
-      
       const fetchData = async () => {
+        if (!email) return; // Wait until email is set
         console.log("Pobieranie danych użytkownika...");
         try {
           console.log('Sending email to server:', email);
-          const response = await axios.post('https://book-it-back.vercel.app//api/user_info_by_email', {email});
+          const response = await axios.post('https://book-it-back.vercel.app/api/user_info_by_email', { email });
           console.log('Server response:', response);
-          setUser(response.user_data.data); // Update to access the correct object
-          console.error('test:', user_data.data);
+          setUser(response.data.user_info); // Correct object structure
         } catch (err) {
           console.error('Error fetching user details:', err);
           if (axios.isAxiosError(err)) {
@@ -232,9 +231,9 @@ function ProfileForm({ onSubmit })
           }
         }
       };
-    
+  
       fetchData();
-    }, []);
+    }, [email]);
 
     const handleSave = async () => {
       // Tutaj możesz wywołać funkcję fetch(), aby przesłać dane na backend
